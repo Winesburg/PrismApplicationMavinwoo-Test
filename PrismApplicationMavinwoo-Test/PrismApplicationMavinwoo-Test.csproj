@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <RootNamespace>PrismApplicationMavinwoo_Test</RootNamespace>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Prism.Unity" Version="8.1.97" />
+    <PackageReference Include="Syncfusion.Shared.WPF" Version="23.1.42" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Module\Module.csproj" />
+    <ProjectReference Include="..\PrismApplicationMavinwoo-Test.core\PrismApplicationMavinwoo-Test.core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
+  </ItemGroup>
+
+</Project>
