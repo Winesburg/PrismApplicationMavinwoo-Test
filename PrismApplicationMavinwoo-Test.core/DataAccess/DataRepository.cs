@@ -22,7 +22,7 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
-                return Conn.Query<OrderInfoModel>(" select * from Sales_Order ").AsList();
+                return Conn.Query<OrderInfoModel>(" select * from Sales_Order ").AsList() ;
             }
         }
         public List<OrderInfoModel> FilterData(DateTime start, DateTime end)
