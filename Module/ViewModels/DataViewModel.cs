@@ -42,12 +42,17 @@ namespace Module.ViewModels
         private List<OrderInfoModel> _filterData;
         private ObservableCollection<OrderInfoModel> _filterD;
         private ObservableCollection<OrderInfoModel> _searchD;
-        private ObservableCollection<OrderInfoModel> _selectedD;
+        private ObservableCollection<SalespersonModel> _selectedD;
         private string _searchData;
         private string _keyword;
         private string _selection;
+        private int _displayChart;
+        private bool _displaySalesperson = false;
 
 
+        public int test = 0;
+        public bool DisplaySalesperson { get => _displaySalesperson; set => _displaySalesperson = value; }
+        public int DisplayChart { get => _displayChart; set => _displayChart = value; }
         public string SearchData
         {
             get { return _searchData; }
@@ -59,7 +64,6 @@ namespace Module.ViewModels
             set { _keyword = value; }
         }
         public string Selection { get => _selection; set { SetProperty(ref _selection, value); } }
-
         public DateTime Date_Start { get => _date_Start; set { SetProperty(ref _date_Start, value); } }
         public DateTime Date_End { get => _date_End; set { SetProperty(ref _date_End, value); } }
         public List<OrderInfoModel> FilterData { get => _filterData; set { SetProperty(ref _filterData, value); } }
@@ -69,7 +73,7 @@ namespace Module.ViewModels
         public ObservableCollection<OrderInfoModel> FilterD { get => _filterD; set { SetProperty(ref _filterD, value); } }
 
         public ObservableCollection<OrderInfoModel> SearchD {  get => _searchD; set { SetProperty(ref _searchD, value); } }
-        public ObservableCollection<OrderInfoModel> SelectedD { get => _selectedD; set { SetProperty(ref _selectedD, value); } }
+        public ObservableCollection<SalespersonModel> SelectedD { get => _selectedD; set { SetProperty(ref _selectedD, value); } }
 
 
 
@@ -90,7 +94,7 @@ namespace Module.ViewModels
 
 
             //TestClick = new DelegateCommand(Click, CanClick);
-            SelectedData = new DelegateCommand(Select, CanClick);
+            SelectedData = new DelegateCommand(SelectDataGrid, CanClick);
             SearchDataResults = new DelegateCommand(Search, CanClick);
             FilterDataResults = new DelegateCommand(Filter, CanClick);
             Date_Start = DateTime.Now;
@@ -98,8 +102,21 @@ namespace Module.ViewModels
             FilterData = new List<OrderInfoModel>();
             FilterD = new ObservableCollection<OrderInfoModel>();
             SearchD = new ObservableCollection<OrderInfoModel>();
-            SelectedD = new ObservableCollection<OrderInfoModel>();
+            SelectedD = new ObservableCollection<SalespersonModel>();
+            test = DisplayChart;
 
+        }
+
+        private void SelectDataGrid()
+        {
+            if (DisplaySalesperson == false)
+            {
+                SelectedD.Clear();
+                SelectedD.AddRange(_dataRepository.SelectSalesperson());
+                SelectedD.ToList();
+                DisplayChart = 2; 
+                DisplaySalesperson = true;
+            }
         }
 
         private void GetData()
@@ -125,17 +142,12 @@ namespace Module.ViewModels
         private void Select()
         {
             SelectedD.Clear();
-            SelectedD.AddRange(_dataRepository.SelectData(Selection));
-            Title = SelectedD.ToList();
+            SelectedD.AddRange(_dataRepository.SelectSalesperson());
+            SelectedD.ToList();
         }
         private bool CanClick()
         {
             return true;
         }
-
-        //private void Click()
-        //{
-        //    Title = FilterData;
-        //}
     }
 }

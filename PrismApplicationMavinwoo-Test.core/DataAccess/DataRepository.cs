@@ -13,7 +13,7 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<OrderInfoModel> FilterData(DateTime start, DateTime end);
 
         public List<OrderInfoModel> SearchData(string keyword);
-        public List<OrderInfoModel> SelectData(string selection);
+        public List<SalespersonModel> SelectSalesperson();
     }
     public class DataRepository : IDataRepository
     {
@@ -43,11 +43,11 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
             }
         }
 
-        public List<OrderInfoModel> SelectData(string selection)
+        public List<SalespersonModel> SelectSalesperson()
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
-                List<OrderInfoModel> P = Conn.Query<OrderInfoModel>(" select * from '" + selection + "'").AsList();
+                List<SalespersonModel> P = Conn.Query<SalespersonModel>(" SELECT Sales_Order.ID, Sales_Order.Order_No, Sales_Order.Date_Sold, Salespersons.Name, Sales_Order.Customer, Sales_Order.Price FROM Sales_Order Left JOIN Salespersons ON Sales_Order.Salesperson = Salespersons.ID ").AsList();
                 return P;
             }
         }

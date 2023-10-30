@@ -22,14 +22,5 @@ namespace PrismApplicationMavinwoo_Test.core.Models
         public int Customer { get => customer; set => customer = value; }
         public int Price { get => price; set => price = value; }
 
-        //public DataModel(int iD, int order_No, int date_Sold, int salesperson, int customer, int price)
-        //{
-        //    ID = iD;
-        //    Order_No = order_No;
-        //    Date_Sold = date_Sold;
-        //    Salesperson = salesperson;
-        //    Customer = customer;
-        //    Price = price;
-        //}
     }
 }

@@ -86,7 +86,8 @@
                 <ComboBoxItem Content="Customer"></ComboBoxItem>
                 <ComboBoxItem Content="Salespersons"></ComboBoxItem>
             </ComboBox>
-            <Button Height="25"
+            <Button Command="{Binding SelectedData}"
+                    Height="25"
                     Width="50"
                     VerticalAlignment="Top"
                     Margin="0 10 10 0">Select</Button>
@@ -110,8 +111,20 @@
                                AllowSorting="False" 
                                AllowTriStateSorting="True" 
                                ShowSortNumbers="True" 
-                               AllowFiltering="True"/>
-        
+                               AllowFiltering="True"
+                               Background="White"
+                               Panel.ZIndex="1" />
+
+        <syncfusion:SfDataGrid ItemsSource="{Binding SelectedD}"
+                               Margin="0 45 0 0"    
+                               ColumnSizer="Star" 
+                               AllowSorting="False" 
+                               AllowTriStateSorting="True" 
+                               ShowSortNumbers="True" 
+                               AllowFiltering="True"
+                               Background="White"
+                               Panel.ZIndex="2" />
+
         <!--Matters what XAML element you use - Was originally using TextBlock element and it was just returning the collection as a whole-->
         <!--<ListView ItemsSource="{Binding Title}"
                   DisplayMemberPath="Price"-->
