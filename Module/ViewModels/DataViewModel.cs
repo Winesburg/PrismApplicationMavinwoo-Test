@@ -5,6 +5,8 @@ using PrismApplicationMavinwoo_Test.core.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 
 namespace Module.ViewModels
 {
@@ -18,7 +20,12 @@ namespace Module.ViewModels
         private List<OrderInfoModel> _title;
 
         // "Title" property is declared and the "getter" and "setter" are both created
-        public List<OrderInfoModel> Title { get => _title; set => _title = value; }
+        public List<OrderInfoModel> Title { 
+            get => _title; 
+            set { 
+                SetProperty(ref _title, value);
+               // SelectedData.RaiseCanExecuteChanged();
+            } }
 
         //private DateTime _testbox = new DateTime(1998,04,30);
 
@@ -34,13 +41,35 @@ namespace Module.ViewModels
         private DateTime _date_End;
         private List<OrderInfoModel> _filterData;
         private ObservableCollection<OrderInfoModel> _filterD;
+        private ObservableCollection<OrderInfoModel> _searchD;
+        private ObservableCollection<OrderInfoModel> _selectedD;
+        private string _searchData;
+        private string _keyword;
+        private string _selection;
+
+
+        public string SearchData
+        {
+            get { return _searchData; }
+            set { SetProperty(ref _searchData, value); }
+        }
+        public string Keyword
+        {
+            get { return _keyword; }
+            set { _keyword = value; }
+        }
+        public string Selection { get => _selection; set { SetProperty(ref _selection, value); } }
 
         public DateTime Date_Start { get => _date_Start; set { SetProperty(ref _date_Start, value); } }
         public DateTime Date_End { get => _date_End; set { SetProperty(ref _date_End, value); } }
         public List<OrderInfoModel> FilterData { get => _filterData; set { SetProperty(ref _filterData, value); } }
-        public DelegateCommand TestClick {  get; private set; }
+        public DelegateCommand SelectedData {  get; private set; }
         public DelegateCommand FilterDataResults { get; private set; }
+        public DelegateCommand SearchDataResults {  get; private set; }
         public ObservableCollection<OrderInfoModel> FilterD { get => _filterD; set { SetProperty(ref _filterD, value); } }
+
+        public ObservableCollection<OrderInfoModel> SearchD {  get => _searchD; set { SetProperty(ref _searchD, value); } }
+        public ObservableCollection<OrderInfoModel> SelectedD { get => _selectedD; set { SetProperty(ref _selectedD, value); } }
 
 
 
@@ -59,14 +88,17 @@ namespace Module.ViewModels
 
             GetData();
 
-       
-            //TestClick = new DelegateCommand(Click, CanClick);
 
+            //TestClick = new DelegateCommand(Click, CanClick);
+            SelectedData = new DelegateCommand(Select, CanClick);
+            SearchDataResults = new DelegateCommand(Search, CanClick);
             FilterDataResults = new DelegateCommand(Filter, CanClick);
             Date_Start = DateTime.Now;
             Date_End = DateTime.Now;
             FilterData = new List<OrderInfoModel>();
             FilterD = new ObservableCollection<OrderInfoModel>();
+            SearchD = new ObservableCollection<OrderInfoModel>();
+            SelectedD = new ObservableCollection<OrderInfoModel>();
 
         }
 
@@ -80,8 +112,22 @@ namespace Module.ViewModels
         {
             FilterD.Clear();
             FilterD.AddRange(_dataRepository.FilterData(Date_Start, Date_End));
+            Title = FilterD.ToList();
         }
 
+        private void Search()
+        {
+            SearchD.Clear();
+            SearchD.AddRange(_dataRepository.SearchData(Keyword));
+            Title = SearchD.ToList();
+        }
+
+        private void Select()
+        {
+            SelectedD.Clear();
+            SelectedD.AddRange(_dataRepository.SelectData(Selection));
+            Title = SelectedD.ToList();
+        }
         private bool CanClick()
         {
             return true;

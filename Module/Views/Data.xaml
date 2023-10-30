@@ -52,13 +52,14 @@
 
             <Button Command="{Binding FilterDataResults}"
                     Height="25"
+                    Width="50"
                     VerticalAlignment="Top"
-                    Margin="10 10 10 0">Click Me</Button>
+                    Margin="10 10 10 0">Filter</Button>
 
-            <ListBox ItemsSource="{Binding FilterD}"
+            <!--<ListBox ItemsSource="{Binding FilterD}"
                      DisplayMemberPath="Order_No" Width="100">
                 
-            </ListBox>
+            </ListBox>-->
             
             <!--<TextBlock Height="25"
                        Width="100"
@@ -77,6 +78,31 @@
                                      Watermark="To" 
                                      Width="150"
                                      SetValueOnLostFocus="True"/>-->
+            <ComboBox Width="100"
+                      Height="25"
+                      VerticalAlignment="Top"
+                      Margin="0 10 10 0"
+                      SelectedItem="{Binding Selection}">
+                <ComboBoxItem Content="Customer"></ComboBoxItem>
+                <ComboBoxItem Content="Salespersons"></ComboBoxItem>
+            </ComboBox>
+            <Button Height="25"
+                    Width="50"
+                    VerticalAlignment="Top"
+                    Margin="0 10 10 0">Select</Button>
+
+            <TextBox VerticalAlignment="Top" 
+                     Margin="0,10,0,0" 
+                     Height="25"
+                     Width="150"
+                     TextWrapping="Wrap" 
+                     Text="{Binding Keyword}" />
+            <Button Command="{Binding SearchDataResults}"
+                    Height="25"
+                    Width="50"
+                    VerticalAlignment="Top"
+                    Margin="10 10 10 0"> Search </Button>
+
         </StackPanel>
         <syncfusion:SfDataGrid ItemsSource="{Binding Title}" 
                                Margin="0 45 0 0"    
@@ -85,7 +111,8 @@
                                AllowTriStateSorting="True" 
                                ShowSortNumbers="True" 
                                AllowFiltering="True"/>
-            <!--Matters what XAML element you use - Was originally using TextBlock element and it was just returning the collection as a whole-->
+        
+        <!--Matters what XAML element you use - Was originally using TextBlock element and it was just returning the collection as a whole-->
         <!--<ListView ItemsSource="{Binding Title}"
                   DisplayMemberPath="Price"-->
     </Grid>
