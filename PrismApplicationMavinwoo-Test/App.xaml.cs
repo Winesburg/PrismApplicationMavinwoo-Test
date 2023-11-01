@@ -1,4 +1,6 @@
 ﻿using Module;
+using Module.ViewModels;
+using Module.Views;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Unity;
@@ -22,6 +24,7 @@ namespace PrismApplicationMavinwoo_Test
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<IDataRepository, DataRepository>();
+            containerRegistry.RegisterDialog<AddDialogView, AddDialogViewModel>();
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)

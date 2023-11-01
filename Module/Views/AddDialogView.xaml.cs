@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Module.Views
 {
     /// <summary>
-    /// Interaction logic for Data.xaml
+    /// Interaction logic for AddDialogView.xaml
     /// </summary>
-    public partial class Data : UserControl
+    public partial class AddDialogView : UserControl
     {
-        public Data()
+        public AddDialogView()
         {
             InitializeComponent();
         }

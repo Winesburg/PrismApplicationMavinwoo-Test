@@ -15,7 +15,7 @@
             HorizontalAlignment="Left"
             Margin="25 0 0 0">
 
-
+            <StackPanel>
             <syncfusion:DateTimeEdit Width="150"
                                      Height="25"
                                      VerticalAlignment="Top"
@@ -27,11 +27,11 @@
             <syncfusion:DateTimeEdit Width="150"
                                      Height="25"
                                      VerticalAlignment="Top"
-                                     Margin="10 10 0 0"
+                                     Margin="0 10 0 0"
                                      DateTime="{Binding Date_End}"
                                      CustomPattern="yyyy-MM-dd"
                                      Text="DateTimeEdit"/>
-
+            </StackPanel>
 
             <!--<DatePicker Width="150"
                         Height="25"
@@ -51,8 +51,8 @@
                                      SetValueOnLostFocus="True" />-->
 
             <Button Command="{Binding FilterDataResults}"
-                    Height="25"
-                    Width="50"
+                    Height="60"
+                    Width="70"
                     VerticalAlignment="Top"
                     Margin="10 10 10 0">Filter</Button>
 
@@ -78,35 +78,55 @@
                                      Watermark="To" 
                                      Width="150"
                                      SetValueOnLostFocus="True"/>-->
-            <ComboBox Width="100"
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox VerticalAlignment="Top" 
+                             Margin="0,10,0,0" 
+                             Height="25"
+                             Width="150"
+                             TextWrapping="Wrap" 
+                             Text="{Binding Keyword}" />
+                
+                    <Button Command="{Binding SearchDataResults}"
+                            Height="25"
+                            Width="70"
+                            VerticalAlignment="Top"
+                            Margin="10 10 10 0">Search</Button>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal">
+                    <ComboBox Width="150"
                       Height="25"
                       VerticalAlignment="Top"
                       Margin="0 10 10 0"
-                      SelectedItem="{Binding Selection}">
-                <ComboBoxItem Content="Customer"></ComboBoxItem>
-                <ComboBoxItem Content="Salespersons"></ComboBoxItem>
-            </ComboBox>
-            <Button Command="{Binding SelectedData}"
+                      SelectedItem="{Binding Selection}"
+                      >
+                        <ComboBoxItem Content="Reset"></ComboBoxItem>
+                        <ComboBoxItem Content="Customer"></ComboBoxItem>
+                        <ComboBoxItem Content="Salespersons"></ComboBoxItem>
+                    </ComboBox>
+
+                    <Button Command="{Binding SelectedData}"
                     Height="25"
-                    Width="50"
+                    Width="70"
                     VerticalAlignment="Top"
                     Margin="0 10 10 0">Select</Button>
+                </StackPanel>
 
-            <TextBox VerticalAlignment="Top" 
-                     Margin="0,10,0,0" 
-                     Height="25"
-                     Width="150"
-                     TextWrapping="Wrap" 
-                     Text="{Binding Keyword}" />
-            <Button Command="{Binding SearchDataResults}"
-                    Height="25"
-                    Width="50"
-                    VerticalAlignment="Top"
-                    Margin="10 10 10 0"> Search </Button>
+            </StackPanel>
+
+            <Button
+                Content="Add"
+                Width="70"
+                Height="60"
+                VerticalAlignment="Top"
+                Margin="0 10 5 0">
+                
+            </Button>
 
         </StackPanel>
         <syncfusion:SfDataGrid ItemsSource="{Binding Title}" 
-                               Margin="0 45 0 0"    
+                               Margin="0 80 0 0"    
                                ColumnSizer="Star" 
                                AllowSorting="False" 
                                AllowTriStateSorting="True" 
@@ -115,15 +135,24 @@
                                Background="White"
                                Panel.ZIndex="1" />
 
-        <syncfusion:SfDataGrid ItemsSource="{Binding SelectedD}"
-                               Margin="0 45 0 0"    
+        <syncfusion:SfDataGrid ItemsSource="{Binding SelectedSalespersons}"
+                               Margin="0 80 0 0"    
                                ColumnSizer="Star" 
                                AllowSorting="False" 
                                AllowTriStateSorting="True" 
                                ShowSortNumbers="True" 
                                AllowFiltering="True"
                                Background="White"
-                               Panel.ZIndex="2" />
+                               Panel.ZIndex="{Binding DisplaySalesperson}" />
+        <syncfusion:SfDataGrid ItemsSource="{Binding SelectedCustomers}"
+                               Margin="0 80 0 0"    
+                               ColumnSizer="Star" 
+                               AllowSorting="False" 
+                               AllowTriStateSorting="True" 
+                               ShowSortNumbers="True" 
+                               AllowFiltering="True"
+                               Background="White"
+                               Panel.ZIndex="{Binding DisplayCustomer}" />
 
         <!--Matters what XAML element you use - Was originally using TextBlock element and it was just returning the collection as a whole-->
         <!--<ListView ItemsSource="{Binding Title}"
