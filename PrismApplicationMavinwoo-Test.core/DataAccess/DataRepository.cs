@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Google.Protobuf.WellKnownTypes;
 using MySql.Data.MySqlClient;
 using PrismApplicationMavinwoo_Test.core.Models;
 using System;
@@ -17,6 +18,7 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<CustomerModel> SearchCustomer(string keyword);
         public List<SalespersonModel> SelectSalesperson();
         public List<CustomerModel> SelectCustomers();
+        public List<CustomerAddDialogModel> AddCustomers(int value1, string value2, string value3, string value4, string value5, int value6, int value7);
     }
     public class DataRepository : IDataRepository
     {
@@ -92,6 +94,14 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
                 List<CustomerModel> P = Conn.Query<CustomerModel>(" SELECT Sales_Order.Order_No, Sales_Order.Date_Sold, Sales_Order.Salesperson, Customer.Name, Sales_Order.Price FROM Sales_Order Left JOIN Customer ON Sales_Order.Customer = Customer.Customer ").AsList();
+                return P;
+            }
+        }
+        public List<CustomerAddDialogModel> AddCustomers(int value1, string value2, string value3, string value4, string value5, int value6, int value7)
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                List<CustomerAddDialogModel> P = Conn.Query<CustomerAddDialogModel>(" INSERT INTO Customer VALUES ('" + value1 + "', '" + value2 + "', '" + value3 + "', '" + value4 + "', '" + value5 + "', '" + value6 + "', '" + value7 + "'  ) ").AsList();
                 return P;
             }
         }

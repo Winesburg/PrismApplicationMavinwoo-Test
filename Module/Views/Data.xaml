@@ -115,13 +115,12 @@
 
             </StackPanel>
 
-            <Button
-                Content="Add"
-                Width="70"
-                Height="60"
-                VerticalAlignment="Top"
-                Margin="0 10 5 0">
-                
+            <Button Command="{Binding ShowDialogCommand}"
+                    Content="Add"
+                    Width="70"
+                    Height="60"
+                    VerticalAlignment="Top"
+                    Margin="0 10 5 0">
             </Button>
 
         </StackPanel>

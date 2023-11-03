@@ -1,5 +1,4 @@
-﻿using Org.BouncyCastle.Asn1.Crmf;
-using Prism.Commands;
+﻿using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using PrismApplicationMavinwoo_Test.core.DataAccess;
@@ -8,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
 
 namespace Module.ViewModels
 {

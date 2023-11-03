@@ -10,11 +10,12 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <prism:Dialog.WindowStyle>
         <Style TargetType="Window">
-            <Setter Property="Height" Value="200" />
-            <Setter Property="Width" Value="400" />
+            <Setter Property="Height" Value="400" />
+            <Setter Property="Width" Value="800" />
             <Setter Property="ResizeMode" Value="NoResize" />
             <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterScreen" />
         </Style>
+
     </prism:Dialog.WindowStyle>
     <Grid>
         <Grid x:Name="LayoutRoot" Margin="25">
@@ -23,9 +24,113 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <TextBlock Text="{Binding Message}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" />
-            <Button Command ="{Binding CloseDialogCommand}" Content="OK" Width="75" Height="25" HorizontalAlignment="Right" />
+            <StackPanel Width="100"
+                        Height="50"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Left"
+                        Margin="10 0 0 0">
+                <TextBlock Text="Customer ID"
+                           Margin="0 0 0 5" />
+                <TextBox Text="{Binding Customer}" />
+            </StackPanel>
+
+            <StackPanel Width="100"
+                        Height="50"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Left"
+                        Margin="115 0 0 0">
+                <TextBlock Text="Name"
+                           Margin="0 0 0 5"/>
+                <TextBox Text="{Binding Name}" />
+            </StackPanel>
+
+            <StackPanel Width="100"
+                        Height="50"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Left"
+                        Margin="220 0 0 0">
+                <TextBlock Text="Address"
+                           Margin="0 0 0 5"/>
+                <TextBox Text="{Binding Address}" />
+            </StackPanel>
+
+            <StackPanel Width="100"
+                        Height="50"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Center"
+                        Margin="10 0 0 0">
+                <TextBlock Text="City"
+                           Margin="0 0 0 5"/>
+                <TextBox Text="{Binding City}" />
+            </StackPanel>
+
+            <StackPanel Width="100"
+                        Height="50"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Center"
+                        Margin="220 0 0 0">
+                <TextBlock Text="State"
+                           Margin="0 0 0 5"/>
+                <TextBox Text="{Binding State}" />
+            </StackPanel>
+
+            <StackPanel Width="100"
+                        Height="50"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Center"
+                        Margin="430 0 0 0">
+                <TextBlock Text="Zip"
+                           Margin="0 0 0 5"/>
+                <TextBox Text="{Binding Zip}" />
+            </StackPanel>
+
+            <StackPanel Width="100"
+                        Height="50"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Right"
+                        Margin="0 0 5 0">
+                <TextBlock Text="Phone"
+                           Margin="0 0 0 5"/>
+                <TextBox Text="{Binding Phone}" />
+            </StackPanel>
+
+            <StackPanel VerticalAlignment="Bottom">
+                <TextBlock Text="Add Customer"
+                           Height="25"
+                           VerticalAlignment="Bottom"
+                           HorizontalAlignment="Center"/>
+                <Button Command="{Binding AddCustomerCommand}"
+                        Content="Submit"
+                        Width="75"
+                        Height="25"
+                        VerticalAlignment="Bottom"/>
+            </StackPanel>
+
+
+            <TextBlock Text="{Binding Message}"  
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch" 
+                       Grid.Row="1" />
+
+            <Button Command ="{Binding CloseDialogCommand}" 
+                    Content="OK"
+                    Width="75" 
+                    ToolTip="Click here"
+                    ToolTipService.InitialShowDelay="0"
+                    Height="25" 
+                    HorizontalAlignment="Right"
+                    Grid.Row="1" />
+
         </Grid>
-            
+
+        <!--<ComboBox Width="100"
+                  Height="50">
+            <ComboBoxItem Content="Edit Customer"/>
+            <ComboBoxItem Content="Edit Inventory"/>
+            <ComboBoxItem Content="Edit Order Lines"/>
+            <ComboBoxItem Content="Edit Salespersons"/>
+            <ComboBoxItem Content="Edit Sales Order"/>
+        </ComboBox>-->
+
     </Grid>
 </UserControl>
