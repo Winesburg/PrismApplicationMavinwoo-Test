@@ -16,13 +16,14 @@
             Margin="25 0 0 0">
 
             <StackPanel>
-            <syncfusion:DateTimeEdit Width="150"
+                <syncfusion:DateTimeEdit Width="150"
                                      Height="25"
                                      VerticalAlignment="Top"
                                      Margin="0 10 0 0"
                                      DateTime="{Binding Date_Start}"
                                      CustomPattern="yyyy-MM-dd"
-                                     Text="DateTimeEdit"/>
+                                     Text="DateTimeEdit">
+                </syncfusion:DateTimeEdit>
             
             <syncfusion:DateTimeEdit Width="150"
                                      Height="25"
@@ -54,7 +55,13 @@
                     Height="60"
                     Width="70"
                     VerticalAlignment="Top"
-                    Margin="10 10 10 0">Filter</Button>
+                    Margin="10 10 10 0">Filter
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5" />
+                    </Style>
+                </Button.Resources>
+            </Button>
 
             <!--<ListBox ItemsSource="{Binding FilterD}"
                      DisplayMemberPath="Order_No" Width="100">
@@ -91,7 +98,13 @@
                             Height="25"
                             Width="70"
                             VerticalAlignment="Top"
-                            Margin="10 10 10 0">Search</Button>
+                            Margin="10 10 10 0">Search
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
                 </StackPanel>
                 
                 <StackPanel Orientation="Horizontal">
@@ -110,7 +123,13 @@
                     Height="25"
                     Width="70"
                     VerticalAlignment="Top"
-                    Margin="0 10 10 0">Select</Button>
+                    Margin="0 10 10 0">Select
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
                 </StackPanel>
 
             </StackPanel>
@@ -121,6 +140,11 @@
                     Height="60"
                     VerticalAlignment="Top"
                     Margin="0 10 5 0">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5" />
+                    </Style>
+                </Button.Resources>
             </Button>
 
         </StackPanel>

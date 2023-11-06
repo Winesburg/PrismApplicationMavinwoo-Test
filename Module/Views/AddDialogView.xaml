@@ -22,6 +22,11 @@
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
 
             <StackPanel Width="100"
@@ -38,7 +43,8 @@
                         Height="50"
                         VerticalAlignment="Top"
                         HorizontalAlignment="Left"
-                        Margin="115 0 0 0">
+                        Margin="10 0 0 0"
+                        Grid.Row="1">
                 <TextBlock Text="Name"
                            Margin="0 0 0 5"/>
                 <TextBox Text="{Binding Name}" />
@@ -48,7 +54,8 @@
                         Height="50"
                         VerticalAlignment="Top"
                         HorizontalAlignment="Left"
-                        Margin="220 0 0 0">
+                        Margin="10 0 0 0"
+                        Grid.Row="2">
                 <TextBlock Text="Address"
                            Margin="0 0 0 5"/>
                 <TextBox Text="{Binding Address}" />
@@ -57,8 +64,9 @@
             <StackPanel Width="100"
                         Height="50"
                         VerticalAlignment="Top"
-                        HorizontalAlignment="Center"
-                        Margin="10 0 0 0">
+                        HorizontalAlignment="Left"
+                        Margin="10 0 0 0"
+                        Grid.Row="3">
                 <TextBlock Text="City"
                            Margin="0 0 0 5"/>
                 <TextBox Text="{Binding City}" />
@@ -66,29 +74,29 @@
 
             <StackPanel Width="100"
                         Height="50"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Center"
-                        Margin="220 0 0 0">
+                        HorizontalAlignment="Left"
+                        Margin="10 0 0 0"
+                        Grid.Row="4">
                 <TextBlock Text="State"
-                           Margin="0 0 0 5"/>
+                           Margin="0 0 0 5" />
                 <TextBox Text="{Binding State}" />
             </StackPanel>
 
             <StackPanel Width="100"
                         Height="50"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Center"
-                        Margin="430 0 0 0">
+                        HorizontalAlignment="Left"
+                        Margin="10 0 0 0"
+                        Grid.Row="5">
                 <TextBlock Text="Zip"
-                           Margin="0 0 0 5"/>
+                           Margin="0 0 0 5" />
                 <TextBox Text="{Binding Zip}" />
             </StackPanel>
 
             <StackPanel Width="100"
                         Height="50"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Right"
-                        Margin="0 0 5 0">
+                        HorizontalAlignment="Left"
+                        Margin="10 0 0 0"
+                        Grid.Row="6">
                 <TextBlock Text="Phone"
                            Margin="0 0 0 5"/>
                 <TextBox Text="{Binding Phone}" />
