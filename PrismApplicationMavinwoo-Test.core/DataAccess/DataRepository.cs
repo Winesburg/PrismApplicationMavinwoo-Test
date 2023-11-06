@@ -19,6 +19,7 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<SalespersonModel> SelectSalesperson();
         public List<CustomerModel> SelectCustomers();
         public List<CustomerAddDialogModel> AddCustomers(string value1, string value2, string value3, string value4, string value5, string value6);
+        public List<InventoryAddDialogModel> AddInventory(string value1, int value2, int? value3, DateTime? value4, int value5);
     }
     public class DataRepository : IDataRepository
     {
@@ -102,6 +103,15 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
                 List<CustomerAddDialogModel> P = Conn.Query<CustomerAddDialogModel>(" INSERT INTO Customer (Name, Address, City, State, Zip, Phone)  VALUES ('" + value1 + "', '" + value2 + "', '" + value3 + "', '" + value4 + "', '" + value5 + "', '" + value6 + "') ").AsList();
+                return P;
+            }
+        }
+
+        public List<InventoryAddDialogModel> AddInventory(string value1, int value2, int? value3, DateTime? value4, int value5)
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" INSERT INTO Inventory (Item, In_Stock, On_Order, Delivery_Date, Reorder_Limit)  VALUES ('" + value1 + "', '" + value2 + "', '" + value3 + "', '" + value4 + "', '" + value5 + "') ").AsList();
                 return P;
             }
         }
