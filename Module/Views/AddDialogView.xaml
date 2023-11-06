@@ -7,138 +7,141 @@
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="300">
     <prism:Dialog.WindowStyle>
         <Style TargetType="Window">
-            <Setter Property="Height" Value="400" />
-            <Setter Property="Width" Value="800" />
+            <Setter Property="Height" Value="450" />
+            <Setter Property="Width" Value="300" />
             <Setter Property="ResizeMode" Value="NoResize" />
             <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterScreen" />
         </Style>
-
     </prism:Dialog.WindowStyle>
-    <Grid>
-        <Grid x:Name="LayoutRoot" Margin="25">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
 
-            <StackPanel Width="100"
-                        Height="50"
+    <Grid x:Name="LayoutRoot" Margin="25">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--<StackPanel Height="50"
                         VerticalAlignment="Top"
-                        HorizontalAlignment="Left"
-                        Margin="10 0 0 0">
+                        HorizontalAlignment="Stretch"
+                        Grid.ColumnSpan="2">
+
                 <TextBlock Text="Customer ID"
-                           Margin="0 0 0 5" />
+                           FontSize="14">
+                    -->
+        <!--<Image Width="14"
+                           Height="14"
+                           Margin="10 0 0 0"
+                           Source="C:\Users\dustin\source\repos\PrismApplicationMavinwoo-Test3\PrismApplicationMavinwoo-Test\Resources\info.png" />-->
+        <!--
+                </TextBlock>
                 <TextBox Text="{Binding Customer}" />
-            </StackPanel>
+            </StackPanel>-->
 
-            <StackPanel Width="100"
-                        Height="50"
+        <StackPanel Height="50"
                         VerticalAlignment="Top"
-                        HorizontalAlignment="Left"
-                        Margin="10 0 0 0"
-                        Grid.Row="1">
-                <TextBlock Text="Name"
-                           Margin="0 0 0 5"/>
-                <TextBox Text="{Binding Name}" />
-            </StackPanel>
+                        HorizontalAlignment="Stretch"
+                        Grid.ColumnSpan="2">
 
-            <StackPanel Width="100"
-                        Height="50"
+            <TextBlock Text="Name"
+                           FontSize="14"/>
+            <TextBox Text="{Binding Name}" />
+        </StackPanel>
+
+        <StackPanel Height="50"
                         VerticalAlignment="Top"
-                        HorizontalAlignment="Left"
-                        Margin="10 0 0 0"
-                        Grid.Row="2">
-                <TextBlock Text="Address"
-                           Margin="0 0 0 5"/>
-                <TextBox Text="{Binding Address}" />
-            </StackPanel>
+                        HorizontalAlignment="Stretch"
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2">
+            <TextBlock Text="Address"
+                           FontSize="14"/>
+            <TextBox Text="{Binding Address}" />
+        </StackPanel>
 
-            <StackPanel Width="100"
-                        Height="50"
+        <StackPanel Height="50"
                         VerticalAlignment="Top"
-                        HorizontalAlignment="Left"
-                        Margin="10 0 0 0"
-                        Grid.Row="3">
-                <TextBlock Text="City"
-                           Margin="0 0 0 5"/>
-                <TextBox Text="{Binding City}" />
-            </StackPanel>
+                        HorizontalAlignment="Stretch"
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2">
+            <TextBlock Text="City"
+                           FontSize="14"/>
+            <TextBox Text="{Binding City}" />
+        </StackPanel>
 
-            <StackPanel Width="100"
-                        Height="50"
-                        HorizontalAlignment="Left"
-                        Margin="10 0 0 0"
-                        Grid.Row="4">
-                <TextBlock Text="State"
-                           Margin="0 0 0 5" />
-                <TextBox Text="{Binding State}" />
-            </StackPanel>
+        <StackPanel Height="50"
+                        HorizontalAlignment="Stretch"
+                        Grid.Row="3"
+                        Grid.ColumnSpan="2">
+            <TextBlock Text="State"
+                           FontSize="14"/>
+            <TextBox Text="{Binding State}" />
+        </StackPanel>
 
-            <StackPanel Width="100"
-                        Height="50"
-                        HorizontalAlignment="Left"
-                        Margin="10 0 0 0"
-                        Grid.Row="5">
-                <TextBlock Text="Zip"
-                           Margin="0 0 0 5" />
-                <TextBox Text="{Binding Zip}" />
-            </StackPanel>
+        <StackPanel Height="50"
+                        HorizontalAlignment="Stretch"
+                        Grid.Row="4"
+                        Grid.ColumnSpan="2">
+            <TextBlock Text="Zip"
+                           FontSize="14" />
+            <TextBox Text="{Binding Zip}" />
+        </StackPanel>
 
-            <StackPanel Width="100"
-                        Height="50"
-                        HorizontalAlignment="Left"
-                        Margin="10 0 0 0"
-                        Grid.Row="6">
-                <TextBlock Text="Phone"
-                           Margin="0 0 0 5"/>
-                <TextBox Text="{Binding Phone}" />
-            </StackPanel>
+        <StackPanel Height="50"
+                        HorizontalAlignment="Stretch"
+                        Grid.Row="5"
+                        Grid.ColumnSpan="2">
+            <TextBlock Text="Phone"
+                           FontSize="14"/>
+            <TextBox Text="{Binding Phone}" />
+        </StackPanel>
 
-            <StackPanel VerticalAlignment="Bottom">
-                <TextBlock Text="Add Customer"
+        <StackPanel VerticalAlignment="Bottom"
+                        HorizontalAlignment="Stretch"
+                        Grid.Row="6"
+                        Grid.ColumnSpan="2">
+            <TextBlock Text="Add Customer"
                            Height="25"
-                           VerticalAlignment="Bottom"
-                           HorizontalAlignment="Center"/>
-                <Button Command="{Binding AddCustomerCommand}"
+                           HorizontalAlignment="Left"
+                           FontSize="14"/>
+            <Button Command="{Binding AddCustomerCommand}"
                         Content="Submit"
-                        Width="75"
-                        Height="25"
-                        VerticalAlignment="Bottom"/>
-            </StackPanel>
+                        HorizontalAlignment="Stretch"
+                        Height="25">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius"  Value="5" />
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </StackPanel>
 
 
-            <TextBlock Text="{Binding Message}"  
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch" 
-                       Grid.Row="1" />
+        <!--<StackPanel VerticalAlignment="Bottom"
+                        Grid.Column="1"
+                        Grid.Row="7">
+                <TextBlock Text="{Binding Message}"  
+                           HorizontalAlignment="Center" />
 
-            <Button Command ="{Binding CloseDialogCommand}" 
-                    Content="OK"
-                    Width="75" 
-                    ToolTip="Click here"
-                    ToolTipService.InitialShowDelay="0"
-                    Height="25" 
-                    HorizontalAlignment="Right"
-                    Grid.Row="1" />
-
-        </Grid>
-
-        <!--<ComboBox Width="100"
-                  Height="50">
-            <ComboBoxItem Content="Edit Customer"/>
-            <ComboBoxItem Content="Edit Inventory"/>
-            <ComboBoxItem Content="Edit Order Lines"/>
-            <ComboBoxItem Content="Edit Salespersons"/>
-            <ComboBoxItem Content="Edit Sales Order"/>
-        </ComboBox>-->
+                <Button Command ="{Binding CloseDialogCommand}" 
+                        Content="Close"
+                        Width="75" 
+                        ToolTip="Click here"
+                        ToolTipService.InitialShowDelay="0"
+                        Height="25" 
+                        HorizontalAlignment="Center"
+                        Grid.Row="7" />
+            </StackPanel>-->
 
     </Grid>
 </UserControl>

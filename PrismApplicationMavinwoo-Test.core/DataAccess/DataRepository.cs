@@ -18,7 +18,7 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<CustomerModel> SearchCustomer(string keyword);
         public List<SalespersonModel> SelectSalesperson();
         public List<CustomerModel> SelectCustomers();
-        public List<CustomerAddDialogModel> AddCustomers(int value1, string value2, string value3, string value4, string value5, int value6, int value7);
+        public List<CustomerAddDialogModel> AddCustomers(string value1, string value2, string value3, string value4, string value5, string value6);
     }
     public class DataRepository : IDataRepository
     {
@@ -97,11 +97,11 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
                 return P;
             }
         }
-        public List<CustomerAddDialogModel> AddCustomers(int value1, string value2, string value3, string value4, string value5, int value6, int value7)
+        public List<CustomerAddDialogModel> AddCustomers(string value1, string value2, string value3, string value4, string value5, string value6)
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
-                List<CustomerAddDialogModel> P = Conn.Query<CustomerAddDialogModel>(" INSERT INTO Customer VALUES ('" + value1 + "', '" + value2 + "', '" + value3 + "', '" + value4 + "', '" + value5 + "', '" + value6 + "', '" + value7 + "'  ) ").AsList();
+                List<CustomerAddDialogModel> P = Conn.Query<CustomerAddDialogModel>(" INSERT INTO Customer (Name, Address, City, State, Zip, Phone)  VALUES ('" + value1 + "', '" + value2 + "', '" + value3 + "', '" + value4 + "', '" + value5 + "', '" + value6 + "') ").AsList();
                 return P;
             }
         }

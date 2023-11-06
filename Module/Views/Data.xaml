@@ -135,7 +135,7 @@
             </StackPanel>
 
             <Button Command="{Binding ShowDialogCommand}"
-                    Content="Add"
+                    Content="Customer"
                     Width="70"
                     Height="60"
                     VerticalAlignment="Top"
@@ -146,8 +146,23 @@
                     </Style>
                 </Button.Resources>
             </Button>
+            
+            <Button Command="{Binding EditInventoryCommand}"
+                    Content="Inventory"
+                    Width="70"
+                    Height="60"
+                    VerticalAlignment="Top"
+                    Margin="5 10 5 0">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5" />
+                    </Style>
+                </Button.Resources>
+            </Button>
+
 
         </StackPanel>
+        
         <syncfusion:SfDataGrid ItemsSource="{Binding Title}" 
                                Margin="0 80 0 0"    
                                ColumnSizer="Star" 

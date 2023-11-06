@@ -6,7 +6,6 @@ using Prism.Modularity;
 using Prism.Unity;
 using PrismApplicationMavinwoo_Test.core.DataAccess;
 using PrismApplicationMavinwoo_Test.Views;
-using System;
 using System.Windows;
 
 namespace PrismApplicationMavinwoo_Test
@@ -21,10 +20,18 @@ namespace PrismApplicationMavinwoo_Test
             return Container.Resolve<ShellWindow>();
         }
 
+        public App()
+        {
+            //Register Syncfusion license
+            string key = "Mjc2NTM5N0AzMjMzMmUzMDJlMzBaQmlFeVpadEtyT21yOWJKejQvOGVncjZxZExkSit2R2hONVF3UzBjbENRPQ==";
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(key);
+        }
+
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<IDataRepository, DataRepository>();
             containerRegistry.RegisterDialog<AddDialogView, AddDialogViewModel>();
+            containerRegistry.RegisterDialog<InventoryDialogView, InventoryDialogViewModel>();
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)

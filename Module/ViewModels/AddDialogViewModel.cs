@@ -12,22 +12,19 @@ namespace Module.ViewModels
     {
         private IDataRepository _dataRepository;
         private string _message;
-        private int _customer;
         private string _name;
         private string _address;
         private string _city;
         private string _state;
-        private int _zip;
-        private int _phone;
+        private string _zip;
+        private string _phone;
         private ObservableCollection<CustomerAddDialogModel> _addCust;
-
-        public int Customer { get => _customer; set => _customer = value; }
         public string Name { get => _name; set => _name = value; }
         public string Address { get => _address; set => _address = value; }
         public string City { get => _city; set => _city = value; }
         public string State { get => _state; set => _state = value; }
-        public int Zip { get => _zip; set => _zip = value; }
-        public int Phone { get => _phone; set => _phone = value; }
+        public string Zip { get => _zip; set => _zip = value; }
+        public string Phone { get => _phone; set => _phone = value; }
         public string Message
         {
             get { return _message; }
@@ -50,7 +47,7 @@ namespace Module.ViewModels
 
         private void AddCustomer()
         {
-            _dataRepository.AddCustomers(Customer, Name, Address, City, State, Zip, Phone);
+            _dataRepository.AddCustomers(Name, Address, City, State, Zip, Phone);
         }
 
         private void CloseDialog()

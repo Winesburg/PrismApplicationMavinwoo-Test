@@ -80,6 +80,7 @@ namespace Module.ViewModels
         public DelegateCommand FilterDataResults { get; private set; }
         public DelegateCommand SearchDataResults {  get; private set; }
         public DelegateCommand ShowDialogCommand { get; private set; }
+        public DelegateCommand EditInventoryCommand { get; private set; }
         public ObservableCollection<OrderInfoModel> FilterD { get => _filterD; set { SetProperty(ref _filterD, value); } }
 
         public ObservableCollection<OrderInfoModel> SearchD {  get => _searchD; set { SetProperty(ref _searchD, value); } }
@@ -107,6 +108,7 @@ namespace Module.ViewModels
             SearchDataResults = new DelegateCommand(Search, CanClick);
             FilterDataResults = new DelegateCommand(Filter, CanClick);
             ShowDialogCommand = new DelegateCommand(ShowDialog, CanClick);
+            EditInventoryCommand = new DelegateCommand(ShowInventoryDialog, CanClick);
             Date_Start = DateTime.Now;
             Date_End = DateTime.Now;
             FilterData = new List<OrderInfoModel>();
@@ -119,7 +121,7 @@ namespace Module.ViewModels
         private void ShowDialog()
         {
             var p = new DialogParameters();
-            p.Add("message", "This is a test message.");
+            //p.Add("message", "This is a test message.");
 
             _dialogService.ShowDialog("AddDialogView", p, result =>
             {
@@ -132,6 +134,22 @@ namespace Module.ViewModels
                     MessageReceived = "Okay button not clicked";
                 }
             } );
+        }
+        private void ShowInventoryDialog()
+        {
+            var p = new DialogParameters();
+
+            _dialogService.ShowDialog("InventoryDialogView", p, result =>
+            {
+                //if (result.Result == ButtonResult.OK)
+                //{
+                //    MessageReceived = result.Parameters.GetValue<string>("myParam");
+                //}
+                //else
+                //{
+                //    MessageReceived = "Okay button not clicked";
+                //}
+            });
         }
         private void SelectDataGrid()
         {
