@@ -20,6 +20,9 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<CustomerModel> SelectCustomers();
         public List<CustomerAddDialogModel> AddCustomers(string value1, string value2, string value3, string value4, string value5, string value6);
         public List<InventoryAddDialogModel> AddInventory(string value1, int value2, int? value3, DateTime? value4, int value5);
+        public List<InventoryAddDialogModel> GetInventory();
+        public List<InventoryAddDialogModel> GetInventoryItems();
+        public List<string> GetColumns();
     }
     public class DataRepository : IDataRepository
     {
@@ -112,6 +115,32 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
                 List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" INSERT INTO Inventory (Item, In_Stock, On_Order, Delivery_Date, Reorder_Limit)  VALUES ('" + value1 + "', '" + value2 + "', '" + value3 + "', '" + value4 + "', '" + value5 + "') ").AsList();
+                return P;
+            }
+        }
+
+        public List<InventoryAddDialogModel> GetInventory()
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" SELECT * from Inventory ").AsList();
+                return P;
+            }
+        }
+
+        public List<InventoryAddDialogModel> GetInventoryItems()
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" SELECT Item from Inventory ").AsList();
+                return P;
+            }
+        }
+        public List<string> GetColumns()
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQLInfo))
+            {
+                List<string> P = Conn.Query<string>(" Select Column_Name From Columns Where Table_Name = 'Inventory' ").AsList();
                 return P;
             }
         }

@@ -110,10 +110,10 @@
                         HorizontalAlignment="Stretch"
                         Grid.Row="6"
                         Grid.ColumnSpan="2">
-            <TextBlock Text="Add Customer"
+            <!--<TextBlock Text="Add Customer"
                            Height="25"
                            HorizontalAlignment="Left"
-                           FontSize="14"/>
+                           FontSize="14"/>-->
             <Button Command="{Binding AddCustomerCommand}"
                         Content="Submit"
                         HorizontalAlignment="Stretch"
