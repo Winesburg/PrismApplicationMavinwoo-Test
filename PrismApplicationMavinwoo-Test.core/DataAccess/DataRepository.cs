@@ -21,8 +21,9 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<CustomerAddDialogModel> AddCustomers(string value1, string value2, string value3, string value4, string value5, string value6);
         public List<InventoryAddDialogModel> AddInventory(string value1, int value2, int? value3, DateTime? value4, int value5);
         public List<InventoryAddDialogModel> GetInventory();
-        public List<InventoryAddDialogModel> GetInventoryItems();
+        public List<InventoryItemModel> GetInventoryItems();
         public List<string> GetColumns();
+        public List<string> GetItems();
     }
     public class DataRepository : IDataRepository
     {
@@ -128,14 +129,24 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
             }
         }
 
-        public List<InventoryAddDialogModel> GetInventoryItems()
+        public List<InventoryItemModel> GetInventoryItems()
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
-                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" SELECT Item from Inventory ").AsList();
+                List<InventoryItemModel> P = Conn.Query<InventoryItemModel>(" SELECT Item from Inventory ").AsList();
                 return P;
             }
         }
+
+        public List<string> GetItems()
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                List<string> P = Conn.Query<string>(" SELECT Item from Inventory ").AsList();
+                return P;
+            }
+        }
+
         public List<string> GetColumns()
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQLInfo))

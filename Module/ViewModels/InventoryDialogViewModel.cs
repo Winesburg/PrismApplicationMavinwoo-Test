@@ -25,9 +25,35 @@ namespace Module.ViewModels
         private int _displayAddIndex = 2;
         private int _displayDeleteIndex = 0;
         private int _displayUpdateIndex = 0;
-        private string _selection;
+        private string? _selection;
         private ObservableCollection<InventoryAddDialogModel> _inventoryData;
         private ObservableCollection<string> _test;
+        private string? _selectedInventory;
+
+        public ObservableCollection<string> Test2 
+        { 
+            get => _test2;
+            set
+            { 
+                SetProperty(ref _test2, value); 
+                RaisePropertyChanged(nameof(Test2));
+                EditOptionsCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+
+        private string? _selectTest;
+        private ObservableCollection<string> _test2;
+        private ObservableCollection<InventoryItemModel> _inventoryItems;
+
+        public string? SelectTest
+        {
+            get => _selectTest;
+            set 
+            { 
+                SetProperty(ref _selectTest, value); 
+            }
+        }
 
         public string Item { get => _item; set => _item = value; }
         public int InStock { get => _inStock; set => _inStock = value; }
@@ -38,36 +64,53 @@ namespace Module.ViewModels
         public int DisplayAddIndex { get => _displayAddIndex; set { SetProperty(ref _displayAddIndex, value); } }
         public int DisplayDeleteIndex { get => _displayDeleteIndex; set { SetProperty(ref _displayDeleteIndex, value); } }
         public int DisplayUpdateIndex { get => _displayUpdateIndex; set { SetProperty(ref _displayUpdateIndex, value); } }
-        public string Selection { get => _selection; set { SetProperty(ref _selection, value); } }
+        public ObservableCollection<InventoryItemModel> InventoryItems { get => _inventoryItems; set { SetProperty(ref _inventoryItems, value); } }
+        public string? SelectedInventory
+        {
+            get => _selectedInventory;
+            set
+            {
+                SetProperty( ref _selectedInventory, value);
+                RaisePropertyChanged(nameof(SelectedInventory));
+                EditOptionsCommand.RaiseCanExecuteChanged();
+                
+            }
+        }
+        public string? Selection 
+        { 
+            get => _selection; 
+            set 
+            { 
+                SetProperty(ref _selection, value);
+                RaisePropertyChanged(nameof(Selection));
+                DisplaySelectedCommand.RaiseCanExecuteChanged();
+            } 
+        }
         public ObservableCollection<InventoryAddDialogModel> InventoryData { get => _inventoryData; set { SetProperty(ref _inventoryData, value); } }
         public ObservableCollection<string> Test { get => _test; set { SetProperty(ref _test, value); }  }
         public DelegateCommand DisplaySelectedCommand {  get; private set; }
-
-        //private string _message;
-        //public string Message
-        //{
-        //    get { return _message; }
-        //    set { SetProperty(ref _message, value); }
-        //}
+        public DelegateCommand EditOptionsCommand { get; private set; }
 
         public InventoryDialogViewModel(IDataRepository dataRepository)
         {
             _dataRepository = dataRepository;
-            DisplaySelectedCommand = new DelegateCommand(DisplaySelected);
+            DisplaySelectedCommand = new DelegateCommand(DisplaySelected, CanClickSelection);
+            EditOptionsCommand = new DelegateCommand(DisplayEditOptions, CanClickInventory);
             InventoryData = new ObservableCollection<InventoryAddDialogModel>();
+            InventoryItems = new ObservableCollection<InventoryItemModel>();
             Test= new ObservableCollection<string>();
-
+            Test2 = new ObservableCollection<string>();
         }
-
         
         public void GetInvColumns()
         {
             Test.Clear();
             Test.AddRange(_dataRepository.GetColumns());
         }
+
         public void GetInvItems()
         {
-            if (InventoryData.Any())
+            if (InventoryItems.Any())
             {
                 return;
             }
@@ -78,10 +121,36 @@ namespace Module.ViewModels
             {
                 foreach(var customer in customers)
                 {
-                    InventoryData.Add(customer);
+                    InventoryItems.Add(customer);
                 }
             }
         }
+
+        public void DisplayEditOptions()
+        {
+            switch (SelectedInventory)
+            {
+                case "System.Windows.Controls.ComboBoxItem: Sunglasses":
+                    SelectTest = "This is a test";
+                    break;
+                case "System.Windows.Controls.ComboBoxItem: Spoon":
+                    SelectTest = "This is a test2";
+                    break;
+                case "System.Windows.Controls.ComboBoxItem: Flashlight":
+                    SelectTest = "This is a test3";
+                    break;
+                case "System.Windows.Controls.ComboBoxItem: Hat":
+                    SelectTest = "This is a test4";
+                    break;
+                case "System.Windows.Controls.ComboBoxItem: Backpack":
+                    SelectTest = "This is a test5";
+                    break;
+                case "System.Windows.Controls.ComboBoxItem: Gloves":
+                    SelectTest = "This is a test6";
+                    break;
+            }
+        }
+
         public void DisplaySelected()
         {
             switch (Selection)
@@ -91,12 +160,14 @@ namespace Module.ViewModels
                     DisplayDeleteIndex = 0;
                     DisplayUpdateIndex = 0;
                     DisplayAddIndex = 2;
+                    Selection = null;
                     break;
                 case "System.Windows.Controls.ComboBoxItem: Delete":
                     DisplayInventoryIndex = 0;
                     DisplayDeleteIndex = 2;
                     DisplayUpdateIndex = 0;
                     DisplayAddIndex = 0;
+                    Selection = null;
                     break;
                 case "System.Windows.Controls.ComboBoxItem: Update":
                     DisplayInventoryIndex = 0;
@@ -105,6 +176,7 @@ namespace Module.ViewModels
                     DisplayAddIndex = 0;
                     GetInvItems();
                     GetInvColumns();
+                    Selection = null;
                     break;
                 case "System.Windows.Controls.ComboBoxItem: Display":
                     DisplayInventoryIndex = 2;
@@ -112,6 +184,7 @@ namespace Module.ViewModels
                     DisplayUpdateIndex = 0;
                     DisplayAddIndex = 0;
                     GetInventoryData();
+                    Selection = null;
                     break;
 
             }
@@ -123,7 +196,29 @@ namespace Module.ViewModels
             InventoryData.ToList();
         }
         
-        
+        private bool CanClickSelection()
+        {
+            if (Selection != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private bool CanClickInventory()
+        {
+            if (SelectedInventory != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public string Title => "Edit Inventory";
 
         public event Action<IDialogResult> RequestClose;

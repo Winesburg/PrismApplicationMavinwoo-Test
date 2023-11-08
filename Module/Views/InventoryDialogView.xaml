@@ -167,15 +167,35 @@
                 Panel.ZIndex="{Binding DisplayUpdateIndex}">
             <StackPanel Orientation="Horizontal"
                         Height="30"
-                        VerticalAlignment="Top">
+                        VerticalAlignment="Top"
+                        Margin="10 5 0 0">
                 <TextBlock Text="Select Item to Edit:"
                            FontSize="14"
-                           VerticalAlignment="Center"
-                           Margin="5 0 0 0"/>
-                <Button Width="50"
+                           VerticalAlignment="Center"/>
+                
+            
+            
+            <!--Used this to dynamically add ListView Content-->
+            <!--ItemsSource="{Binding InventoryItems}"-->
+            <!--SelectedValuePath="Item"
+            DisplayMemberPath="Item"-->
+                <ComboBox SelectedItem="{Binding SelectedInventory}"
+                          VerticalAlignment="Center"
+                          Margin="10 0 0 0"
+                          Width="175"
+                          Height="25">
+                    <ComboBoxItem Content="Sunglasses" />
+                    <ComboBoxItem Content="Spoon" />
+                    <ComboBoxItem Content="Flashlight" />
+                    <ComboBoxItem Content="Hat" />
+                    <ComboBoxItem Content="Backpack" />
+                    <ComboBoxItem Content="Gloves" />
+                </ComboBox>
+                <Button Command="{Binding EditOptionsCommand}"
+                        Width="50"
                         Height="25"
                         Content="Confirm"
-                        Margin="10 0 0 0">
+                        Margin="20 0 0 0">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="5" />
@@ -183,21 +203,55 @@
                     </Button.Resources>
                 </Button>
             </StackPanel>
-            <ListView ItemsSource="{Binding InventoryData}"
-                      SelectedItem="{Binding SelectedInventory}"
-                      HorizontalAlignment="Left"
-                      Margin="0 35 0 0"
-                      DisplayMemberPath="Item">
-                <ListView.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="5" />
-                    </Style>
-                </ListView.Resources>
-            </ListView>
+            <Grid Background="LightCoral"
+                  Margin="0 40 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock Text="Current Value"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="20"/>
+                <TextBlock Text="Property"
+                           Grid.Column="1"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="24"/>
+                <TextBlock Text="New Value"
+                           Grid.Column="2"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="24"/>
+                <TextBox Grid.Row="1"
+                         Height="30"
+                         Width="150"/>
+                <TextBlock Grid.Column="1"
+                           Grid.Row="1"
+                           Text="Item"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="18"/>
+                
+
+            </Grid>
+            <!--<TextBlock Text="{Binding SelectTest}"
+                       Width="150"
+                       Height="300"
+                       Background="LightGray"/>
             <ListView ItemsSource="{Binding Test}"
                       HorizontalAlignment="Right"
                       Margin="0 35 0 0">
-            </ListView>
+            </ListView>-->
         </Grid>
     </Grid>
 </UserControl>
