@@ -27,34 +27,64 @@ namespace Module.ViewModels
         private int _displayUpdateIndex = 0;
         private string? _selection;
         private ObservableCollection<InventoryAddDialogModel> _inventoryData;
-        private ObservableCollection<string> _test;
+        //private ObservableCollection<InventoryItemModel> _inventoryItems;
+        private ObservableCollection<InventoryAddDialogModel> _invItems;
+        //private ObservableCollection<string> _test;
         private string? _selectedInventory;
+        private string? _selectInventory;
+        private List<string> _currentPropertyValue;
+        private string _propertySelection;
 
-        public ObservableCollection<string> Test2 
+
+        //public ObservableCollection<string> Test2 
+        //{ 
+        //    get => _test2;
+        //    set
+        //    { 
+        //        SetProperty(ref _test2, value); 
+        //        RaisePropertyChanged(nameof(Test2));
+        //        EditOptionsCommand.RaiseCanExecuteChanged();
+        //    }
+        //}
+        //private ObservableCollection<string> _test2;
+
+
+        public ObservableCollection<InventoryAddDialogModel> InvItems 
         { 
-            get => _test2;
+            get => _invItems;
             set
-            { 
-                SetProperty(ref _test2, value); 
-                RaisePropertyChanged(nameof(Test2));
-                EditOptionsCommand.RaiseCanExecuteChanged();
+            {
+                SetProperty(ref _invItems, value);
             }
         }
+        //public string? SelectInventory
+        //{
+        //    get => _selectInventory;
+        //    set
+        //    {
+        //        SetProperty(ref _selectInventory, value);
+        //    }
+        //}
 
 
-        private string? _selectTest;
-        private ObservableCollection<string> _test2;
-        private ObservableCollection<InventoryItemModel> _inventoryItems;
-
-        public string? SelectTest
-        {
-            get => _selectTest;
+        public string PropertySelection 
+        { 
+            get => _propertySelection;
+            set
+            {
+                SetProperty(ref _propertySelection, value);
+            } 
+        }
+        public List<string> CurrentPropertyValue 
+        { 
+            get => _currentPropertyValue; 
             set 
             { 
-                SetProperty(ref _selectTest, value); 
-            }
+                SetProperty(ref _currentPropertyValue, value);
+                RaisePropertyChanged(nameof(CurrentPropertyValue));
+                InventoryPropertyCommand.RaiseCanExecuteChanged();
+            } 
         }
-
         public string Item { get => _item; set => _item = value; }
         public int InStock { get => _inStock; set => _inStock = value; }
         public int? OnOrder { get => _onOrder; set => _onOrder = value; }
@@ -64,7 +94,9 @@ namespace Module.ViewModels
         public int DisplayAddIndex { get => _displayAddIndex; set { SetProperty(ref _displayAddIndex, value); } }
         public int DisplayDeleteIndex { get => _displayDeleteIndex; set { SetProperty(ref _displayDeleteIndex, value); } }
         public int DisplayUpdateIndex { get => _displayUpdateIndex; set { SetProperty(ref _displayUpdateIndex, value); } }
-        public ObservableCollection<InventoryItemModel> InventoryItems { get => _inventoryItems; set { SetProperty(ref _inventoryItems, value); } }
+
+        // Tried to dynamically add columns
+        //public ObservableCollection<InventoryItemModel> InventoryItems { get => _inventoryItems; set { SetProperty(ref _inventoryItems, value); } }
         public string? SelectedInventory
         {
             get => _selectedInventory;
@@ -86,67 +118,105 @@ namespace Module.ViewModels
                 DisplaySelectedCommand.RaiseCanExecuteChanged();
             } 
         }
+        //  Inventory Data Display
         public ObservableCollection<InventoryAddDialogModel> InventoryData { get => _inventoryData; set { SetProperty(ref _inventoryData, value); } }
-        public ObservableCollection<string> Test { get => _test; set { SetProperty(ref _test, value); }  }
+
+        //public ObservableCollection<string> Test { get => _test; set { SetProperty(ref _test, value); }  }
         public DelegateCommand DisplaySelectedCommand {  get; private set; }
         public DelegateCommand EditOptionsCommand { get; private set; }
+        public DelegateCommand InventoryPropertyCommand { get; private set; }
 
         public InventoryDialogViewModel(IDataRepository dataRepository)
         {
             _dataRepository = dataRepository;
             DisplaySelectedCommand = new DelegateCommand(DisplaySelected, CanClickSelection);
             EditOptionsCommand = new DelegateCommand(DisplayEditOptions, CanClickInventory);
+            InventoryPropertyCommand = new DelegateCommand(PropertySelectionFunc);
             InventoryData = new ObservableCollection<InventoryAddDialogModel>();
-            InventoryItems = new ObservableCollection<InventoryItemModel>();
-            Test= new ObservableCollection<string>();
-            Test2 = new ObservableCollection<string>();
+            InvItems = new ObservableCollection<InventoryAddDialogModel>();
+
+            //Test= new ObservableCollection<string>();
+            //Test2 = new ObservableCollection<string>();
+            //InventoryItems = new ObservableCollection<InventoryItemModel>();
         }
+
+        //public void GetInvColumns()
+        //{
+        //    Test.Clear();
+        //    Test.AddRange(_dataRepository.GetColumns());
+        //}
+
+        // Used to try to dynamically add columns in dropbox
+        //public void GetInvItems()
+        //{
+        //    if (InventoryItems.Any())
+        //    {
+        //        return;
+        //    }
+
+        //    var customers = _dataRepository.GetInventoryItems();
+
+        //    if (customers is not null)
+        //    {
+        //        foreach(var customer in customers)
+        //        {
+        //            InventoryItems.Add(customer);
+        //        }
+        //    }
+        //}
+
         
-        public void GetInvColumns()
+        //  Figure out how to get actual value in SQL query???????
+        public void PropertySelectionFunc()
         {
-            Test.Clear();
-            Test.AddRange(_dataRepository.GetColumns());
-        }
+            string replacement2 = SelectedInventory.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            string replacement1 = PropertySelection.Replace("System.Windows.Controls.ComboBoxItem: ", "");
 
-        public void GetInvItems()
-        {
-            if (InventoryItems.Any())
+            if (replacement1 == "Item")
             {
-                return;
+                
+                // Find a way to display 
+                CurrentPropertyValue = _dataRepository.GetPropertyValueTest(replacement1, replacement2);
             }
-
-            var customers = _dataRepository.GetInventoryItems();
-
-            if (customers is not null)
+            if (replacement1 == "In_Stock")
             {
-                foreach(var customer in customers)
-                {
-                    InventoryItems.Add(customer);
-                }
+                CurrentPropertyValue = _dataRepository.GetPropertyValueTest(replacement1, replacement2);
             }
         }
-
         public void DisplayEditOptions()
         {
-            switch (SelectedInventory)
+            string replacement = SelectedInventory.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            switch (replacement)
             {
-                case "System.Windows.Controls.ComboBoxItem: Sunglasses":
-                    SelectTest = "This is a test";
+                case "Sunglasses":
+                    InvItems.Clear();
+                    InvItems.AddRange(_dataRepository.GetSelectedInvItem(replacement));
+                    
                     break;
-                case "System.Windows.Controls.ComboBoxItem: Spoon":
-                    SelectTest = "This is a test2";
+                case "Spoon":
+                    InvItems.Clear();
+                    InvItems.AddRange(_dataRepository.GetSelectedInvItem(replacement));
+                    SelectedInventory = null;
                     break;
-                case "System.Windows.Controls.ComboBoxItem: Flashlight":
-                    SelectTest = "This is a test3";
+                case "Flashlight":
+                    InvItems.Clear();
+                    InvItems.AddRange(_dataRepository.GetSelectedInvItem(replacement));
+                    SelectedInventory = null;
                     break;
-                case "System.Windows.Controls.ComboBoxItem: Hat":
-                    SelectTest = "This is a test4";
+                case "Hat":
+                    InvItems.Clear();
+                    InvItems.AddRange(_dataRepository.GetSelectedInvItem(replacement));
+                    SelectedInventory = null;
                     break;
-                case "System.Windows.Controls.ComboBoxItem: Backpack":
-                    SelectTest = "This is a test5";
+                case "Backpack":
+                    InvItems.Clear();
+                    InvItems.AddRange(_dataRepository.GetSelectedInvItem(replacement));
+                    SelectedInventory = null;
                     break;
-                case "System.Windows.Controls.ComboBoxItem: Gloves":
-                    SelectTest = "This is a test6";
+                case "Gloves":
+                    InvItems.Clear();
+                    InvItems.AddRange(_dataRepository.GetSelectedInvItem(replacement));
+                    SelectedInventory = null;
                     break;
             }
         }
@@ -174,8 +244,8 @@ namespace Module.ViewModels
                     DisplayDeleteIndex = 0;
                     DisplayUpdateIndex = 2;
                     DisplayAddIndex = 0;
-                    GetInvItems();
-                    GetInvColumns();
+                    //GetInvItems();
+                    //GetInvColumns();
                     Selection = null;
                     break;
                 case "System.Windows.Controls.ComboBoxItem: Display":

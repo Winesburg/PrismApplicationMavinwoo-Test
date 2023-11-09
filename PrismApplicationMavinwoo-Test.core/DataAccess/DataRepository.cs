@@ -21,9 +21,14 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<CustomerAddDialogModel> AddCustomers(string value1, string value2, string value3, string value4, string value5, string value6);
         public List<InventoryAddDialogModel> AddInventory(string value1, int value2, int? value3, DateTime? value4, int value5);
         public List<InventoryAddDialogModel> GetInventory();
-        public List<InventoryItemModel> GetInventoryItems();
-        public List<string> GetColumns();
-        public List<string> GetItems();
+        public List<InventoryAddDialogModel> GetSelectedInvItem(string input);
+
+        public List<InventoryAddDialogModel> GetPropertyValue(string value1, string value2);
+        public List<string> GetPropertyValueTest(string value1, string value2);
+
+        //public List<InventoryItemModel> GetInventoryItems();
+        //public List<string> GetColumns();
+        //public List<string> GetItems();
     }
     public class DataRepository : IDataRepository
     {
@@ -129,31 +134,60 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
             }
         }
 
-        public List<InventoryItemModel> GetInventoryItems()
+        public List<InventoryAddDialogModel> GetSelectedInvItem(string input)
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
-                List<InventoryItemModel> P = Conn.Query<InventoryItemModel>(" SELECT Item from Inventory ").AsList();
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" SELECT Item, In_Stock, On_Order, Delivery_Date, Reorder_Limit from Inventory where Item = '" + input + "'  ").AsList();
                 return P;
             }
         }
 
-        public List<string> GetItems()
+
+        public List<InventoryAddDialogModel> GetPropertyValue(string value1, string value2)
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
-                List<string> P = Conn.Query<string>(" SELECT Item from Inventory ").AsList();
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" SELECT '" + value1 + "' FROM Inventory WHERE Item = '" + value2 + "'  ").AsList();
                 return P;
             }
         }
 
-        public List<string> GetColumns()
+        public List<string> GetPropertyValueTest(string value1, string value2)
         {
-            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQLInfo))
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
-                List<string> P = Conn.Query<string>(" Select Column_Name From Columns Where Table_Name = 'Inventory' ").AsList();
+                List<string> P = Conn.Query<string>(" SELECT '" + value1 + "' FROM Inventory WHERE Item = '" + value2 + "'  ").AsList();
                 return P;
             }
         }
+
+
+        //public List<InventoryItemModel> GetInventoryItems()
+        //{
+        //    using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+        //    {
+        //        List<InventoryItemModel> P = Conn.Query<InventoryItemModel>(" SELECT Item from Inventory ").AsList();
+        //        return P;
+        //    }
+        //}
+
+        //public List<string> GetItems()
+        //{
+        //    using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+        //    {
+        //        List<string> P = Conn.Query<string>(" SELECT Item from Inventory ").AsList();
+        //        return P;
+        //    }
+        //}
+
+        //public List<string> GetColumns()
+        //{
+        //    using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQLInfo))
+        //    {
+        //        List<string> P = Conn.Query<string>(" Select Column_Name From Columns Where Table_Name = 'Inventory' ").AsList();
+        //        return P;
+        //    }
+        //}
     }
 }

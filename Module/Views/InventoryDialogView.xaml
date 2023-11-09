@@ -17,44 +17,48 @@
         </Style>
     </prism:Dialog.WindowStyle>
     <Grid>
+
+        <!--Header-->
         <Grid Background="LightGray">
-        <StackPanel 
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Left"
-                    Height="50"
-                    Margin="25 0 0 0"
-                    Panel.ZIndex="10">
-            <TextBlock Text="Select Action:"
-                       Margin="0 0 0 5"
-                       FontSize="14"
-                       VerticalAlignment="Center"/>
-            <ComboBox Width="100"
-                      Height="25"
-                      SelectedItem="{Binding Selection}">
-                <ComboBoxItem Content="Add"/>
-                <ComboBoxItem Content="Delete"/>
-                <ComboBoxItem Content="Update"/>
-                <ComboBoxItem Content="Display"/>
-            </ComboBox>
-        </StackPanel>
-        <StackPanel HorizontalAlignment="Right"
-                    Margin="0 0 25 0">
-            <TextBlock Text="Confirm Action:"
-                       FontSize="14"
-                       />
-            <Button Command="{Binding DisplaySelectedCommand}"
-                    Height="25"
-                    Width="100"
-                    Margin="0 5 0 0"
-                    Content="Confirm">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="5" />
-                    </Style>
-                </Button.Resources>
-            </Button>
-        </StackPanel>
+            <StackPanel 
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Left"
+                        Height="50"
+                        Margin="25 0 0 0"
+                        Panel.ZIndex="10">
+                <TextBlock Text="Select Action:"
+                           Margin="0 0 0 5"
+                           FontSize="14"
+                           VerticalAlignment="Center"/>
+                <ComboBox Width="100"
+                          Height="25"
+                          SelectedItem="{Binding Selection}">
+                    <ComboBoxItem Content="Add"/>
+                    <ComboBoxItem Content="Delete"/>
+                    <ComboBoxItem Content="Update"/>
+                    <ComboBoxItem Content="Display"/>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Right"
+                        Margin="0 0 25 0">
+                <TextBlock Text="Confirm Action:"
+                           FontSize="14"
+                           />
+                <Button Command="{Binding DisplaySelectedCommand}"
+                        Height="25"
+                        Width="100"
+                        Margin="0 5 0 0"
+                        Content="Confirm">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5" />
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
         </Grid>
+
+        <!--Add Display-->
         <Grid Margin="0 55 0 0"
               Panel.ZIndex="{Binding DisplayAddIndex}"
               Background="White">
@@ -147,6 +151,7 @@
             </StackPanel>
         </Grid>
 
+        <!--Inventory Data Display-->
         <syncfusion:SfDataGrid ItemsSource="{Binding InventoryData}"
                                Margin="0 55 0 0"
                                ColumnSizer="Star"
@@ -157,14 +162,20 @@
                                AllowFiltering="True"
                                Background="White"
                                Panel.ZIndex= "{Binding DisplayInventoryIndex}" />
+
+        <!--Delete Display-->
         <Grid Margin="0 55 0 0"
                 Panel.ZIndex="{Binding DisplayDeleteIndex}"
               Background="White">
             <TextBlock>Delete</TextBlock>
         </Grid>
+
+        <!--Update Display-->
         <Grid Background="White"
                 Margin="0 55 0 0"
                 Panel.ZIndex="{Binding DisplayUpdateIndex}">
+
+            <!--Update Display Subheader-->
             <StackPanel Orientation="Horizontal"
                         Height="30"
                         VerticalAlignment="Top"
@@ -172,17 +183,17 @@
                 <TextBlock Text="Select Item to Edit:"
                            FontSize="14"
                            VerticalAlignment="Center"/>
-                
-            
-            
-            <!--Used this to dynamically add ListView Content-->
-            <!--ItemsSource="{Binding InventoryItems}"-->
-            <!--SelectedValuePath="Item"
+
+
+
+                <!--Used this to dynamically add ListView Content-->
+                <!--ItemsSource="{Binding InventoryItems}"-->
+                <!--SelectedValuePath="Item"
             DisplayMemberPath="Item"-->
                 <ComboBox SelectedItem="{Binding SelectedInventory}"
                           VerticalAlignment="Center"
                           Margin="10 0 0 0"
-                          Width="175"
+                          Width="120"
                           Height="25">
                     <ComboBoxItem Content="Sunglasses" />
                     <ComboBoxItem Content="Spoon" />
@@ -203,47 +214,104 @@
                     </Button.Resources>
                 </Button>
             </StackPanel>
+            <!--Update Display - Property Change Control-->
             <Grid Background="LightCoral"
-                  Margin="0 40 0 0">
+                  VerticalAlignment="Top"
+                  Height="70"
+                  Margin="0 45 0 0">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25*" />
                     <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="24*"/>
+                    <ColumnDefinition Width="25*" />
+                    <ColumnDefinition Width="25*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Text="Current Value"
+                <TextBlock 
+                           Text="Current Value"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           FontSize="20"/>
-                <TextBlock Text="Property"
-                           Grid.Column="1"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           FontSize="24"/>
+                           FontSize="16"/>
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal" Grid.ColumnSpan="2">
+                    <TextBlock Text="Property"
+                               VerticalAlignment="Center"
+                               FontSize="16"
+                               Margin="15 0 0 0"/>
+                    <Button Command="{Binding InventoryPropertyCommand}"
+                            Width="50"
+                            Height="25"
+                            Margin="10 0 0 0"
+                            Content="Confirm"
+                            VerticalAlignment="Center">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </StackPanel>
                 <TextBlock Text="New Value"
-                           Grid.Column="2"
+                           Grid.Column="3"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           FontSize="24"/>
-                <TextBox Grid.Row="1"
-                         Height="30"
-                         Width="150"/>
-                <TextBlock Grid.Column="1"
+                           FontSize="16"/>
+                <TextBox Text="{Binding CurrentPropertyValue}"
+                         Grid.Row="1"
+                         Height="25"
+                         Width="120"
+                         IsReadOnly="True" Margin="15,5,15,5"/>
+                <ComboBox SelectedItem="{Binding PropertySelection}"
+                          Grid.Column="2"
+                          Grid.Row="1"
+                          Width="120"
+                          Height="25"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Center" Margin="9,0,0,0">
+                    <ComboBoxItem Content="Item"/>
+                    <ComboBoxItem Content="In_Stock" />
+                    <ComboBoxItem Content="On_Order" />
+                    <ComboBoxItem Content="Delivery_Date" />
+                    <ComboBoxItem Content="Reorder_Limit" />
+                </ComboBox>
+                <!--<TextBlock Grid.Column="1"
                            Grid.Row="1"
                            Text="Item"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           FontSize="18"/>
-                
-
+                           FontSize="18"/>-->
+                <TextBox Text="{Binding NewPropertyValue}"
+                         Grid.Column="3"
+                         Grid.Row="1"
+                         Height="25"
+                         Width="120" Margin="15,5,15,5"/>
+                <Button Grid.Column="4"
+                        Grid.RowSpan="2"
+                        Width="100"
+                        Height="50"
+                        Content="Submit"
+                        FontSize="20" Margin="25,10,25,10">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5" />
+                        </Style>
+                    </Button.Resources>
+                </Button>
             </Grid>
+            <!--Inventory Item Display-->
+            <syncfusion:SfDataGrid ItemsSource="{Binding InvItems}"
+                                   ColumnSizer="Star"
+                                   AllowSorting="False" 
+                                   AllowTriStateSorting="True" 
+                                   ShowSortNumbers="True" 
+                                   AllowFiltering="True"
+                                   Background="White"
+                                   Margin="0 115 0 0"/>
+
+
             <!--<TextBlock Text="{Binding SelectTest}"
                        Width="150"
                        Height="300"
