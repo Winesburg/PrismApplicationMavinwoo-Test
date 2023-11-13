@@ -22,13 +22,14 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<InventoryAddDialogModel> AddInventory(string value1, int value2, int? value3, DateTime? value4, int value5);
         public List<InventoryAddDialogModel> GetInventory();
         public List<InventoryAddDialogModel> GetSelectedInvItem(string input);
+        public List<InventoryAddDialogModel> GetItemValue(string input);
+        public List<InventoryAddDialogModel> GetStockValue(string input);
+        public List<InventoryAddDialogModel> GetOnOrderValue(string input);
+        public List<InventoryAddDialogModel> GetDeliveryDateValue(string input);
+        public List<InventoryAddDialogModel> GetReorderLimitValue(string input);
+        public List<InventoryAddDialogModel> UpdateInventory();
 
-        public List<InventoryAddDialogModel> GetPropertyValue(string value1, string value2);
-        public List<string> GetPropertyValueTest(string value1, string value2);
 
-        //public List<InventoryItemModel> GetInventoryItems();
-        //public List<string> GetColumns();
-        //public List<string> GetItems();
     }
     public class DataRepository : IDataRepository
     {
@@ -144,50 +145,53 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         }
 
 
-        public List<InventoryAddDialogModel> GetPropertyValue(string value1, string value2)
+        public List<InventoryAddDialogModel> GetItemValue(string input)
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
-                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" SELECT '" + value1 + "' FROM Inventory WHERE Item = '" + value2 + "'  ").AsList();
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" SELECT Item FROM Inventory WHERE Item = '" + input + "'  ").AsList();
                 return P;
             }
         }
-
-        public List<string> GetPropertyValueTest(string value1, string value2)
+        public List<InventoryAddDialogModel> GetStockValue(string input)
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
-                List<string> P = Conn.Query<string>(" SELECT '" + value1 + "' FROM Inventory WHERE Item = '" + value2 + "'  ").AsList();
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" SELECT In_Stock FROM Inventory WHERE Item = '" + input + "'  ").AsList();
                 return P;
             }
         }
-
-
-        //public List<InventoryItemModel> GetInventoryItems()
-        //{
-        //    using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
-        //    {
-        //        List<InventoryItemModel> P = Conn.Query<InventoryItemModel>(" SELECT Item from Inventory ").AsList();
-        //        return P;
-        //    }
-        //}
-
-        //public List<string> GetItems()
-        //{
-        //    using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
-        //    {
-        //        List<string> P = Conn.Query<string>(" SELECT Item from Inventory ").AsList();
-        //        return P;
-        //    }
-        //}
-
-        //public List<string> GetColumns()
-        //{
-        //    using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQLInfo))
-        //    {
-        //        List<string> P = Conn.Query<string>(" Select Column_Name From Columns Where Table_Name = 'Inventory' ").AsList();
-        //        return P;
-        //    }
-        //}
+        public List<InventoryAddDialogModel> GetOnOrderValue(string input)
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" SELECT On_Order FROM Inventory WHERE Item = '" + input + "'  ").AsList();
+                return P;
+            }
+        }
+        public List<InventoryAddDialogModel> GetDeliveryDateValue(string input)
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" SELECT Delivery_Date FROM Inventory WHERE Item = '" + input + "'  ").AsList();
+                return P;
+            }
+        }
+        public List<InventoryAddDialogModel> GetReorderLimitValue(string input)
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" SELECT Reorder_Limit FROM Inventory WHERE Item = '" + input + "'  ").AsList();
+                return P;
+            }
+        }
+        public List<InventoryAddDialogModel> UpdateInventory()
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" UPDATE Inventory SET Reorder_Limit = 20 WHERE Item = 'Sunglasses' ").AsList();
+                return P;
+            }
+        }
     }
 }

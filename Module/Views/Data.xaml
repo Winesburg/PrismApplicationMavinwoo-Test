@@ -160,6 +160,19 @@
                 </Button.Resources>
             </Button>
 
+            <Button Command="{Binding SalesOrderCommand}"
+                    Content="Sales Order"
+                    Width="70"
+                    Height="60"
+                    VerticalAlignment="Top"
+                    Margin="5 10 5 0">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5" />
+                    </Style>
+                </Button.Resources>
+            </Button>
+
 
         </StackPanel>
         

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,65 +27,14 @@ namespace Module.ViewModels
         private int _displayDeleteIndex = 0;
         private int _displayUpdateIndex = 0;
         private string? _selection;
-        private ObservableCollection<InventoryAddDialogModel> _inventoryData;
-        //private ObservableCollection<InventoryItemModel> _inventoryItems;
-        private ObservableCollection<InventoryAddDialogModel> _invItems;
-        //private ObservableCollection<string> _test;
-        private string? _selectedInventory;
-        private string? _selectInventory;
-        private List<string> _currentPropertyValue;
         private string _propertySelection;
+        private string _invDisplayPath;
+        private string _newPropertyValue;
+        private string? _selectedInventory;
+        private ObservableCollection<InventoryAddDialogModel> _inventoryData;
+        private ObservableCollection<InventoryAddDialogModel> _invItems;
+        private ObservableCollection<InventoryAddDialogModel> _currentPropertyValue;
 
-
-        //public ObservableCollection<string> Test2 
-        //{ 
-        //    get => _test2;
-        //    set
-        //    { 
-        //        SetProperty(ref _test2, value); 
-        //        RaisePropertyChanged(nameof(Test2));
-        //        EditOptionsCommand.RaiseCanExecuteChanged();
-        //    }
-        //}
-        //private ObservableCollection<string> _test2;
-
-
-        public ObservableCollection<InventoryAddDialogModel> InvItems 
-        { 
-            get => _invItems;
-            set
-            {
-                SetProperty(ref _invItems, value);
-            }
-        }
-        //public string? SelectInventory
-        //{
-        //    get => _selectInventory;
-        //    set
-        //    {
-        //        SetProperty(ref _selectInventory, value);
-        //    }
-        //}
-
-
-        public string PropertySelection 
-        { 
-            get => _propertySelection;
-            set
-            {
-                SetProperty(ref _propertySelection, value);
-            } 
-        }
-        public List<string> CurrentPropertyValue 
-        { 
-            get => _currentPropertyValue; 
-            set 
-            { 
-                SetProperty(ref _currentPropertyValue, value);
-                RaisePropertyChanged(nameof(CurrentPropertyValue));
-                InventoryPropertyCommand.RaiseCanExecuteChanged();
-            } 
-        }
         public string Item { get => _item; set => _item = value; }
         public int InStock { get => _inStock; set => _inStock = value; }
         public int? OnOrder { get => _onOrder; set => _onOrder = value; }
@@ -94,9 +44,7 @@ namespace Module.ViewModels
         public int DisplayAddIndex { get => _displayAddIndex; set { SetProperty(ref _displayAddIndex, value); } }
         public int DisplayDeleteIndex { get => _displayDeleteIndex; set { SetProperty(ref _displayDeleteIndex, value); } }
         public int DisplayUpdateIndex { get => _displayUpdateIndex; set { SetProperty(ref _displayUpdateIndex, value); } }
-
-        // Tried to dynamically add columns
-        //public ObservableCollection<InventoryItemModel> InventoryItems { get => _inventoryItems; set { SetProperty(ref _inventoryItems, value); } }
+        public string NewPropertyValue { get => _newPropertyValue; set { SetProperty(ref _newPropertyValue, value); } }
         public string? SelectedInventory
         {
             get => _selectedInventory;
@@ -118,13 +66,49 @@ namespace Module.ViewModels
                 DisplaySelectedCommand.RaiseCanExecuteChanged();
             } 
         }
+        public string InvDisplayPath
+        {
+            get => _invDisplayPath;
+            set
+            {
+                SetProperty(ref _invDisplayPath, value);
+            }
+        }
+        public string PropertySelection
+        {
+            get => _propertySelection;
+            set
+            {
+                SetProperty(ref _propertySelection, value);
+            }
+        }
+        public ObservableCollection<InventoryAddDialogModel> InvItems
+        {
+            get => _invItems;
+            set
+            {
+                SetProperty(ref _invItems, value);
+            }
+        }
+
+
+        public ObservableCollection<InventoryAddDialogModel> CurrentPropertyValue
+        {
+            get => _currentPropertyValue;
+            set
+            {
+                SetProperty(ref _currentPropertyValue, value);
+                RaisePropertyChanged(nameof(CurrentPropertyValue));
+                InventoryPropertyCommand.RaiseCanExecuteChanged();
+            }
+        }
+
         //  Inventory Data Display
         public ObservableCollection<InventoryAddDialogModel> InventoryData { get => _inventoryData; set { SetProperty(ref _inventoryData, value); } }
-
-        //public ObservableCollection<string> Test { get => _test; set { SetProperty(ref _test, value); }  }
         public DelegateCommand DisplaySelectedCommand {  get; private set; }
         public DelegateCommand EditOptionsCommand { get; private set; }
         public DelegateCommand InventoryPropertyCommand { get; private set; }
+        public DelegateCommand UpdateInvCommand { get; private set; }
 
         public InventoryDialogViewModel(IDataRepository dataRepository)
         {
@@ -132,59 +116,53 @@ namespace Module.ViewModels
             DisplaySelectedCommand = new DelegateCommand(DisplaySelected, CanClickSelection);
             EditOptionsCommand = new DelegateCommand(DisplayEditOptions, CanClickInventory);
             InventoryPropertyCommand = new DelegateCommand(PropertySelectionFunc);
+            UpdateInvCommand = new DelegateCommand(UpdateInv);
             InventoryData = new ObservableCollection<InventoryAddDialogModel>();
             InvItems = new ObservableCollection<InventoryAddDialogModel>();
-
-            //Test= new ObservableCollection<string>();
-            //Test2 = new ObservableCollection<string>();
-            //InventoryItems = new ObservableCollection<InventoryItemModel>();
+            CurrentPropertyValue = new ObservableCollection<InventoryAddDialogModel>();
         }
 
-        //public void GetInvColumns()
-        //{
-        //    Test.Clear();
-        //    Test.AddRange(_dataRepository.GetColumns());
-        //}
-
-        // Used to try to dynamically add columns in dropbox
-        //public void GetInvItems()
-        //{
-        //    if (InventoryItems.Any())
-        //    {
-        //        return;
-        //    }
-
-        //    var customers = _dataRepository.GetInventoryItems();
-
-        //    if (customers is not null)
-        //    {
-        //        foreach(var customer in customers)
-        //        {
-        //            InventoryItems.Add(customer);
-        //        }
-        //    }
-        //}
-
+        public void UpdateInv()
+        {
+            _dataRepository.UpdateInventory();
+        }
         
-        //  Figure out how to get actual value in SQL query???????
         public void PropertySelectionFunc()
         {
-            string replacement2 = SelectedInventory.Replace("System.Windows.Controls.ComboBoxItem: ", "");
-            string replacement1 = PropertySelection.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            string value1 = PropertySelection.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            string value2 = SelectedInventory.Replace("System.Windows.Controls.ComboBoxItem: ", "");
 
-            if (replacement1 == "Item")
+            switch (value1)
             {
-                
-                // Find a way to display 
-                CurrentPropertyValue = _dataRepository.GetPropertyValueTest(replacement1, replacement2);
-            }
-            //if (replacement1 == "In_Stock")
-            //{
-            //    CurrentPropertyValue = _dataRepository.GetPropertyValueTest(replacement1, replacement2);
-            //    CurrentPropertyValue.GetProperties();
+                case "Item":
+                    CurrentPropertyValue.Clear();
+                    CurrentPropertyValue.AddRange(_dataRepository.GetItemValue(value2));
+                    InvDisplayPath = "Item";
+                    break;
 
-            //}
+                case "In_Stock":
+                    CurrentPropertyValue.Clear();
+                    CurrentPropertyValue.AddRange(_dataRepository.GetStockValue(value2));
+                    InvDisplayPath = "In_Stock";
+                    break;
+                case "On_Order":
+                    CurrentPropertyValue.Clear();
+                    CurrentPropertyValue.AddRange(_dataRepository.GetOnOrderValue(value2));
+                    InvDisplayPath = "On_Order";
+                    break;
+                case "Delivery_Date":
+                    CurrentPropertyValue.Clear();
+                    CurrentPropertyValue.AddRange(_dataRepository.GetDeliveryDateValue(value2));
+                    InvDisplayPath = "Delivery_Date";
+                    break;
+                case "Reorder_Limit":
+                    CurrentPropertyValue.Clear();
+                    CurrentPropertyValue.AddRange(_dataRepository.GetReorderLimitValue(value2));
+                    InvDisplayPath = "Reorder_Limit";
+                    break;
+            }
         }
+
         public void DisplayEditOptions()
         {
             string replacement = SelectedInventory.Replace("System.Windows.Controls.ComboBoxItem: ", "");
@@ -246,8 +224,6 @@ namespace Module.ViewModels
                     DisplayDeleteIndex = 0;
                     DisplayUpdateIndex = 2;
                     DisplayAddIndex = 0;
-                    //GetInvItems();
-                    //GetInvColumns();
                     Selection = null;
                     break;
                 case "System.Windows.Controls.ComboBoxItem: Display":
@@ -299,22 +275,12 @@ namespace Module.ViewModels
         {
             return true;
         }
-        //private void CloseDialog()
-        //{
-        //    var result = ButtonResult.OK;
-
-        //    var p = new DialogParameters();
-        //    p.Add("myParam", "The dialog was closed by the user");
-
-        //    RequestClose.Invoke(new DialogResult(result, p));
-        //}
         public void OnDialogClosed()
         {
         }
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
-            //Message = parameters.GetValue<string>("message");
         }
     }
 }
