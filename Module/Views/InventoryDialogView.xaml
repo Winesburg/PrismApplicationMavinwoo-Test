@@ -163,9 +163,10 @@
                                Background="White"
                                Panel.ZIndex= "{Binding DisplayInventoryIndex}" />
 
+        
         <!--Delete Display-->
         <Grid Margin="0 55 0 0"
-                Panel.ZIndex="{Binding DisplayDeleteIndex}"
+              Panel.ZIndex="{Binding DisplayDeleteIndex}"
               Background="White">
             <TextBlock>Delete</TextBlock>
         </Grid>

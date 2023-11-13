@@ -178,10 +178,12 @@ namespace Module.ViewModels
                 // Find a way to display 
                 CurrentPropertyValue = _dataRepository.GetPropertyValueTest(replacement1, replacement2);
             }
-            if (replacement1 == "In_Stock")
-            {
-                CurrentPropertyValue = _dataRepository.GetPropertyValueTest(replacement1, replacement2);
-            }
+            //if (replacement1 == "In_Stock")
+            //{
+            //    CurrentPropertyValue = _dataRepository.GetPropertyValueTest(replacement1, replacement2);
+            //    CurrentPropertyValue.GetProperties();
+
+            //}
         }
         public void DisplayEditOptions()
         {
