@@ -81,6 +81,7 @@ namespace Module.ViewModels
         public DelegateCommand SearchDataResults {  get; private set; }
         public DelegateCommand ShowDialogCommand { get; private set; }
         public DelegateCommand EditInventoryCommand { get; private set; }
+        public DelegateCommand SalesOrderCommand {  get; private set; }
         public ObservableCollection<OrderInfoModel> FilterD { get => _filterD; set { SetProperty(ref _filterD, value); } }
 
         public ObservableCollection<OrderInfoModel> SearchD {  get => _searchD; set { SetProperty(ref _searchD, value); } }
@@ -109,6 +110,7 @@ namespace Module.ViewModels
             FilterDataResults = new DelegateCommand(Filter, CanClick);
             ShowDialogCommand = new DelegateCommand(ShowDialog, CanClick);
             EditInventoryCommand = new DelegateCommand(ShowInventoryDialog, CanClick);
+            SalesOrderCommand = new DelegateCommand(ShowSalesDialog, CanClick);
             Date_Start = DateTime.Now;
             Date_End = DateTime.Now;
             FilterData = new List<OrderInfoModel>();
@@ -118,7 +120,17 @@ namespace Module.ViewModels
             SelectedCustomers = new ObservableCollection<CustomerModel>();
         }
 
-        private void ShowDialog()
+        private void ShowSalesDialog()
+        {
+            var p = new DialogParameters();
+            //p.Add("message", "This is a test message.");
+
+            _dialogService.ShowDialog("SalesOrderDialogView", p, result =>
+            {
+
+            });
+        }
+            private void ShowDialog()
         {
             var p = new DialogParameters();
             //p.Add("message", "This is a test message.");

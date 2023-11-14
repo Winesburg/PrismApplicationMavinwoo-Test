@@ -32,6 +32,7 @@ namespace PrismApplicationMavinwoo_Test
             containerRegistry.RegisterSingleton<IDataRepository, DataRepository>();
             containerRegistry.RegisterDialog<AddDialogView, AddDialogViewModel>();
             containerRegistry.RegisterDialog<InventoryDialogView, InventoryDialogViewModel>();
+            containerRegistry.RegisterDialog<SalesOrderDialogView, SalesOrderDialogViewModel>();
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)

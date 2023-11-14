@@ -88,6 +88,8 @@ namespace Module.ViewModels
             set
             {
                 SetProperty(ref _invItems, value);
+                RaisePropertyChanged(nameof(InvItems));
+                UpdateInvCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -124,9 +126,32 @@ namespace Module.ViewModels
 
         public void UpdateInv()
         {
-            _dataRepository.UpdateInventory();
+            string value1 = PropertySelection.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            string value2 = SelectedInventory.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            
+            if (value1 == "On_Order" || value1 == "Delivery_Date")
+            { 
+                if (NewPropertyValue == null)
+                {
+                    _dataRepository.UpdateNullInventory(value1, "null", value2);
+                }
+                else
+                {
+                    _dataRepository.UpdateInventory(value1, NewPropertyValue, value2);
+                }
+            }
+            else 
+            { 
+                if (NewPropertyValue == null)
+                {
+                    return;
+                }
+                else
+                {
+                _dataRepository.UpdateInventory(value1, NewPropertyValue, value2);
+                }
+            }
         }
-        
         public void PropertySelectionFunc()
         {
             string value1 = PropertySelection.Replace("System.Windows.Controls.ComboBoxItem: ", "");
