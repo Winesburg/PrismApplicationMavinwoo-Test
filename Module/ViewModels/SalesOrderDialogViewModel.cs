@@ -25,6 +25,22 @@ namespace Module.ViewModels
         private ObservableCollection<InventoryAddDialogModel> _selItemCollection;
         private ObservableCollection<CompletedSalesOrderModel> _salesOrder;
         private ObservableCollection<string> _salesOrderDisplay;
+        private DateTime _itemDateConn;
+        private string _itemSalespersonConn;
+        private string _itemCustomerConn;
+        private string _itemNameConn;
+        private decimal _itemPriceConn;
+        private int _itemQuantityConn;
+        private string _selectedItemName;
+
+        public string SelectedItemName { get => _selectedItemName; set { SetProperty(ref _selectedItemName, value); } }
+        public DateTime ItemDateConn { get => _itemDateConn; set { SetProperty(ref _itemDateConn, value); } }
+        public string ItemSalespersonConn { get => _itemSalespersonConn; set { SetProperty(ref _itemSalespersonConn, value); } }
+        public string ItemCustomerConn { get => _itemCustomerConn; set { SetProperty(ref _itemCustomerConn, value);
+            } }
+        public string ItemNameConn { get => _itemNameConn; set { SetProperty(ref _itemNameConn, value); } }
+        public decimal ItemPriceConn { get => _itemPriceConn; set { SetProperty(ref _itemPriceConn, value); } }
+        public int ItemQuantityConn { get => _itemQuantityConn; set { SetProperty(ref _itemQuantityConn, value); } }
 
         public ObservableCollection<string> SalesOrderDisplay { get => _salesOrderDisplay; set { SetProperty(ref _salesOrderDisplay, value); } }
         public ObservableCollection<CompletedSalesOrderModel> SalesOrder { get => _salesOrder; set { SetProperty(ref _salesOrder, value); } }
@@ -54,7 +70,7 @@ namespace Module.ViewModels
             ItemName = new ObservableCollection<string>();
             SalesOrder = new ObservableCollection<CompletedSalesOrderModel>();
             SalesOrderDisplay = new ObservableCollection<string>();
-            
+            ItemDateConn = DateTime.Now;
 
 
             NewCustomerCommand = new DelegateCommand(ShowAddCustomerDialog);
@@ -69,30 +85,29 @@ namespace Module.ViewModels
 
         private void AddSalesLine()
         {
-            DateTime item_date = new DateTime(2023, 11, 25);
-            string item_salesperson = "Dustin Kurtz";
-            string item_customer = "Mountain Outfitters";
-            string item_item = "Sunglasses";
-            decimal item_price = 80.00m;
-            int item_quantity = 3;
+            string item_date = ItemDateConn.Date.ToString().Replace(" 12:00:00 AM", "");
+            string item_salesperson = ItemSalespersonConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            string item_customer = ItemCustomerConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            string item_item = SelItem.Item;
+            decimal item_price = ItemPriceConn;
+            int item_quantity = ItemQuantityConn;
             SalesOrder.Add(new CompletedSalesOrderModel(item_date, item_salesperson, item_customer, item_item, item_price, item_quantity));
             List<string> strings  = new List<string>();
-            strings.AddRange(SalesOrder.Select(s => s.Item).ToList());
-            strings.AddRange(SalesOrder.Select(t => t.Salesperson).ToList());
-            strings.AddRange(SalesOrder.Select(u => u.Price.ToString()).ToList());
             strings.AddRange(SalesOrder.Select(w => w.Date_Sold.ToString()).ToList());
-            strings.AddRange(SalesOrder.Select(c => c.Quantity.ToString()).ToList());
+            strings.AddRange(SalesOrder.Select(t => t.Salesperson).ToList());
             strings.AddRange(SalesOrder.Select(e => e.Customer.ToString()).ToList());
+            strings.AddRange(SalesOrder.Select(s => s.Item).ToList());
+            strings.AddRange(SalesOrder.Select(u => u.Price.ToString()).ToList());
+            strings.AddRange(SalesOrder.Select(c => c.Quantity.ToString()).ToList());
+
 
             //Array<string> test2 = new Array<string>();
             //    SalesOrder.Select(s => s.Item).ToList();
 
-            SalesOrderDisplay.Add($"{strings[0]} {strings[1]}");
-            SalesOrderDisplay.Add(strings[1]);
-            SalesOrderDisplay.Add(strings[2]);
-            SalesOrderDisplay.Add(strings[3]);
-            SalesOrderDisplay.Add(strings[4]);
-            SalesOrderDisplay.Add(strings[5]);
+            //SalesOrderDisplay.Add("Date Time        Salesperson           Customer                    Item    Price   Quantity");
+            SalesOrderDisplay.Add($"{strings[0]}          {strings[1]}          {strings[2]}          {strings[3]}          {strings[4]}          {strings[5]}");
+            strings.Clear();
+            SalesOrder.Clear();
 
             
          }

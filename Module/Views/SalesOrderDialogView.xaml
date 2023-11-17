@@ -54,7 +54,7 @@
                  Height="25"
                  VerticalAlignment="Center"
                  HorizontalAlignment="Left"
-                 DateTime="{Binding Date_Start}"
+                 DateTime="{Binding ItemDateConn}"
                  CustomPattern="yyyy-MM-dd">
             </syncfusion:DateTimeEdit>
         </StackPanel>
@@ -77,7 +77,8 @@
                 </Button>
             </StackPanel>
             <ComboBox Width="150"
-                  Height="25">
+                      Height="25"
+                      SelectedItem="{Binding ItemSalespersonConn}">
                 <ComboBoxItem Content="Matt Schlabach"/>
                 <ComboBoxItem Content="Dustin Kurtz"/>
                 <ComboBoxItem Content="Andrew Seese"/>
@@ -103,7 +104,8 @@
                 </Button>
             </StackPanel>
              <ComboBox Width="150"
-                       Height="25">
+                       Height="25"
+                       SelectedItem="{Binding ItemCustomerConn}">
                  <ComboBoxItem Content="Mountain Outfitters"/>
                  <ComboBoxItem Content="East Coast Customs"/>
                  <ComboBoxItem Content="Denver Exporters"/>
@@ -162,7 +164,7 @@
                         Margin="0 0 0 5">
                 <TextBlock Text="Price"
                            FontSize="14"/>
-                <TextBox />
+                <TextBox Text="{Binding ItemPriceConn}"/>
             </StackPanel>
 
             <StackPanel
@@ -180,7 +182,7 @@
                         Margin="0 0 0 20">
                 <TextBlock Text="Quantity"
                            FontSize="14"/>
-                <TextBox />
+                <TextBox Text="{Binding ItemQuantityConn}"/>
             </StackPanel>
             <Button Command="{Binding AddSalesLineCommand}"
                     Grid.Row="5"
