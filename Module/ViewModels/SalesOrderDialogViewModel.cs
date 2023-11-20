@@ -60,6 +60,7 @@ namespace Module.ViewModels
         public DelegateCommand NewCustomerCommand { get; set; }
         public DelegateCommand TestCommand { get; set; }
         public DelegateCommand AddSalesLineCommand { get; set; }
+        public DelegateCommand OpenSalespersonCommand { get; set; }
 
         public SalesOrderDialogViewModel(IDataRepository dataRepository, IDialogService dialogService)
         {
@@ -75,6 +76,7 @@ namespace Module.ViewModels
 
             NewCustomerCommand = new DelegateCommand(ShowAddCustomerDialog);
             AddSalesLineCommand = new DelegateCommand(AddSalesLine);
+            OpenSalespersonCommand = new DelegateCommand(ShowAddSalespersonDialog);
 
             GenerateInvList();
 
@@ -158,6 +160,16 @@ namespace Module.ViewModels
             _dialogService.ShowDialog("AddDialogView", p, result =>
             {
                 
+            });
+        }
+        private void ShowAddSalespersonDialog()
+        {
+            var p = new DialogParameters();
+
+
+            _dialogService.ShowDialog("AddSalespersonDialogView", p, result =>
+            {
+
             });
         }
 
