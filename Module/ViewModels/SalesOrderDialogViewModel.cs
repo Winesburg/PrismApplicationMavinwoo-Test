@@ -32,7 +32,9 @@ namespace Module.ViewModels
         private decimal _itemPriceConn;
         private int _itemQuantityConn;
         private string _selectedItemName;
+        private string _itemSalesperson;
 
+        public string ItemSalesperson { get => _itemSalesperson; set { SetProperty(ref _itemSalesperson, value); } }
         public string SelectedItemName { get => _selectedItemName; set { SetProperty(ref _selectedItemName, value); } }
         public DateTime ItemDateConn { get => _itemDateConn; set { SetProperty(ref _itemDateConn, value); } }
         public string ItemSalespersonConn { get => _itemSalespersonConn; set { SetProperty(ref _itemSalespersonConn, value); } }
@@ -88,12 +90,12 @@ namespace Module.ViewModels
         private void AddSalesLine()
         {
             string item_date = ItemDateConn.Date.ToString().Replace(" 12:00:00 AM", "");
-            string item_salesperson = ItemSalespersonConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            string ItemSalesperson = ItemSalespersonConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
             string item_customer = ItemCustomerConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
             string item_item = SelItem.Item;
             decimal item_price = ItemPriceConn;
             int item_quantity = ItemQuantityConn;
-            SalesOrder.Add(new CompletedSalesOrderModel(item_date, item_salesperson, item_customer, item_item, item_price, item_quantity));
+            SalesOrder.Add(new CompletedSalesOrderModel(item_date, ItemSalesperson, item_customer, item_item, item_price, item_quantity));
             List<string> strings  = new List<string>();
             strings.AddRange(SalesOrder.Select(w => w.Date_Sold.ToString()).ToList());
             strings.AddRange(SalesOrder.Select(t => t.Salesperson).ToList());
