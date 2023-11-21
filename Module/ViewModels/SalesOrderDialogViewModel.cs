@@ -9,9 +9,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Module.ViewModels
 {
@@ -36,7 +39,9 @@ namespace Module.ViewModels
         private ObservableCollection<string> _salesHeader_Date;
         private ObservableCollection<string> _salesHeader_Salesperson;
         private ObservableCollection<string> _salesHeader_Customer;
+        private string testTest1;
 
+        public string testTest { get => testTest1; set => testTest1 = value; }
         public string ItemSalesperson 
         { 
             get => _itemSalesperson; 
@@ -92,7 +97,16 @@ namespace Module.ViewModels
             SalesHeader_Salesperson = new ObservableCollection<string>();
             SalesHeader_Customer = new ObservableCollection<string>();
             ItemDateConn = DateTime.Now;
-            
+
+            System.Windows.Controls.Image test = new System.Windows.Controls.Image();
+            test.Width = 10;
+            BitmapImage test1 = new BitmapImage();
+            test1.BeginInit();
+            test1.UriSource = new Uri(@"C:\Users\dustin\source\repos\PrismApplicationMavinwoo-Test3\PrismApplicationMavinwoo-Test\Resources\delete.png");
+            test1.DecodePixelWidth = 10;
+            test1.EndInit();
+            test.Source = test1;
+
 
 
             NewCustomerCommand = new DelegateCommand(ShowAddCustomerDialog);
@@ -131,10 +145,16 @@ namespace Module.ViewModels
             //    SalesOrder.Select(s => s.Item).ToList();
 
             //SalesOrderDisplay.Add("Date Time        Salesperson           Customer                    Item    Price   Quantity");
-            SalesOrderDisplay.Add($"{strings[0]}          {strings[1]}          {strings[2]}          {strings[3]}          {strings[4]}          {strings[5]}");
+            SalesOrderDisplay.Add($"{strings[1]}          {strings[3]}          {strings[4]}          {strings[5]}");
+
+
+
+
+
+
             strings.Clear();
             SalesOrder.Clear();
-            
+
             // Need to add counter to determine logic for header vs order lines
 
 
