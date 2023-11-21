@@ -200,29 +200,39 @@
                 </Button.Resources>
             </Button>
         </StackPanel>
-        <StackPanel Background="LightGray"
+        <!--<StackPanel Background="LightGray"
                     Grid.Row="5"
-                    Grid.ColumnSpan="3">
-            <StackPanel.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="5" />
-                </Style>
-            </StackPanel.Resources>
-            <TextBlock Text="{Binding item_date}"
-                       HorizontalAlignment="Left"
+                    Grid.ColumnSpan="3"
+                    Orientation="Horizontal">-->
+            <ListView  ItemsSource ="{Binding SalesHeader_Date}"
+                       Background="LightGray"
+                       BorderBrush="LightGray"
+                       HorizontalContentAlignment="Center"
+                       Grid.Column="0"
+                       Grid.Row="5"
                        FontSize="16"
-                       Margin="0 4 0 0"/>
-            <TextBlock Text="{Binding ItemSalesperson}"
-                       HorizontalAlignment="Center"
+                       Height="30" />
+        <ListView  ItemsSource ="{Binding SalesHeader_Salesperson}"
+                       Background="LightGray"
+                       BorderBrush="LightGray"
+                   HorizontalContentAlignment="Center"
                        FontSize="16"
-                       Margin="0 4 0 0"/>
-            <TextBlock Text="{Binding item_customer}"
-                       HorizontalAlignment="Right"
-                       FontSize="16"
-                       Margin="0 4 0 0"/>
-        </StackPanel>
-        <ListView Grid.Row="7"
+                       Grid.Row="5"
+                       Grid.Column="1"
+                       Height="30"/>
+        <ListView  ItemsSource ="{Binding SalesHeader_Customer}"
+                   Background="LightGray"
+                   BorderBrush="LightGray"
+                   HorizontalContentAlignment="Center"
+                   Grid.Row="5"
+                   Grid.Column="2"
+                   FontSize="16"
+                   Height="30" />
+        <!--</StackPanel>-->
+        
+        <ListView Grid.Row="6"
                   Grid.ColumnSpan="3"
-                  ItemsSource="{Binding SalesOrderDisplay}"/>
+                  ItemsSource="{Binding SalesOrderDisplay}"
+                  HorizontalContentAlignment="Center"/>
     </Grid>
 </UserControl>

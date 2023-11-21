@@ -33,8 +33,20 @@ namespace Module.ViewModels
         private int _itemQuantityConn;
         private string _selectedItemName;
         private string _itemSalesperson;
+        private ObservableCollection<string> _salesHeader_Date;
+        private ObservableCollection<string> _salesHeader_Salesperson;
+        private ObservableCollection<string> _salesHeader_Customer;
 
-        public string ItemSalesperson { get => _itemSalesperson; set { SetProperty(ref _itemSalesperson, value); } }
+        public string ItemSalesperson 
+        { 
+            get => _itemSalesperson; 
+            set 
+            { 
+                SetProperty(ref _itemSalesperson, value);
+                RaisePropertyChanged(nameof(_itemSalesperson));
+                AddSalesLineCommand.RaiseCanExecuteChanged();
+            }
+        }
         public string SelectedItemName { get => _selectedItemName; set { SetProperty(ref _selectedItemName, value); } }
         public DateTime ItemDateConn { get => _itemDateConn; set { SetProperty(ref _itemDateConn, value); } }
         public string ItemSalespersonConn { get => _itemSalespersonConn; set { SetProperty(ref _itemSalespersonConn, value); } }
@@ -44,6 +56,9 @@ namespace Module.ViewModels
         public decimal ItemPriceConn { get => _itemPriceConn; set { SetProperty(ref _itemPriceConn, value); } }
         public int ItemQuantityConn { get => _itemQuantityConn; set { SetProperty(ref _itemQuantityConn, value); } }
 
+        public ObservableCollection<string> SalesHeader_Date { get => _salesHeader_Date; set { SetProperty(ref _salesHeader_Date, value); } }
+        public ObservableCollection<string> SalesHeader_Salesperson { get => _salesHeader_Salesperson; set { SetProperty(ref _salesHeader_Salesperson, value); } }
+        public ObservableCollection<string> SalesHeader_Customer { get => _salesHeader_Customer; set { SetProperty(ref _salesHeader_Customer, value); } }
         public ObservableCollection<string> SalesOrderDisplay { get => _salesOrderDisplay; set { SetProperty(ref _salesOrderDisplay, value); } }
         public ObservableCollection<CompletedSalesOrderModel> SalesOrder { get => _salesOrder; set { SetProperty(ref _salesOrder, value); } }
         public ObservableCollection<InventoryAddDialogModel> SelItemCollection { get => _selItemCollection; set { SetProperty(ref _selItemCollection, value); } }
@@ -73,7 +88,11 @@ namespace Module.ViewModels
             ItemName = new ObservableCollection<string>();
             SalesOrder = new ObservableCollection<CompletedSalesOrderModel>();
             SalesOrderDisplay = new ObservableCollection<string>();
+            SalesHeader_Date = new ObservableCollection<string>();
+            SalesHeader_Salesperson = new ObservableCollection<string>();
+            SalesHeader_Customer = new ObservableCollection<string>();
             ItemDateConn = DateTime.Now;
+            
 
 
             NewCustomerCommand = new DelegateCommand(ShowAddCustomerDialog);
@@ -104,6 +123,9 @@ namespace Module.ViewModels
             strings.AddRange(SalesOrder.Select(u => u.Price.ToString()).ToList());
             strings.AddRange(SalesOrder.Select(c => c.Quantity.ToString()).ToList());
 
+            SalesHeader_Date.Add($"{strings[0]}");
+            SalesHeader_Salesperson.Add($"{strings[1]}");
+            SalesHeader_Customer.Add($"{strings[2]}");
 
             //Array<string> test2 = new Array<string>();
             //    SalesOrder.Select(s => s.Item).ToList();
@@ -112,9 +134,11 @@ namespace Module.ViewModels
             SalesOrderDisplay.Add($"{strings[0]}          {strings[1]}          {strings[2]}          {strings[3]}          {strings[4]}          {strings[5]}");
             strings.Clear();
             SalesOrder.Clear();
-
             
-         }
+            // Need to add counter to determine logic for header vs order lines
+
+
+        }
 
         private void TestTest()
         {
