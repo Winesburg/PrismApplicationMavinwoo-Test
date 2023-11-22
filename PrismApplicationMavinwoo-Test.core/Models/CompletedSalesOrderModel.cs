@@ -26,6 +26,6 @@ namespace PrismApplicationMavinwoo_Test.core.Models
             Price = P;
             Quantity = Q;
 
-    }
+        }
     }
 }

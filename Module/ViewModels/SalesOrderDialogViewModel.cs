@@ -39,9 +39,20 @@ namespace Module.ViewModels
         private ObservableCollection<string> _salesHeader_Date;
         private ObservableCollection<string> _salesHeader_Salesperson;
         private ObservableCollection<string> _salesHeader_Customer;
-        private string testTest1;
+        private int _addSalesTrigger;
+        private List<string> _strings;
+        private InventoryAddDialogModel _selOrderLine;
 
-        public string testTest { get => testTest1; set => testTest1 = value; }
+        public int AddSalesTrigger 
+        { 
+            get => _addSalesTrigger;
+            set 
+            { 
+                SetProperty(ref _addSalesTrigger, value);
+                RaisePropertyChanged(nameof(_addSalesTrigger));
+                SubmitSalesOrderCommand.RaiseCanExecuteChanged();
+            } 
+        }
         public string ItemSalesperson 
         { 
             get => _itemSalesperson; 
@@ -61,28 +72,45 @@ namespace Module.ViewModels
         public decimal ItemPriceConn { get => _itemPriceConn; set { SetProperty(ref _itemPriceConn, value); } }
         public int ItemQuantityConn { get => _itemQuantityConn; set { SetProperty(ref _itemQuantityConn, value); } }
 
-        public ObservableCollection<string> SalesHeader_Date { get => _salesHeader_Date; set { SetProperty(ref _salesHeader_Date, value); } }
+        public ObservableCollection<string> SalesHeader_Date 
+        { 
+            get => _salesHeader_Date; 
+            set 
+            {
+                SetProperty(ref _salesHeader_Date, value);
+                RaisePropertyChanged(nameof(SalesHeader_Date));
+            }
+        }
         public ObservableCollection<string> SalesHeader_Salesperson { get => _salesHeader_Salesperson; set { SetProperty(ref _salesHeader_Salesperson, value); } }
         public ObservableCollection<string> SalesHeader_Customer { get => _salesHeader_Customer; set { SetProperty(ref _salesHeader_Customer, value); } }
-        public ObservableCollection<string> SalesOrderDisplay { get => _salesOrderDisplay; set { SetProperty(ref _salesOrderDisplay, value); } }
+        public ObservableCollection<string> SalesOrderDisplay 
+        { 
+            get => _salesOrderDisplay; 
+            set 
+            { 
+                SetProperty(ref _salesOrderDisplay, value);
+            }
+        }
         public ObservableCollection<CompletedSalesOrderModel> SalesOrder { get => _salesOrder; set { SetProperty(ref _salesOrder, value); } }
         public ObservableCollection<InventoryAddDialogModel> SelItemCollection { get => _selItemCollection; set { SetProperty(ref _selItemCollection, value); } }
         public InventoryAddDialogModel SelItem { get => _selItem; set { SetProperty(ref _selItem, value); } }
+        public InventoryAddDialogModel SelOrderLine { get => _selOrderLine; set { SetProperty(ref _selOrderLine, value); } }
         public ObservableCollection<string> ItemName 
         { 
             get => _itemName; 
             set 
             {
                 SetProperty(ref _itemName, value);
-                //RaisePropertyChanged(nameof(_itemName));
-                //TestCommand.RaiseCanExecuteChanged();
             } 
         }
+        public List<string> strings { get => _strings; set => _strings = value; }
         public ObservableCollection<InventoryAddDialogModel> ListOfInv { get => _listOfInv; set { SetProperty(ref _listOfInv, value); } }
         public DelegateCommand NewCustomerCommand { get; set; }
         public DelegateCommand TestCommand { get; set; }
         public DelegateCommand AddSalesLineCommand { get; set; }
         public DelegateCommand OpenSalespersonCommand { get; set; }
+        public DelegateCommand SubmitSalesOrderCommand { get; set; }
+        public DelegateCommand DeleteOrderLineCommand {  get; set; }
 
         public SalesOrderDialogViewModel(IDataRepository dataRepository, IDialogService dialogService)
         {
@@ -97,27 +125,13 @@ namespace Module.ViewModels
             SalesHeader_Salesperson = new ObservableCollection<string>();
             SalesHeader_Customer = new ObservableCollection<string>();
             ItemDateConn = DateTime.Now;
-
-            System.Windows.Controls.Image test = new System.Windows.Controls.Image();
-            test.Width = 10;
-            BitmapImage test1 = new BitmapImage();
-            test1.BeginInit();
-            test1.UriSource = new Uri(@"C:\Users\dustin\source\repos\PrismApplicationMavinwoo-Test3\PrismApplicationMavinwoo-Test\Resources\delete.png");
-            test1.DecodePixelWidth = 10;
-            test1.EndInit();
-            test.Source = test1;
-
-
-
             NewCustomerCommand = new DelegateCommand(ShowAddCustomerDialog);
             AddSalesLineCommand = new DelegateCommand(AddSalesLine);
             OpenSalespersonCommand = new DelegateCommand(ShowAddSalespersonDialog);
-
+            SubmitSalesOrderCommand = new DelegateCommand(SubmitSalesOrder, CanSubmitSalesOrder);
+            DeleteOrderLineCommand = new DelegateCommand(DeleteOrderLine);
+            strings = new List<string>();
             GenerateInvList();
-
-            // This was the test functionality for dynamically adding inv items and selecting them
-            //TestCommand = new DelegateCommand(TestTest);
-
         }
 
         private void AddSalesLine()
@@ -129,7 +143,6 @@ namespace Module.ViewModels
             decimal item_price = ItemPriceConn;
             int item_quantity = ItemQuantityConn;
             SalesOrder.Add(new CompletedSalesOrderModel(item_date, ItemSalesperson, item_customer, item_item, item_price, item_quantity));
-            List<string> strings  = new List<string>();
             strings.AddRange(SalesOrder.Select(w => w.Date_Sold.ToString()).ToList());
             strings.AddRange(SalesOrder.Select(t => t.Salesperson).ToList());
             strings.AddRange(SalesOrder.Select(e => e.Customer.ToString()).ToList());
@@ -137,61 +150,82 @@ namespace Module.ViewModels
             strings.AddRange(SalesOrder.Select(u => u.Price.ToString()).ToList());
             strings.AddRange(SalesOrder.Select(c => c.Quantity.ToString()).ToList());
 
-            SalesHeader_Date.Add($"{strings[0]}");
-            SalesHeader_Salesperson.Add($"{strings[1]}");
-            SalesHeader_Customer.Add($"{strings[2]}");
-
-            //Array<string> test2 = new Array<string>();
-            //    SalesOrder.Select(s => s.Item).ToList();
-
-            //SalesOrderDisplay.Add("Date Time        Salesperson           Customer                    Item    Price   Quantity");
+            if (SalesOrderDisplay.Count() == 0)
+            { 
+                SalesHeader_Date.Add($"{strings[0]}");
+                SalesHeader_Customer.Add($"{strings[2]}");
+            }
             SalesOrderDisplay.Add($"{strings[1]}          {strings[3]}          {strings[4]}          {strings[5]}");
 
-
-
-
-
-
-            strings.Clear();
+            
             SalesOrder.Clear();
-
-            // Need to add counter to determine logic for header vs order lines
-
-
+            AddSalesTrigger = 1;
         }
 
-        private void TestTest()
+        private void DeleteOrderLine()
         {
-            //if (SelItem != null)
-            //{
-            //    ItemName.AddRange(SelItem);
-            //}
+            //List<string> Sunglasses = new List<string>();
+            //Sunglasses.Add("Sunglasses");
 
-            List<string> Sunglasses = new List<string>();
-            Sunglasses.Add("Sunglasses");
-            
 
-            if (SelItem == null)
+            if (SelOrderLine == null)
             {
                 return;
             }
             else
             {
-                SelItemCollection.Add(SelItem);
-                List<string> testtesttest = SelItemCollection.Select(x => x.Item).ToList();
+                //SelItemCollection.Add(SelItem);
+                //List<string> testtesttest = SelItemCollection.Select(x => x.Item).ToList();
 
-                if (testtesttest[0] == "Spoon")
-                {
-                    ItemName.Add(testtesttest[0]);
-
-
-
-                    //Works perfectly
-                    //List<string> y = ListOfInv.Select(x => x.Item).ToList();
-                    //ItemName.Add(y[0]);
-
-                }
+                //if (testtesttest[0] == "Spoon")
+                //{
+                //    ItemName.Add(testtesttest[0]);
+                //}
             }
+
+        }
+        private bool CanSubmitSalesOrder()
+        {
+            if(AddSalesTrigger == 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private void SubmitSalesOrder()
+        {
+            SalesOrderDisplay.Clear();
+            SalesHeader_Date.Clear();
+            SalesHeader_Customer.Clear();
+            AddSalesTrigger = 0;
+        }
+        private void CanDeleteSalesLine()
+        {
+
+        }
+        private void TestTest()
+        {
+            //List<string> Sunglasses = new List<string>();
+            //Sunglasses.Add("Sunglasses");
+            
+
+            //if (SelItem == null)
+            //{
+            //    return;
+            //}
+            //else
+            //{
+            //    SelItemCollection.Add(SelItem);
+            //    List<string> testtesttest = SelItemCollection.Select(x => x.Item).ToList();
+
+            //    if (testtesttest[0] == "Spoon")
+            //    {
+            //        ItemName.Add(testtesttest[0]);
+            //    }
+            //}
         }
         public void GenerateInvList()
         {
