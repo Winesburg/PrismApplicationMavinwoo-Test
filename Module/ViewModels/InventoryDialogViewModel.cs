@@ -8,9 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Security.RightsManagement;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Module.ViewModels
 {
@@ -19,7 +16,7 @@ namespace Module.ViewModels
         private IDataRepository _dataRepository;
         private string _item;
         private int _reorderLimit;
-        private DateTime? _deliveryDate;
+        private string _deliveryDate;
         private int? _onOrder;
         private int _inStock;
         private int _displayInventoryIndex = 0;
@@ -30,22 +27,62 @@ namespace Module.ViewModels
         private string _propertySelection;
         private string _invDisplayPath;
         private string _newPropertyValue;
-        private string? _selectedInventory;
+        private InventoryAddDialogModel _selectedInventory;
         private ObservableCollection<InventoryAddDialogModel> _inventoryData;
         private ObservableCollection<InventoryAddDialogModel> _invItems;
         private ObservableCollection<InventoryAddDialogModel> _currentPropertyValue;
+        private ObservableCollection<InventoryAddDialogModel> _listOfInv;
 
-        public string Item { get => _item; set => _item = value; }
-        public int InStock { get => _inStock; set => _inStock = value; }
-        public int? OnOrder { get => _onOrder; set => _onOrder = value; }
-        public DateTime? DeliveryDate { get => _deliveryDate; set => _deliveryDate = value; }
-        public int ReorderLimit { get => _reorderLimit; set => _reorderLimit = value; }
+        public string Item 
+        { 
+            get => _item;
+            set
+            {
+                SetProperty(ref _item, value);
+                RaisePropertyChanged(nameof(Item));
+            }
+        }
+        public int InStock
+        {
+            get => _inStock;
+            set
+            {
+                SetProperty(ref _inStock, value);
+            }
+        }
+        public int? OnOrder 
+        { 
+            get => _onOrder;
+            set 
+            { 
+                SetProperty(ref _onOrder, value);
+                RaisePropertyChanged(nameof(OnOrder));
+            } 
+        }
+        public string DeliveryDate 
+        { 
+            get => _deliveryDate;
+            set
+            {
+                SetProperty(ref _deliveryDate, value);
+                RaisePropertyChanged($"Delivery Date: {value}");
+            } 
+        }
+        public int ReorderLimit
+        {
+            get => _reorderLimit;
+            set
+            {
+                SetProperty(ref _reorderLimit, value);
+                RaisePropertyChanged(nameof(ReorderLimit));
+            }
+        }
         public int DisplayInventoryIndex { get => _displayInventoryIndex; set { SetProperty(ref _displayInventoryIndex, value); } }
         public int DisplayAddIndex { get => _displayAddIndex; set { SetProperty(ref _displayAddIndex, value); } }
         public int DisplayDeleteIndex { get => _displayDeleteIndex; set { SetProperty(ref _displayDeleteIndex, value); } }
         public int DisplayUpdateIndex { get => _displayUpdateIndex; set { SetProperty(ref _displayUpdateIndex, value); } }
         public string NewPropertyValue { get => _newPropertyValue; set { SetProperty(ref _newPropertyValue, value); } }
-        public string? SelectedInventory
+        public InventoryAddDialogModel SelectedInventory
         {
             get => _selectedInventory;
             set
@@ -53,7 +90,6 @@ namespace Module.ViewModels
                 SetProperty( ref _selectedInventory, value);
                 RaisePropertyChanged(nameof(SelectedInventory));
                 EditOptionsCommand.RaiseCanExecuteChanged();
-                
             }
         }
         public string? Selection 
@@ -89,7 +125,7 @@ namespace Module.ViewModels
             {
                 SetProperty(ref _invItems, value);
                 RaisePropertyChanged(nameof(InvItems));
-                UpdateInvCommand.RaiseCanExecuteChanged();
+                //UpdateInvCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -101,129 +137,126 @@ namespace Module.ViewModels
             {
                 SetProperty(ref _currentPropertyValue, value);
                 RaisePropertyChanged(nameof(CurrentPropertyValue));
-                InventoryPropertyCommand.RaiseCanExecuteChanged();
+                //InventoryPropertyCommand.RaiseCanExecuteChanged();
             }
         }
 
+        public ObservableCollection<InventoryAddDialogModel> ListOfInv { get => _listOfInv; set { SetProperty(ref _listOfInv, value); } }
         //  Inventory Data Display
         public ObservableCollection<InventoryAddDialogModel> InventoryData { get => _inventoryData; set { SetProperty(ref _inventoryData, value); } }
         public DelegateCommand DisplaySelectedCommand {  get; private set; }
         public DelegateCommand EditOptionsCommand { get; private set; }
         public DelegateCommand InventoryPropertyCommand { get; private set; }
         public DelegateCommand UpdateInvCommand { get; private set; }
+        public DelegateCommand AddInventoryCommand { get; private set; }
 
         public InventoryDialogViewModel(IDataRepository dataRepository)
         {
             _dataRepository = dataRepository;
+            //DeliveryDate = DateTime.Now;
+            OnOrder = 0;
             DisplaySelectedCommand = new DelegateCommand(DisplaySelected, CanClickSelection);
             EditOptionsCommand = new DelegateCommand(DisplayEditOptions, CanClickInventory);
-            InventoryPropertyCommand = new DelegateCommand(PropertySelectionFunc);
-            UpdateInvCommand = new DelegateCommand(UpdateInv);
+            //InventoryPropertyCommand = new DelegateCommand(PropertySelectionFunc);
+            //UpdateInvCommand = new DelegateCommand(UpdateInv);
+            AddInventoryCommand = new DelegateCommand(AddInventory);
             InventoryData = new ObservableCollection<InventoryAddDialogModel>();
             InvItems = new ObservableCollection<InventoryAddDialogModel>();
+            ListOfInv = new ObservableCollection<InventoryAddDialogModel>();
             CurrentPropertyValue = new ObservableCollection<InventoryAddDialogModel>();
+            GenerateInvList();
         }
 
-        public void UpdateInv()
+        public void GenerateInvList()
         {
-            string value1 = PropertySelection.Replace("System.Windows.Controls.ComboBoxItem: ", "");
-            string value2 = SelectedInventory.Replace("System.Windows.Controls.ComboBoxItem: ", "");
-            
-            if (value1 == "On_Order" || value1 == "Delivery_Date")
-            { 
-                if (NewPropertyValue == null)
-                {
-                    _dataRepository.UpdateNullInventory(value1, "null", value2);
-                }
-                else
-                {
-                    _dataRepository.UpdateInventory(value1, NewPropertyValue, value2);
-                }
-            }
-            else 
-            { 
-                if (NewPropertyValue == null)
-                {
-                    return;
-                }
-                else
-                {
-                _dataRepository.UpdateInventory(value1, NewPropertyValue, value2);
-                }
-            }
+            ListOfInv.Clear();
+            ListOfInv.AddRange(_dataRepository.GetInventory());
         }
-        public void PropertySelectionFunc()
+        public void AddInventory()
         {
-            string value1 = PropertySelection.Replace("System.Windows.Controls.ComboBoxItem: ", "");
-            string value2 = SelectedInventory.Replace("System.Windows.Controls.ComboBoxItem: ", "");
-
-            switch (value1)
+            if (DeliveryDate == null)
             {
-                case "Item":
-                    CurrentPropertyValue.Clear();
-                    CurrentPropertyValue.AddRange(_dataRepository.GetItemValue(value2));
-                    InvDisplayPath = "Item";
-                    break;
-
-                case "In_Stock":
-                    CurrentPropertyValue.Clear();
-                    CurrentPropertyValue.AddRange(_dataRepository.GetStockValue(value2));
-                    InvDisplayPath = "In_Stock";
-                    break;
-                case "On_Order":
-                    CurrentPropertyValue.Clear();
-                    CurrentPropertyValue.AddRange(_dataRepository.GetOnOrderValue(value2));
-                    InvDisplayPath = "On_Order";
-                    break;
-                case "Delivery_Date":
-                    CurrentPropertyValue.Clear();
-                    CurrentPropertyValue.AddRange(_dataRepository.GetDeliveryDateValue(value2));
-                    InvDisplayPath = "Delivery_Date";
-                    break;
-                case "Reorder_Limit":
-                    CurrentPropertyValue.Clear();
-                    CurrentPropertyValue.AddRange(_dataRepository.GetReorderLimitValue(value2));
-                    InvDisplayPath = "Reorder_Limit";
-                    break;
+                _dataRepository.AddInventoryNull(Item, InStock, ReorderLimit);
             }
+            if (DeliveryDate != null)
+            {
+                DateTime date = DateTime.Parse(DeliveryDate);
+                _dataRepository.AddInventory(Item, InStock, OnOrder, date, ReorderLimit);
+            }
+            Item = "";
+            DeliveryDate = "";
+            OnOrder = null;
+            ReorderLimit = 0;
         }
+
+        //public void UpdateInv()
+        //{
+        //    string value1 = PropertySelection.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+        //    //string value2 = SelectedInventory.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            
+        //    if (value1 == "On_Order" || value1 == "Delivery_Date")
+        //    { 
+        //        if (NewPropertyValue == null)
+        //        {
+        //            _dataRepository.UpdateNullInventory(value1, "null", value2);
+        //        }
+        //        else
+        //        {
+        //            _dataRepository.UpdateInventory(value1, NewPropertyValue, value2);
+        //        }
+        //    }
+        //    else 
+        //    { 
+        //        if (NewPropertyValue == null)
+        //        {
+        //            return;
+        //        }
+        //        else
+        //        {
+        //        _dataRepository.UpdateInventory(value1, NewPropertyValue, value2);
+        //        }
+        //    }
+        //}
+        //public void PropertySelectionFunc()
+        //{
+        //    string value1 = PropertySelection.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+        //    //string value2 = SelectedInventory.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+
+        //    switch (value1)
+        //    {
+        //        case "Item":
+        //            CurrentPropertyValue.Clear();
+        //            CurrentPropertyValue.AddRange(_dataRepository.GetItemValue(value2));
+        //            InvDisplayPath = "Item";
+        //            break;
+
+        //        case "In_Stock":
+        //            CurrentPropertyValue.Clear();
+        //            CurrentPropertyValue.AddRange(_dataRepository.GetStockValue(value2));
+        //            InvDisplayPath = "In_Stock";
+        //            break;
+        //        case "On_Order":
+        //            CurrentPropertyValue.Clear();
+        //            CurrentPropertyValue.AddRange(_dataRepository.GetOnOrderValue(value2));
+        //            InvDisplayPath = "On_Order";
+        //            break;
+        //        case "Delivery_Date":
+        //            CurrentPropertyValue.Clear();
+        //            CurrentPropertyValue.AddRange(_dataRepository.GetDeliveryDateValue(value2));
+        //            InvDisplayPath = "Delivery_Date";
+        //            break;
+        //        case "Reorder_Limit":
+        //            CurrentPropertyValue.Clear();
+        //            CurrentPropertyValue.AddRange(_dataRepository.GetReorderLimitValue(value2));
+        //            InvDisplayPath = "Reorder_Limit";
+        //            break;
+        //    }
+        //}
 
         public void DisplayEditOptions()
         {
-            string replacement = SelectedInventory.Replace("System.Windows.Controls.ComboBoxItem: ", "");
-            switch (replacement)
-            {
-                case "Sunglasses":
-                    InvItems.Clear();
-                    InvItems.AddRange(_dataRepository.GetSelectedInvItem(replacement));
-                    
-                    break;
-                case "Spoon":
-                    InvItems.Clear();
-                    InvItems.AddRange(_dataRepository.GetSelectedInvItem(replacement));
-                    SelectedInventory = null;
-                    break;
-                case "Flashlight":
-                    InvItems.Clear();
-                    InvItems.AddRange(_dataRepository.GetSelectedInvItem(replacement));
-                    SelectedInventory = null;
-                    break;
-                case "Hat":
-                    InvItems.Clear();
-                    InvItems.AddRange(_dataRepository.GetSelectedInvItem(replacement));
-                    SelectedInventory = null;
-                    break;
-                case "Backpack":
-                    InvItems.Clear();
-                    InvItems.AddRange(_dataRepository.GetSelectedInvItem(replacement));
-                    SelectedInventory = null;
-                    break;
-                case "Gloves":
-                    InvItems.Clear();
-                    InvItems.AddRange(_dataRepository.GetSelectedInvItem(replacement));
-                    SelectedInventory = null;
-                    break;
-            }
+            InvItems.Clear();
+            InvItems.AddRange(_dataRepository.GetSelectedInvItem(SelectedInventory.Item));
         }
 
         public void DisplaySelected()

@@ -10,15 +10,21 @@ namespace PrismApplicationMavinwoo_Test.core.Models
 {
     public class CompletedSalesOrderModel
     {
+        public int ID { get; }
         public string Date_Sold { get; set; }
         public string Salesperson { get; set; }
         public string Customer { get; set; }
         public string Item { get; set; }
-        public decimal Price { get; set; }
-        public int Quantity { get; set; }
-
-        public CompletedSalesOrderModel(string DS, string SP, string C, string I, decimal P, int Q)
+        public decimal? Price { get; set; }
+        public int? Quantity { get; set; }
+        public string ReturnItem()
         {
+            return Item;
+        }
+
+        public CompletedSalesOrderModel(int I_D, string DS, string SP, string C, string I, decimal? P, int? Q)
+        {
+            ID = I_D;
             Date_Sold = DS;
             Salesperson = SP;
             Customer = C;

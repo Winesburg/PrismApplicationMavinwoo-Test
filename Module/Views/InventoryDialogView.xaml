@@ -34,7 +34,7 @@
                           Height="25"
                           SelectedItem="{Binding Selection}">
                     <ComboBoxItem Content="Add"/>
-                    <ComboBoxItem Content="Delete"/>
+                    <!--<ComboBoxItem Content="Delete"/>-->
                     <ComboBoxItem Content="Update"/>
                     <ComboBoxItem Content="Display"/>
                 </ComboBox>
@@ -105,7 +105,7 @@
                         Margin="10 0 10 0">
                 <TextBlock Text="On Order"
                            FontSize="14"/>
-                <TextBox Text="{Binding On_Order}" />
+                <TextBox Text="{Binding OnOrder}" />
             </StackPanel>
 
             <StackPanel Height="50"
@@ -115,7 +115,8 @@
                         Margin="10 0 10 0">
                 <TextBlock Text="Delivery Date"
                            FontSize="14"/>
-                <TextBox Text="{Binding Delivery_Date}" />
+                <syncfusion:DateTimeEdit DateTime="{Binding DeliveryDate}"
+                                         CustomPattern="yyyy-MM-dd"/>
             </StackPanel>
 
             <StackPanel Height="50"
@@ -125,7 +126,7 @@
                         Margin="10 0 10 0">
                 <TextBlock Text="Reorder Limit"
                            FontSize="14" />
-                <TextBox Text="{Binding Reorder_Limit}" />
+                <TextBox Text="{Binding ReorderLimit}" />
             </StackPanel>
 
             <StackPanel VerticalAlignment="Bottom"
@@ -191,17 +192,19 @@
                 <!--ItemsSource="{Binding InventoryItems}"-->
                 <!--SelectedValuePath="Item"
             DisplayMemberPath="Item"-->
-                <ComboBox SelectedItem="{Binding SelectedInventory}"
+                <ComboBox ItemsSource="{Binding ListOfInv}"
+                          SelectedItem="{Binding SelectedInventory}"
+                          DisplayMemberPath="Item"
                           VerticalAlignment="Center"
                           Margin="10 0 0 0"
                           Width="120"
                           Height="25">
-                    <ComboBoxItem Content="Sunglasses" />
+                    <!--<ComboBoxItem Content="Sunglasses" />
                     <ComboBoxItem Content="Spoon" />
                     <ComboBoxItem Content="Flashlight" />
                     <ComboBoxItem Content="Hat" />
                     <ComboBoxItem Content="Backpack" />
-                    <ComboBoxItem Content="Gloves" />
+                    <ComboBoxItem Content="Gloves" />-->
                 </ComboBox>
                 <Button Command="{Binding EditOptionsCommand}"
                         Width="50"

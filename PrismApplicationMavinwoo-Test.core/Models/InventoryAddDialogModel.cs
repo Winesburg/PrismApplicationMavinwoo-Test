@@ -8,6 +8,7 @@ namespace PrismApplicationMavinwoo_Test.core.Models
 {
     public class InventoryAddDialogModel
     {
+        //public int ID {  get; set; }
         public string Item { get; set ; }
         public int In_Stock { get; set; }
         public int? On_Order { get; set; }

@@ -19,7 +19,8 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<SalespersonModel> SelectSalesperson();
         public List<CustomerModel> SelectCustomers();
         public List<CustomerAddDialogModel> AddCustomers(string value1, string value2, string value3, string value4, string value5, string value6);
-        public List<InventoryAddDialogModel> AddInventory(string value1, int value2, int? value3, DateTime? value4, int value5);
+        public List<InventoryAddDialogModel> AddInventory(string value1, int value2, int? value3, DateTime value4, int value5);
+        public List<InventoryAddDialogModel> AddInventoryNull(string value1, int value2, int value3);
         public List<InventoryAddDialogModel> GetInventory();
         public List<InventoryAddDialogModel> GetSelectedInvItem(string input);
         public List<InventoryAddDialogModel> GetItemValue(string input);
@@ -118,11 +119,19 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         }
         
 
-        public List<InventoryAddDialogModel> AddInventory(string value1, int value2, int? value3, DateTime? value4, int value5)
+        public List<InventoryAddDialogModel> AddInventory(string value1, int value2, int? value3, DateTime value4, int value5)
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
-                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" INSERT INTO Inventory (Item, In_Stock, On_Order, Delivery_Date, Reorder_Limit)  VALUES ('" + value1 + "', '" + value2 + "', '" + value3 + "', '" + value4 + "', '" + value5 + "') ").AsList();
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" INSERT INTO Inventory (Item, In_Stock, On_Order, Delivery_Date, Reorder_Limit)  VALUES ('" + value1 + "', '" + value2 + "', '" + value3 + "', '" + value4.ToString("yyyy'-'MM'-'dd") + "', '" + value5 + "') ").AsList();
+                return P;
+            }
+        }
+        public List<InventoryAddDialogModel> AddInventoryNull(string value1, int value2, int value3)
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" INSERT INTO Inventory (Item, In_Stock, Reorder_Limit)  VALUES ('" + value1 + "', '" + value2 + "', '" + value3 + "') ").AsList();
                 return P;
             }
         }

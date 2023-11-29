@@ -227,6 +227,7 @@
                   Grid.ColumnSpan="3"
                   ItemsSource="{Binding SalesOrderDisplay}"
                   SelectedValue="{Binding SelOrderLine}"
+                  
                   HorizontalContentAlignment="Left"
                   />
 
@@ -247,7 +248,7 @@
                 
             </Button>
             <Button Command="{Binding DeleteOrderLineCommand}"
-                    Content="Delete"
+                    Content="Clear"
                     Grid.Row="7"
                     Grid.Column="3"
                     FontSize="16"
