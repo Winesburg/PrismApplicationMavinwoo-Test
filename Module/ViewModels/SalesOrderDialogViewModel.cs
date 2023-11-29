@@ -245,6 +245,7 @@ namespace Module.ViewModels
         }
         private void DeleteOrderLine()
         {
+            // This logic is flawed... Sometimes deletes more than one line due to targeting logic not being specific enough
             for ( int i = 0; i < SalesOrderDisplay.Count; i++)
             if(SalesOrderDisplay.Contains(SelOrderLine))
             {
