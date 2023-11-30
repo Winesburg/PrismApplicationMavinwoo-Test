@@ -57,7 +57,11 @@
                  VerticalAlignment="Center"
                  HorizontalAlignment="Left"
                  DateTime="{Binding ItemDateConn}"
-                 CustomPattern="yyyy-MM-dd">
+                 CustomPattern="yyyy-MM-dd"
+                 NoneDateText="Select the Date"
+                 ShowMaskOnNullValue="False"
+                 IsEmptyDateEnabled="True">
+                
             </syncfusion:DateTimeEdit>
         </StackPanel>
         <StackPanel Grid.Column="1"
@@ -227,12 +231,10 @@
                   Grid.ColumnSpan="3"
                   ItemsSource="{Binding SalesOrderDisplay}"
                   SelectedValue="{Binding SelOrderLine}"
-                  
                   HorizontalContentAlignment="Left"
                   />
-
         
-            <Button Command="{Binding SubmitSalesOrderCommand}"
+        <Button Command="{Binding SubmitSalesOrderCommand}"
                     Content="Submit"
                     FontSize="16"
                     Background="LightGray"

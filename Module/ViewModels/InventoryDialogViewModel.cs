@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 
 namespace Module.ViewModels
 {
@@ -15,10 +16,10 @@ namespace Module.ViewModels
     {
         private IDataRepository _dataRepository;
         private string _item;
-        private int _reorderLimit;
-        private string _deliveryDate;
+        private int? _reorderLimit;
+        private string? _deliveryDate;
         private int? _onOrder;
-        private int _inStock;
+        private int? _inStock;
         private int _displayInventoryIndex = 0;
         private int _displayAddIndex = 2;
         private int _displayDeleteIndex = 0;
@@ -32,7 +33,17 @@ namespace Module.ViewModels
         private ObservableCollection<InventoryAddDialogModel> _invItems;
         private ObservableCollection<InventoryAddDialogModel> _currentPropertyValue;
         private ObservableCollection<InventoryAddDialogModel> _listOfInv;
+        private int delDateFormat;
 
+        public int DelDateFormat 
+        { 
+            get => delDateFormat;
+            set
+            { 
+                SetProperty(ref delDateFormat, value); 
+                RaisePropertyChanged(nameof(DelDateFormat));
+            } 
+        }
         public string Item 
         { 
             get => _item;
@@ -42,7 +53,7 @@ namespace Module.ViewModels
                 RaisePropertyChanged(nameof(Item));
             }
         }
-        public int InStock
+        public int? InStock
         {
             get => _inStock;
             set
@@ -59,16 +70,17 @@ namespace Module.ViewModels
                 RaisePropertyChanged(nameof(OnOrder));
             } 
         }
-        public string DeliveryDate 
+        public string? DeliveryDate 
         { 
             get => _deliveryDate;
             set
             {
                 SetProperty(ref _deliveryDate, value);
-                RaisePropertyChanged($"Delivery Date: {value}");
+                RaisePropertyChanged(nameof(DeliveryDate));
+                //RaisePropertyChanged($"Delivery Date: {value}");
             } 
         }
-        public int ReorderLimit
+        public int? ReorderLimit
         {
             get => _reorderLimit;
             set
@@ -82,7 +94,7 @@ namespace Module.ViewModels
         public int DisplayDeleteIndex { get => _displayDeleteIndex; set { SetProperty(ref _displayDeleteIndex, value); } }
         public int DisplayUpdateIndex { get => _displayUpdateIndex; set { SetProperty(ref _displayUpdateIndex, value); } }
         public string NewPropertyValue { get => _newPropertyValue; set { SetProperty(ref _newPropertyValue, value); } }
-        public InventoryAddDialogModel SelectedInventory
+        public InventoryAddDialogModel? SelectedInventory
         {
             get => _selectedInventory;
             set
@@ -165,6 +177,14 @@ namespace Module.ViewModels
             ListOfInv = new ObservableCollection<InventoryAddDialogModel>();
             CurrentPropertyValue = new ObservableCollection<InventoryAddDialogModel>();
             GenerateInvList();
+            FormatInputs();
+        }
+
+        public void FormatInputs()
+        {
+            InStock = null;
+            OnOrder = null;
+            ReorderLimit = null;
         }
 
         public void GenerateInvList()
@@ -172,21 +192,41 @@ namespace Module.ViewModels
             ListOfInv.Clear();
             ListOfInv.AddRange(_dataRepository.GetInventory());
         }
+
         public void AddInventory()
         {
-            if (DeliveryDate == null)
+            if (Item != null && InStock != null  && ReorderLimit != null)
             {
-                _dataRepository.AddInventoryNull(Item, InStock, ReorderLimit);
+
+                if (DeliveryDate == null)
+                {
+                    _dataRepository.AddInventoryNull(Item, (int)InStock, (int)ReorderLimit);
+                    Item = "";
+                    DeliveryDate = "";
+                    InStock = null;
+                    OnOrder = null;
+                    ReorderLimit = null;
+                }
+
             }
-            if (DeliveryDate != null)
+            else if (Item != null && InStock != null && OnOrder != null && DeliveryDate != null && ReorderLimit != null)
             {
-                DateTime date = DateTime.Parse(DeliveryDate);
-                _dataRepository.AddInventory(Item, InStock, OnOrder, date, ReorderLimit);
+                if (DeliveryDate != null )
+                {
+                    DateTime date = DateTime.Parse(DeliveryDate);
+                    _dataRepository.AddInventory(Item, (int)InStock, OnOrder, date, (int)ReorderLimit);
+                    Item = "";
+                    DeliveryDate = "";
+                    InStock = null;
+                    OnOrder = null;
+                    ReorderLimit = null;
+                }
             }
-            Item = "";
-            DeliveryDate = "";
-            OnOrder = null;
-            ReorderLimit = 0;
+            else if (Item == null || InStock == null || ReorderLimit == null)
+            {
+                MessageBox.Show("Invalid Input: Make sure all input fields are complete!");
+            }
+            
         }
 
         //public void UpdateInv()
@@ -255,8 +295,12 @@ namespace Module.ViewModels
 
         public void DisplayEditOptions()
         {
+            if (SelectedInventory != null)
+            { 
             InvItems.Clear();
             InvItems.AddRange(_dataRepository.GetSelectedInvItem(SelectedInventory.Item));
+            SelectedInventory = null;
+            }
         }
 
         public void DisplaySelected()

@@ -94,7 +94,7 @@
                         Margin="10 0 10 0">
                 <TextBlock Text="In Stock"
                            FontSize="14"/>
-                <TextBox Text="{Binding InStock}" />
+                <TextBox Text="{Binding InStock, UpdateSourceTrigger=LostFocus}" />
             </StackPanel>
 
             <StackPanel Height="50"
@@ -116,9 +116,12 @@
                 <TextBlock Text="Delivery Date"
                            FontSize="14"/>
                 <syncfusion:DateTimeEdit DateTime="{Binding DeliveryDate}"
-                                         CustomPattern="yyyy-MM-dd"/>
-            </StackPanel>
+                                         NoneDateText="Select the Date"
+                                         CustomPattern="yyyy-MM-dd"
+                                         ShowMaskOnNullValue="False"
+                                         IsEmptyDateEnabled="True" />
 
+            </StackPanel>
             <StackPanel Height="50"
                         HorizontalAlignment="Stretch"
                         Grid.Row="4"
@@ -126,7 +129,7 @@
                         Margin="10 0 10 0">
                 <TextBlock Text="Reorder Limit"
                            FontSize="14" />
-                <TextBox Text="{Binding ReorderLimit}" />
+                <TextBox  Text="{Binding ReorderLimit}" />
             </StackPanel>
 
             <StackPanel VerticalAlignment="Bottom"
@@ -163,13 +166,20 @@
                                AllowFiltering="True"
                                Background="White"
                                Panel.ZIndex= "{Binding DisplayInventoryIndex}" />
-
         
         <!--Delete Display-->
         <Grid Margin="0 55 0 0"
               Panel.ZIndex="{Binding DisplayDeleteIndex}"
               Background="White">
             <TextBlock>Delete</TextBlock>
+            <Line
+                X1="10" Y1="10"
+                X2="50" Y2="10" 
+                Stroke="Black"
+                StrokeThickness="4"/>
+            <Polygon 
+                Points="10,110 60,10 110,110 10,110"
+                Fill="Blue"/>
         </Grid>
 
         <!--Update Display-->
@@ -260,6 +270,7 @@
                         </Button.Resources>
                     </Button>
                 </StackPanel>
+                
                 <TextBlock Text="New Value"
                            Grid.Column="2"
                            HorizontalAlignment="Center"
@@ -311,9 +322,9 @@
             <!--Inventory Item Display-->
             <syncfusion:SfDataGrid ItemsSource="{Binding InvItems}"
                                    ColumnSizer="Star"
-                                   AllowSorting="False" 
-                                   AllowTriStateSorting="True" 
-                                   ShowSortNumbers="True" 
+                                   AllowSorting="False"
+                                   AllowTriStateSorting="True"
+                                   ShowSortNumbers="True"
                                    AllowFiltering="True"
                                    Background="White"
                                    Margin="0 150 0 0"/>

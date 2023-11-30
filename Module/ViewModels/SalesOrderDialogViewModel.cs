@@ -23,7 +23,7 @@ namespace Module.ViewModels
         private ObservableCollection<CompletedSalesOrderModel> _selOrderLineCollection;
         private ObservableCollection<CompletedSalesOrderModel> _salesOrder;
         private ObservableCollection<string> _salesOrderDisplay;
-        private DateTime _itemDateConn;
+        private string? _itemDateConn;
         private string _itemSalespersonConn;
         private string _itemCustomerConn;
         private string _itemNameConn;
@@ -73,7 +73,7 @@ namespace Module.ViewModels
         public int Quantity { get => _quantity; set { SetProperty(ref _quantity, value); } }
 
         public string SelectedItemName { get => _selectedItemName; set { SetProperty(ref _selectedItemName, value); } }
-        public DateTime ItemDateConn { get => _itemDateConn; set { SetProperty(ref _itemDateConn, value); } }
+        public string? ItemDateConn { get => _itemDateConn; set { SetProperty(ref _itemDateConn, value); } }
         public string ItemSalespersonConn { get => _itemSalespersonConn; set { SetProperty(ref _itemSalespersonConn, value); } }
         public string ItemCustomerConn { get => _itemCustomerConn; set { SetProperty(ref _itemCustomerConn, value);
             } }
@@ -174,7 +174,7 @@ namespace Module.ViewModels
             SalesHeader_Date = new ObservableCollection<string>();
             SalesHeader_Salesperson = new ObservableCollection<string>();
             SalesHeader_Customer = new ObservableCollection<string>();
-            ItemDateConn = DateTime.Now;
+            //ItemDateConn = DateTime.Now;
             NewCustomerCommand = new DelegateCommand(ShowAddCustomerDialog);
             AddSalesLineCommand = new DelegateCommand(AddSalesLine);
             OpenSalespersonCommand = new DelegateCommand(ShowAddSalespersonDialog);
@@ -204,7 +204,7 @@ namespace Module.ViewModels
             
                 if (ItemPriceConn != null && ItemQuantityConn != null && SelItem != null)
                 {
-                    string item_date = ItemDateConn.Date.ToString().Replace(" 12:00:00 AM", "");
+                    string item_date = ItemDateConn.Replace(" 12:00:00 AM", "");
                     string ItemSalesperson = ItemSalespersonConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
                     string item_customer = ItemCustomerConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
                     string item_item = SelItem.Item;
