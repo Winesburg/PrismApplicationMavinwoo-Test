@@ -94,7 +94,7 @@
                         Margin="10 0 10 0">
                 <TextBlock Text="In Stock"
                            FontSize="14"/>
-                <TextBox Text="{Binding InStock, UpdateSourceTrigger=LostFocus}" />
+                <TextBox Text="{Binding InStock, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
 
             <StackPanel Height="50"

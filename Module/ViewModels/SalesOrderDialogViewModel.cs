@@ -5,14 +5,16 @@ using PrismApplicationMavinwoo_Test.core.DataAccess;
 using PrismApplicationMavinwoo_Test.core.Models;
 using Syncfusion.Data.Extensions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 
 namespace Module.ViewModels
 {
-    public class SalesOrderDialogViewModel : BindableBase, IDialogAware
+    public class SalesOrderDialogViewModel : BindableBase, IDialogAware, INotifyDataErrorInfo
     {
         private IDataRepository _dataRepository;
         private IDialogService _dialogService;
@@ -183,6 +185,7 @@ namespace Module.ViewModels
             strings = new List<string>();
             //SelOrderLine = new ObservableCollection<CompletedSalesOrderModel>();
             //SelOrderLine = new CompletedSalesOrderModel(SalesOrderID, DateSold, ItemSalesperson, Customer, Item, Price, Quantity);
+            _propertyNameToErrorsDictionary = new Dictionary<string, List<string>>();
             GenerateInvList();
             FormatInputs();
         }
@@ -195,14 +198,15 @@ namespace Module.ViewModels
             if (ItemQuantityConn == 0)
             {
                 ItemQuantityConn = null;
-            }  
+            }
+            
         }
 
         private void AddSalesLine()
         {
             
             
-                if (ItemPriceConn != null && ItemQuantityConn != null && SelItem != null)
+                if (ItemDateConn != null && ItemPriceConn != null && ItemQuantityConn != null && SelItem != null)
                 {
                     string item_date = ItemDateConn.Replace(" 12:00:00 AM", "");
                     string ItemSalesperson = ItemSalespersonConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
@@ -237,7 +241,7 @@ namespace Module.ViewModels
                     ItemQuantityConn = null;
                     SelItem = null;
                 }
-                else if (ItemPriceConn == null || ItemQuantityConn == null || SelItem == null)
+                else if (ItemDateConn == null || ItemPriceConn == null || ItemQuantityConn == null || SelItem == null)
                 {
                     MessageBox.Show("Invalid Input: Make sure all input fields are complete!");
                 }
@@ -341,7 +345,21 @@ namespace Module.ViewModels
 
         public string Title => "Sales Order";
 
+       
+
         public event Action<IDialogResult> RequestClose;
+
+
+
+        private readonly Dictionary<string, List<string>> _propertyNameToErrorsDictionary;
+        public bool HasErrors => _propertyNameToErrorsDictionary.Any();
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+        public IEnumerable GetErrors(string? propertyName)
+        {
+            return _propertyNameToErrorsDictionary.GetValueOrDefault(propertyName, new List<string>());
+        }
+
+
 
         public bool CanCloseDialog()
         {
@@ -357,5 +375,7 @@ namespace Module.ViewModels
         {
            
         }
+
+
     }
 }
