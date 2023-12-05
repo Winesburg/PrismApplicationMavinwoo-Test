@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 
 namespace Module.ViewModels
 {
@@ -123,18 +124,15 @@ namespace Module.ViewModels
         private void ShowSalesDialog()
         {
             var p = new DialogParameters();
-            //p.Add("message", "This is a test message.");
-
             _dialogService.ShowDialog("SalesOrderDialogView", p, result =>
             {
 
             });
         }
+
             private void ShowDialog()
         {
             var p = new DialogParameters();
-            //p.Add("message", "This is a test message.");
-
             _dialogService.ShowDialog("AddDialogView", p, result =>
             {
                 if (result.Result == ButtonResult.OK)
@@ -147,6 +145,7 @@ namespace Module.ViewModels
                 }
             } );
         }
+
         private void ShowInventoryDialog()
         {
             var p = new DialogParameters();
@@ -199,59 +198,85 @@ namespace Module.ViewModels
 
         public void Filter()
         {
-            switch (Selection)
+            // Add data validation
+            if (Date_Start > Date_End)
             {
-                case null:
-                    FilterD.Clear();
-                    FilterD.AddRange(_dataRepository.FilterSale(Date_Start, Date_End));
-                    Title = FilterD.ToList();
-                    break;
-                case "System.Windows.Controls.ComboBoxItem: Salespersons":
-                    SelectedSalespersons.Clear();
-                    SelectedSalespersons.AddRange(_dataRepository.FilterSalesperson(Date_Start, Date_End));
-                    SelectedSalespersons.ToList();
-                    break;
-                case "System.Windows.Controls.ComboBoxItem: Customer":
-                    SelectedCustomers.Clear();
-                    SelectedCustomers.AddRange(_dataRepository.FilterCustomer(Date_Start, Date_End));
-                    SelectedCustomers.ToList();
-                    break;
-                default:
-                    FilterD.Clear();
-                    FilterD.AddRange(_dataRepository.FilterSale(Date_Start, Date_End));
-                    Title = FilterD.ToList();
-                    break;
+                MessageBox.Show("Invalid Filter Date Range");
+            }
+            else
+            {
+                switch (Selection)
+                {
+                    case null:
+                        FilterD.Clear();
+                        FilterD.AddRange(_dataRepository.FilterSale(Date_Start, Date_End));
+                        Title = FilterD.ToList();
+                        break;
+                    case "System.Windows.Controls.ComboBoxItem: Salespersons":
+                        SelectedSalespersons.Clear();
+                        SelectedSalespersons.AddRange(_dataRepository.FilterSalesperson(Date_Start, Date_End));
+                        SelectedSalespersons.ToList();
+                        break;
+                    case "System.Windows.Controls.ComboBoxItem: Customer":
+                        SelectedCustomers.Clear();
+                        SelectedCustomers.AddRange(_dataRepository.FilterCustomer(Date_Start, Date_End));
+                        SelectedCustomers.ToList();
+                        break;
+                    default:
+                        FilterD.Clear();
+                        FilterD.AddRange(_dataRepository.FilterSale(Date_Start, Date_End));
+                        Title = FilterD.ToList();
+                        break;
+                }
             }
         }
 
         private void Search()
         {
-            switch (Selection)
-            { 
-                case null:
-                    SearchD.Clear();
-                    SearchD.AddRange(_dataRepository.SearchOrder(Keyword));
-                    Title = SearchD.ToList();
-                    break;
-                case "System.Windows.Controls.ComboBoxItem: Salespersons":
-                    DisplayCustomer = 0;
-                    SelectedSalespersons.Clear();
-                    SelectedSalespersons.AddRange(_dataRepository.SearchSalesperson(Keyword));
-                    SelectedSalespersons.ToList();
-                    DisplaySalesperson = 2;
-                    break;
-                case "System.Windows.Controls.ComboBoxItem: Customer":
-                    DisplaySalesperson = 0;
-                    SelectedCustomers.Clear();
-                    SelectedCustomers.AddRange(_dataRepository.SearchCustomer(Keyword));
-                    SelectedCustomers.ToList();
-                    DisplayCustomer = 2;
-                    break;
-                default:
-                    SearchD.Clear();
-                    SearchD.AddRange(_dataRepository.SearchOrder(Keyword));
-                    Title = SearchD.ToList();
-                    break;
+            // Add data validation
+            if (Keyword != null)
+            {
+                if
+                    (Keyword.Contains("%") == true || Keyword.Contains(".") == true || Keyword.Contains(",") == true ||
+                    Keyword.Contains("/") == true || Keyword.Contains("?") == true || Keyword.Contains("+") == true ||
+                    Keyword.Contains("=") == true || Keyword.Contains("-") == true || Keyword.Contains("_") == true ||
+                    Keyword.Contains("(") == true || Keyword.Contains(")") == true || Keyword.Contains("*") == true ||
+                    Keyword.Contains("&") == true || Keyword.Contains("$") == true || Keyword.Contains("!") == true ||
+                    Keyword.Contains("<") == true || Keyword.Contains(">") == true || Keyword.Contains("`") == true ||
+                    Keyword.Contains("~") == true || Keyword.Contains("'") == true)
+                {
+                    MessageBox.Show("Invalid input: Does not accept special characters/punctuation");
+                }
+                else
+                {
+                    switch (Selection)
+                    {
+                        case null:
+                            SearchD.Clear();
+                            SearchD.AddRange(_dataRepository.SearchOrder(Keyword));
+                            Title = SearchD.ToList();
+                            break;
+                        case "System.Windows.Controls.ComboBoxItem: Salespersons":
+                            DisplayCustomer = 0;
+                            SelectedSalespersons.Clear();
+                            SelectedSalespersons.AddRange(_dataRepository.SearchSalesperson(Keyword));
+                            SelectedSalespersons.ToList();
+                            DisplaySalesperson = 2;
+                            break;
+                        case "System.Windows.Controls.ComboBoxItem: Customer":
+                            DisplaySalesperson = 0;
+                            SelectedCustomers.Clear();
+                            SelectedCustomers.AddRange(_dataRepository.SearchCustomer(Keyword));
+                            SelectedCustomers.ToList();
+                            DisplayCustomer = 2;
+                            break;
+                        default:
+                            SearchD.Clear();
+                            SearchD.AddRange(_dataRepository.SearchOrder(Keyword));
+                            Title = SearchD.ToList();
+                            break;
+                    }
+                }
             }
         }
         private bool CanClick()

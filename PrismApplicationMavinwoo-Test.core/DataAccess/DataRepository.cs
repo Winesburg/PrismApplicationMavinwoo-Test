@@ -19,8 +19,8 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<SalespersonModel> SelectSalesperson();
         public List<CustomerModel> SelectCustomers();
         public List<CustomerAddDialogModel> AddCustomers(string value1, string value2, string value3, string value4, string value5, string value6);
-        public List<InventoryAddDialogModel> AddInventory(string value1, int value2, int? value3, DateTime value4, int value5);
-        public List<InventoryAddDialogModel> AddInventoryNull(string value1, int value2, int value3);
+        public List<InventoryAddDialogModel> AddInventory(string value1, string value2, string? value3, DateTime value4, string value5);
+        public List<InventoryAddDialogModel> AddInventoryNull(string value1, string value2, string value3);
         public List<InventoryAddDialogModel> GetInventory();
         public List<InventoryAddDialogModel> GetSelectedInvItem(string input);
         public List<InventoryAddDialogModel> GetItemValue(string input);
@@ -119,7 +119,7 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         }
         
 
-        public List<InventoryAddDialogModel> AddInventory(string value1, int value2, int? value3, DateTime value4, int value5)
+        public List<InventoryAddDialogModel> AddInventory(string value1, string value2, string? value3, DateTime value4, string value5)
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
@@ -127,7 +127,7 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
                 return P;
             }
         }
-        public List<InventoryAddDialogModel> AddInventoryNull(string value1, int value2, int value3)
+        public List<InventoryAddDialogModel> AddInventoryNull(string value1, string value2, string value3)
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {

@@ -47,7 +47,18 @@ namespace Module.ViewModels
 
         private void AddCustomer()
         {
-            _dataRepository.AddCustomers(Name, Address, City, State, Zip, Phone);
+            // Add data validation
+            if (Name != null && Address != null && City != null && State != null && Zip != null && Phone != null) 
+            { 
+                if (Phone.Length > 10 && Zip.Length > 5)
+                { 
+                    _dataRepository.AddCustomers(Name, Address, City, State, Zip, Phone);
+                }
+            }
+            else
+            {
+                return;
+            }
         }
 
         private void CloseDialog()

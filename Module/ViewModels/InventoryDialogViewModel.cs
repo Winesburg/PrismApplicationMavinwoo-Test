@@ -16,10 +16,10 @@ namespace Module.ViewModels
     {
         private IDataRepository _dataRepository;
         private string _item;
-        private int? _reorderLimit;
-        private string? _deliveryDate;
-        private int? _onOrder;
-        private int? _inStock;
+        private string _reorderLimit;
+        private string _deliveryDate;
+        private string _onOrder;
+        private string _inStock;
         private int _displayInventoryIndex = 0;
         private int _displayAddIndex = 2;
         private int _displayDeleteIndex = 0;
@@ -53,7 +53,7 @@ namespace Module.ViewModels
                 RaisePropertyChanged(nameof(Item));
             }
         }
-        public int? InStock
+        public string InStock
         {
             get => _inStock;
             set
@@ -61,7 +61,7 @@ namespace Module.ViewModels
                 SetProperty(ref _inStock, value);
             }
         }
-        public int? OnOrder 
+        public string OnOrder 
         { 
             get => _onOrder;
             set 
@@ -70,7 +70,7 @@ namespace Module.ViewModels
                 RaisePropertyChanged(nameof(OnOrder));
             } 
         }
-        public string? DeliveryDate 
+        public string DeliveryDate 
         { 
             get => _deliveryDate;
             set
@@ -80,7 +80,7 @@ namespace Module.ViewModels
                 //RaisePropertyChanged($"Delivery Date: {value}");
             } 
         }
-        public int? ReorderLimit
+        public string ReorderLimit
         {
             get => _reorderLimit;
             set
@@ -166,7 +166,7 @@ namespace Module.ViewModels
         {
             _dataRepository = dataRepository;
             //DeliveryDate = DateTime.Now;
-            OnOrder = 0;
+            //OnOrder = ;
             DisplaySelectedCommand = new DelegateCommand(DisplaySelected, CanClickSelection);
             EditOptionsCommand = new DelegateCommand(DisplayEditOptions, CanClickInventory);
             //InventoryPropertyCommand = new DelegateCommand(PropertySelectionFunc);
@@ -177,14 +177,6 @@ namespace Module.ViewModels
             ListOfInv = new ObservableCollection<InventoryAddDialogModel>();
             CurrentPropertyValue = new ObservableCollection<InventoryAddDialogModel>();
             GenerateInvList();
-            FormatInputs();
-        }
-
-        public void FormatInputs()
-        {
-            InStock = null;
-            OnOrder = null;
-            ReorderLimit = null;
         }
 
         public void GenerateInvList()
@@ -200,12 +192,12 @@ namespace Module.ViewModels
 
                 if (DeliveryDate == null)
                 {
-                    _dataRepository.AddInventoryNull(Item, (int)InStock, (int)ReorderLimit);
+                    _dataRepository.AddInventoryNull(Item, InStock, ReorderLimit);
                     Item = "";
                     DeliveryDate = "";
-                    InStock = null;
-                    OnOrder = null;
-                    ReorderLimit = null;
+                    InStock = "";
+                    OnOrder = "";
+                    ReorderLimit = "";
                 }
 
             }
@@ -214,15 +206,15 @@ namespace Module.ViewModels
                 if (DeliveryDate != null )
                 {
                     DateTime date = DateTime.Parse(DeliveryDate);
-                    _dataRepository.AddInventory(Item, (int)InStock, OnOrder, date, (int)ReorderLimit);
+                    _dataRepository.AddInventory(Item, InStock, OnOrder, date, ReorderLimit);
                     Item = "";
                     DeliveryDate = "";
-                    InStock = null;
-                    OnOrder = null;
-                    ReorderLimit = null;
+                    InStock = "";
+                    OnOrder = "";
+                    ReorderLimit = "";
                 }
             }
-            else if (Item == null || InStock == null || ReorderLimit == null)
+            else if (Item == null || InStock.Length > 0 || ReorderLimit == null)
             {
                 MessageBox.Show("Invalid Input: Make sure all input fields are complete!");
             }
