@@ -29,7 +29,7 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<InventoryAddDialogModel> GetDeliveryDateValue(string input);
         public List<InventoryAddDialogModel> GetReorderLimitValue(string input);
         public List<InventoryAddDialogModel> UpdateInventory(string x, string i, string v);
-        public List<InventoryAddDialogModel> UpdateNullInventory(string x, string i, string v);
+        public List<InventoryAddDialogModel> UpdateNullInventory(string x, string v);
 
     }
     public class DataRepository : IDataRepository
@@ -203,11 +203,11 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
                 return P;
             }
         }
-        public List<InventoryAddDialogModel> UpdateNullInventory(string x, string i, string v)
+        public List<InventoryAddDialogModel> UpdateNullInventory(string x, string v)
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
-                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" UPDATE Inventory SET " + x + " = " + i + " WHERE Item = '" + v + "' ").AsList();
+                List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" UPDATE Inventory SET " + x + " = null WHERE Item = '" + v + "' ").AsList();
                 return P;
             }
         }

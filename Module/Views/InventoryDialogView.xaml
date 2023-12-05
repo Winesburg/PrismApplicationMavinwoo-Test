@@ -83,7 +83,7 @@
 
                 <TextBlock Text="Item"
                            FontSize="14"/>
-                <TextBox Text="{Binding Item}" />
+                <TextBox Text="{Binding Item, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
 
             <StackPanel Height="50"
@@ -94,7 +94,7 @@
                         Margin="10 0 10 0">
                 <TextBlock Text="In Stock"
                            FontSize="14"/>
-                <TextBox Text="{Binding InStock, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Text="{Binding InStock, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
 
             <StackPanel Height="50"
@@ -105,7 +105,7 @@
                         Margin="10 0 10 0">
                 <TextBlock Text="On Order"
                            FontSize="14"/>
-                <TextBox Text="{Binding OnOrder}" />
+                <TextBox Text="{Binding OnOrder, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
 
             <StackPanel Height="50"
@@ -129,30 +129,33 @@
                         Margin="10 0 10 0">
                 <TextBlock Text="Reorder Limit"
                            FontSize="14" />
-                <TextBox  Text="{Binding ReorderLimit}" />
+                <TextBox  Text="{Binding ReorderLimit, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
-
-            <StackPanel VerticalAlignment="Bottom"
+            <Button Command="{Binding AddInventoryCommand}"
+                        Content="Add Inventory"
                         HorizontalAlignment="Stretch"
+                        Height="30"
                         Grid.Row="6"
-                        Grid.ColumnSpan="2"
-                        Margin="10 0 10 0">
-                <TextBlock Text="Add Inventory"
-                           Height="25"
-                           HorizontalAlignment="Left"
-                           FontSize="14"/>
-                <Button Command="{Binding AddInventoryCommand}"
-                        Content="Submit"
+                        Margin="30 0 30 10">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius"  Value="5" />
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button Command="{Binding ClearInventoryCommand}"
+                        Content="Clear"
                         HorizontalAlignment="Stretch"
-                        Height="25"
-                        Margin="0 0 0 15">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius"  Value="5" />
-                        </Style>
-                    </Button.Resources>
-                </Button>
-            </StackPanel>
+                        Height="30"
+                        Grid.Row="6"
+                        Grid.Column="1"
+                        Margin="30 0 30 10">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius"  Value="5" />
+                    </Style>
+                </Button.Resources>
+            </Button>
         </Grid>
 
         <!--Inventory Data Display-->
