@@ -45,6 +45,7 @@ namespace Module.ViewModels
 
         public void OnDialogClosed()
         {
+            return;
         }
 
         private void CloseDialog()

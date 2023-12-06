@@ -29,7 +29,6 @@ namespace Module.ViewModels
         private InventoryAddDialogModel _selectedInventory;
         private ObservableCollection<InventoryAddDialogModel> _inventoryData;
         private ObservableCollection<InventoryAddDialogModel> _invItems;
-        private ObservableCollection<InventoryAddDialogModel> _currentPropertyValue;
         private ObservableCollection<InventoryAddDialogModel> _listOfInv;
         private int delDateFormat;
         private InventoryAddDialogModel? _delInv;
@@ -60,6 +59,7 @@ namespace Module.ViewModels
             {
                 SetProperty(ref _item, value);
                 RaisePropertyChanged(nameof(Item));
+                AddInventoryCommand.RaiseCanExecuteChanged();
             }
         }
         public string InStock
@@ -69,6 +69,7 @@ namespace Module.ViewModels
             {
                 SetProperty(ref _inStock, value);
                 RaisePropertyChanged(nameof(_inStock));
+                AddInventoryCommand.RaiseCanExecuteChanged();
             }
         }
         public string? OnOrder 
@@ -96,6 +97,7 @@ namespace Module.ViewModels
             {
                 SetProperty(ref _reorderLimit, value);
                 RaisePropertyChanged(nameof(ReorderLimit));
+                AddInventoryCommand.RaiseCanExecuteChanged();
             }
         }
         public int DisplayInventoryIndex { get => _displayInventoryIndex; set { SetProperty(ref _displayInventoryIndex, value); } }
@@ -167,7 +169,7 @@ namespace Module.ViewModels
             DisplaySelectedCommand = new DelegateCommand(DisplaySelected, CanClickSelection);
             EditOptionsCommand = new DelegateCommand(DisplayEditOptions, CanClickInventory);
             UpdateInvCommand = new DelegateCommand(UpdateInv, CanSubmit);
-            AddInventoryCommand = new DelegateCommand(AddInventory);
+            AddInventoryCommand = new DelegateCommand(AddInventory, CanAddInv);
             DelInvLineCommand = new DelegateCommand(DeleteInventoryLine);
             ClearInventoryCommand = new DelegateCommand(ClearForm);
             InventoryData = new ObservableCollection<InventoryAddDialogModel>();
@@ -195,7 +197,7 @@ namespace Module.ViewModels
             }
             else if (DelInv == null)
             {
-                MessageBox.Show("Must select an inventory line");
+                MessageBox.Show("Must select an inventory line", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -207,51 +209,65 @@ namespace Module.ViewModels
 
         private void ClearForm()
         {
-            Item = "";
-            DeliveryDate = "";
-            InStock = "";
-            OnOrder = "";
-            ReorderLimit = "";
+            MessageBoxResult result = MessageBox.Show("Are you sure you would like to clear this form?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            switch(result)
+            {
+                case MessageBoxResult.Yes:
+                    Item = "";
+                    DeliveryDate = "";
+                    InStock = "";
+                    OnOrder = "";
+                    ReorderLimit = "";
+                    break;
+                case MessageBoxResult.No:
+                    break;
+            }
         }
 
         public void AddInventory()
         {
             try
             {
-                if (Item.Length > 0 && InStock.Length > 0 && ReorderLimit.Length > 0)
+                if(Item.Length >= 50 || InStock.Length >= 10 || OnOrder.Length >=10 ||  ReorderLimit.Length >= 10)
                 {
-                    if (DeliveryDate.Length == 0 && OnOrder.Length == 0)
+                    MessageBox.Show("Input is too large", "", MessageBoxButton.OK);
+                }
+                else { 
+                    if (Item.Length > 0 && InStock.Length > 0 && ReorderLimit.Length > 0)
                     {
-                        _dataRepository.AddInventoryNull(Item, InStock, ReorderLimit);
-                        Item = "";
-                        DeliveryDate = "";
-                        InStock = "";
-                        OnOrder = "";
-                        ReorderLimit = "";
-                    }
-                    else if (DeliveryDate.Length > 0 && OnOrder.Length > 0)
-                    {
-                        DateTime date = DateTime.Parse(DeliveryDate);
-                        _dataRepository.AddInventory(Item, InStock, OnOrder, date, ReorderLimit);
-                        Item = "";
-                        DeliveryDate = "";
-                        InStock = "";
-                        OnOrder = "";
-                        ReorderLimit = "";
+                        if (DeliveryDate.Length == 0 && OnOrder.Length == 0)
+                        {
+                            _dataRepository.AddInventoryNull(Item, InStock, ReorderLimit);
+                            Item = "";
+                            DeliveryDate = "";
+                            InStock = "";
+                            OnOrder = "";
+                            ReorderLimit = "";
+                        }
+                        else if (DeliveryDate.Length > 0 && OnOrder.Length > 0)
+                        {
+                            DateTime date = DateTime.Parse(DeliveryDate);
+                            _dataRepository.AddInventory(Item, InStock, OnOrder, date, ReorderLimit);
+                            Item = "";
+                            DeliveryDate = "";
+                            InStock = "";
+                            OnOrder = "";
+                            ReorderLimit = "";
+                        }
+                        else
+                        {
+                            MessageBox.Show("Both  'On Order'  and  'Delivery Date'  must be completed", "Improper Use", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
                     }
                     else
                     {
-                        MessageBox.Show("Both  'On Order'  and  'Delivery Date'  must be completed");
+                        MessageBox.Show("Invalid Input: Make sure input fields are complete!", "Improper Use", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
-                }
-                else
-                {
-                    MessageBox.Show("Invalid Input: Make sure input fields are complete!");
                 }
             }
             catch
             {
-                MessageBox.Show("Invalid Input");
+                MessageBox.Show("Invalid Input", "Improper Use", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -296,7 +312,7 @@ namespace Module.ViewModels
                         {
                             MessageBox.Show("Day, Month, and Year must be separated \n\n " +
                                             "with either a froward slash  ( / )  or  a hyphen  ( - ) \n\n " + 
-                                            "Examples: \n\n 01-22-2024 \n\n 01/22/2024");
+                                            "Examples: \n\n 01-22-2024 \n\n 01/22/2024", "Improper Format");
                         }
                     }
                 }
@@ -312,13 +328,13 @@ namespace Module.ViewModels
                 {
                     if (column == "In_Stock" || column == "Reorder_Limit")
                     {
-                        MessageBox.Show("No input given");
+                        MessageBox.Show("No input given", "", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
             catch
             {
-                MessageBox.Show("Invalid Input");
+                MessageBox.Show("Invalid Input", "", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -368,13 +384,14 @@ namespace Module.ViewModels
 
             }
         }
+
         public void GetInventoryData()
         {
             InventoryData.Clear();
             InventoryData.AddRange(_dataRepository.GetInventory());
             InventoryData.ToList();
         }
-        
+
         private bool CanClickSelection()
         {
             if (Selection != null)
@@ -386,6 +403,7 @@ namespace Module.ViewModels
                 return false;
             }
         }
+
         private bool CanClickInventory()
         {
             if (SelectedInventory != null)
@@ -397,9 +415,21 @@ namespace Module.ViewModels
                 return false;
             }
         }
+
         private bool CanSubmit()
         {
             if (SelectedInventory !=null && PropertySelection != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private bool CanAddInv()
+        {
+            if (Item.Length > 0 && InStock.Length > 0 && ReorderLimit.Length > 0)
             {
                 return true;
             }
@@ -419,10 +449,12 @@ namespace Module.ViewModels
         }
         public void OnDialogClosed()
         {
+            return;
         }
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
+            return;
         }
     }
 }

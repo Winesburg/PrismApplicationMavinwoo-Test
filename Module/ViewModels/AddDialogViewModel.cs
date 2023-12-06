@@ -5,6 +5,7 @@ using PrismApplicationMavinwoo_Test.core.DataAccess;
 using PrismApplicationMavinwoo_Test.core.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Module.ViewModels
 {
@@ -57,7 +58,7 @@ namespace Module.ViewModels
             }
             else
             {
-                return;
+                MessageBox.Show("Invalid Input", "", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
