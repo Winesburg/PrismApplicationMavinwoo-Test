@@ -293,7 +293,6 @@
                           Height="35"
                           HorizontalAlignment="Left"
                           VerticalAlignment="Center" Margin="9 0 0 0">
-                    <ComboBoxItem Content="Item"/>
                     <ComboBoxItem Content="In_Stock" />
                     <ComboBoxItem Content="On_Order" />
                     <ComboBoxItem Content="Delivery_Date" />

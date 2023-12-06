@@ -234,34 +234,63 @@ namespace Module.ViewModels
 
         public void UpdateInv()
         {
-             string column = PropertySelection.Replace("System.Windows.Controls.ComboBoxItem: ", "");
-            string item = SelectedInventory.Item ;
-
-            //if (column == "Item" || column == "In_Stock" || column == "Reorder_Limit")
-            //{ 
-            //_dataRepository.UpdateInventory(column, NewPropertyValue, item);
-            //}
-            int x = 0;
-            foreach (char c in NewPropertyValue)
+            string column = PropertySelection.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            string item = SelectedInventory.Item ; 
+            string? deldateformat = NewPropertyValue == null ? null : NewPropertyValue.Replace(" ", "");
+            try 
+            { 
+                if (column == "On_Order")
                 {
-                    if (c == ' ') 
+                    if (NewPropertyValue == "null" || NewPropertyValue == "" || NewPropertyValue == "0" || NewPropertyValue == null || NewPropertyValue.Length == 0 || deldateformat == null)
                     {
-                        NewPropertyValue.Remove(x);   
+                        _dataRepository.UpdateNullInventory(column, item);
+                        DisplayEditOptions();
                     }
-                    x++;
+                    else
+                    {
+                        _dataRepository.UpdateInventory(column, NewPropertyValue, item);
+                        DisplayEditOptions();
+                    }
                 }
-            
+                if (column == "Delivery_Date")
+                {
+                   
+                    if (NewPropertyValue == "null" || NewPropertyValue == "" || NewPropertyValue == "0" || NewPropertyValue == null || NewPropertyValue.Length == 0 || deldateformat == null)
+                    {
+                        _dataRepository.UpdateNullInventory(column, item);
+                        DisplayEditOptions();
+                    }
+                    else if (NewPropertyValue.Length > 0)
+                    {
+                        try
+                        {
+                            string deliveryDate = DateTime.Parse(NewPropertyValue).ToString("yyyy'-'MM'-'dd");
+                            _dataRepository.UpdateInventory(column, deliveryDate, item);
+                            DisplayEditOptions();
 
-            if (NewPropertyValue == "null" || NewPropertyValue == "" || NewPropertyValue == "0" || NewPropertyValue == null || NewPropertyValue.Length == 0 && column == "On_Order" || column == "Delivery_Date")
-            {
-                _dataRepository.UpdateNullInventory(column, item);
-                DisplayEditOptions();
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Day, Month, and Year must be separated \n\n " +
+                                            "with either a froward slash  ( / )  or  a hyphen  ( - ) \n\n " + 
+                                            "Examples: \n\n 01-22-2024 \n\n 01/22/2024");
+                        }
+                    }
+                }
+                if(NewPropertyValue != null)
+                { 
+                    if (column == "In_Stock" || column == "Reorder_Limit")
+                    { 
+                        _dataRepository.UpdateInventory(column, NewPropertyValue, item);
+                        DisplayEditOptions();
+                    }
+                }
             }
-            else
+            catch
             {
-                _dataRepository.UpdateInventory(column, NewPropertyValue, item);
-                DisplayEditOptions();
+                MessageBox.Show("Invalid Input");
             }
+
         }
 
         public void DisplayEditOptions()
