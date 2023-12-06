@@ -25,7 +25,6 @@ namespace Module.ViewModels
         private int _displayUpdateIndex = 0;
         private string? _selection;
         private string _propertySelection;
-        private string _invDisplayPath;
         private string _newPropertyValue;
         private InventoryAddDialogModel _selectedInventory;
         private ObservableCollection<InventoryAddDialogModel> _inventoryData;
@@ -33,7 +32,18 @@ namespace Module.ViewModels
         private ObservableCollection<InventoryAddDialogModel> _currentPropertyValue;
         private ObservableCollection<InventoryAddDialogModel> _listOfInv;
         private int delDateFormat;
+        private InventoryAddDialogModel? _delInv;
 
+
+        public InventoryAddDialogModel? DelInv
+        {
+            get => _delInv;
+            set
+            {
+                SetProperty(ref _delInv, value);
+                RaisePropertyChanged(nameof(DelInv));
+            }
+        }
         public int DelDateFormat 
         { 
             get => delDateFormat;
@@ -77,7 +87,6 @@ namespace Module.ViewModels
             {
                 SetProperty(ref _deliveryDate, value);
                 RaisePropertyChanged(nameof(DeliveryDate));
-                //RaisePropertyChanged($"Delivery Date: {value}");
             } 
         }
         public string ReorderLimit
@@ -122,20 +131,14 @@ namespace Module.ViewModels
                 DisplaySelectedCommand.RaiseCanExecuteChanged();
             } 
         }
-        public string InvDisplayPath
-        {
-            get => _invDisplayPath;
-            set
-            {
-                SetProperty(ref _invDisplayPath, value);
-            }
-        }
         public string PropertySelection
         {
             get => _propertySelection;
             set
             {
                 SetProperty(ref _propertySelection, value);
+                RaisePropertyChanged(nameof(PropertySelection));
+                UpdateInvCommand.RaiseCanExecuteChanged();
             }
         }
         public ObservableCollection<InventoryAddDialogModel> InvItems
@@ -145,19 +148,6 @@ namespace Module.ViewModels
             {
                 SetProperty(ref _invItems, value);
                 RaisePropertyChanged(nameof(InvItems));
-                //UpdateInvCommand.RaiseCanExecuteChanged();
-            }
-        }
-
-
-        public ObservableCollection<InventoryAddDialogModel> CurrentPropertyValue
-        {
-            get => _currentPropertyValue;
-            set
-            {
-                SetProperty(ref _currentPropertyValue, value);
-                RaisePropertyChanged(nameof(CurrentPropertyValue));
-                //InventoryPropertyCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -166,25 +156,47 @@ namespace Module.ViewModels
         public ObservableCollection<InventoryAddDialogModel> InventoryData { get => _inventoryData; set { SetProperty(ref _inventoryData, value); } }
         public DelegateCommand DisplaySelectedCommand {  get; private set; }
         public DelegateCommand EditOptionsCommand { get; private set; }
-        public DelegateCommand InventoryPropertyCommand { get; private set; }
         public DelegateCommand UpdateInvCommand { get; private set; }
         public DelegateCommand AddInventoryCommand { get; private set; }
         public DelegateCommand ClearInventoryCommand { get; private set; }
+        public DelegateCommand DelInvLineCommand {  get; private set; }
 
         public InventoryDialogViewModel(IDataRepository dataRepository)
         {
             _dataRepository = dataRepository;
             DisplaySelectedCommand = new DelegateCommand(DisplaySelected, CanClickSelection);
             EditOptionsCommand = new DelegateCommand(DisplayEditOptions, CanClickInventory);
-            //InventoryPropertyCommand = new DelegateCommand(PropertySelectionFunc);
-            UpdateInvCommand = new DelegateCommand(UpdateInv);
+            UpdateInvCommand = new DelegateCommand(UpdateInv, CanSubmit);
             AddInventoryCommand = new DelegateCommand(AddInventory);
+            DelInvLineCommand = new DelegateCommand(DeleteInventoryLine);
             ClearInventoryCommand = new DelegateCommand(ClearForm);
             InventoryData = new ObservableCollection<InventoryAddDialogModel>();
             InvItems = new ObservableCollection<InventoryAddDialogModel>();
             ListOfInv = new ObservableCollection<InventoryAddDialogModel>();
-            CurrentPropertyValue = new ObservableCollection<InventoryAddDialogModel>();
             GenerateInvList();
+        }
+
+        private void DeleteInventoryLine()
+        {
+            if (DelInv != null)
+            { 
+                MessageBoxResult result = MessageBox.Show($"Are you sure you want to delete:    {DelInv.Item}", "Confirmation", MessageBoxButton.YesNo);
+                switch (result)
+                {
+                    case MessageBoxResult.Yes:
+                        _dataRepository.DeleteInvLine(DelInv.Item);
+                        DelInv = null;
+                        GetInventoryData();
+                        break;
+                    case MessageBoxResult.No:
+                        DelInv = null;
+                        break;
+                }
+            }
+            else if (DelInv == null)
+            {
+                MessageBox.Show("Must select an inventory line");
+            }
         }
 
         public void GenerateInvList()
@@ -204,40 +216,51 @@ namespace Module.ViewModels
 
         public void AddInventory()
         {
-            if (Item.Length > 0 && InStock.Length > 0  && ReorderLimit.Length > 0)
+            try
             {
-                if (DeliveryDate.Length == 0 || OnOrder.Length == 0)
+                if (Item.Length > 0 && InStock.Length > 0 && ReorderLimit.Length > 0)
                 {
-                    _dataRepository.AddInventoryNull(Item, InStock, ReorderLimit);
-                    Item = "";
-                    DeliveryDate = "";
-                    InStock = "";
-                    OnOrder = "";
-                    ReorderLimit = "";
+                    if (DeliveryDate.Length == 0 && OnOrder.Length == 0)
+                    {
+                        _dataRepository.AddInventoryNull(Item, InStock, ReorderLimit);
+                        Item = "";
+                        DeliveryDate = "";
+                        InStock = "";
+                        OnOrder = "";
+                        ReorderLimit = "";
+                    }
+                    else if (DeliveryDate.Length > 0 && OnOrder.Length > 0)
+                    {
+                        DateTime date = DateTime.Parse(DeliveryDate);
+                        _dataRepository.AddInventory(Item, InStock, OnOrder, date, ReorderLimit);
+                        Item = "";
+                        DeliveryDate = "";
+                        InStock = "";
+                        OnOrder = "";
+                        ReorderLimit = "";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Both  'On Order'  and  'Delivery Date'  must be completed");
+                    }
                 }
-                else if (DeliveryDate.Length > 0 && OnOrder.Length > 0)
+                else
                 {
-                    DateTime date = DateTime.Parse(DeliveryDate);
-                    _dataRepository.AddInventory(Item, InStock, OnOrder, date, ReorderLimit);
-                    Item = "";
-                    DeliveryDate = "";
-                    InStock = "";
-                    OnOrder = "";
-                    ReorderLimit = "";
+                    MessageBox.Show("Invalid Input: Make sure input fields are complete!");
                 }
             }
-            else
+            catch
             {
-                MessageBox.Show("Invalid Input: Make sure all input fields are complete!");
-            }   
+                MessageBox.Show("Invalid Input");
+            }
         }
 
         public void UpdateInv()
         {
             string column = PropertySelection.Replace("System.Windows.Controls.ComboBoxItem: ", "");
-            string item = SelectedInventory.Item ; 
+            string item = SelectedInventory.Item; 
             string? deldateformat = NewPropertyValue == null ? null : NewPropertyValue.Replace(" ", "");
-            try 
+            try
             { 
                 if (column == "On_Order")
                 {
@@ -285,21 +308,26 @@ namespace Module.ViewModels
                         DisplayEditOptions();
                     }
                 }
+                if (NewPropertyValue == null)
+                {
+                    if (column == "In_Stock" || column == "Reorder_Limit")
+                    {
+                        MessageBox.Show("No input given");
+                    }
+                }
             }
             catch
             {
                 MessageBox.Show("Invalid Input");
             }
-
         }
 
         public void DisplayEditOptions()
         {
             if (SelectedInventory != null)
-            { 
+            {
             InvItems.Clear();
             InvItems.AddRange(_dataRepository.GetSelectedInvItem(SelectedInventory.Item));
-            //SelectedInventory = null;
             }
         }
 
@@ -319,6 +347,7 @@ namespace Module.ViewModels
                     DisplayDeleteIndex = 2;
                     DisplayUpdateIndex = 0;
                     DisplayAddIndex = 0;
+                    GetInventoryData();
                     Selection = null;
                     break;
                 case "System.Windows.Controls.ComboBoxItem: Update":
@@ -360,6 +389,17 @@ namespace Module.ViewModels
         private bool CanClickInventory()
         {
             if (SelectedInventory != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private bool CanSubmit()
+        {
+            if (SelectedInventory !=null && PropertySelection != null)
             {
                 return true;
             }
