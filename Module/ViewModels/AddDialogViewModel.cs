@@ -49,14 +49,40 @@ namespace Module.ViewModels
         private void AddCustomer()
         {
             // Add data validation
-            if (Name != null && Address != null && City != null && State != null && Zip != null && Phone != null) 
+            try
             { 
-                if (Phone.Length > 10 && Zip.Length > 5)
-                { 
-                    _dataRepository.AddCustomers(Name, Address, City, State, Zip, Phone);
+                if (Name != null && Address != null && City != null && State != null && Zip != null && Phone != null) 
+                {
+                    try
+                    {
+                        Convert.ToInt32(Zip);
+                        Convert.ToInt32(Phone);
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Invalid Input", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
+                    string formattedPhone = string.Empty;
+                    if (Phone.Contains('-') == true || Phone.Contains('(') == true || Phone.Contains(')') == true || Phone.Contains('/') == true)
+                    {
+                        string Phone1 = Phone.Replace("(", "");
+                        string Phone2 = Phone1.Replace("-", "");
+                        string Phone3 = Phone2.Replace(")", "");
+                        string Phone4 = Phone3.Replace("/", "");
+                        _dataRepository.AddCustomers(Name, Address, City, State, Zip, Phone4);
+                    }
+                    else if (Phone.Length >= 10 && Zip.Length == 5)
+                    {
+                        _dataRepository.AddCustomers(Name, Address, City, State, Zip, Phone);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Invalid Input", "", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            else
+            catch
             {
                 MessageBox.Show("Invalid Input", "", MessageBoxButton.OK, MessageBoxImage.Error);
             }

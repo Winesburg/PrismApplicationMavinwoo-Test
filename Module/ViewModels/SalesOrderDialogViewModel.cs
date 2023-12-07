@@ -223,18 +223,27 @@ namespace Module.ViewModels
                     strings.AddRange(SalesOrder.Select(u => u.Price.ToString()).ToList());
                     strings.AddRange(SalesOrder.Select(c => c.Quantity.ToString()).ToList());
 
-
-                    if (SalesHeader_Date.Count == 0 && SalesHeader_Customer.Count == 0)
+                for (int i = 0; i < OrderLineView.Count; i++)
+                {
+                    if (OrderLineView[i] == SalesOrder[0])
                     {
-                        SalesHeader_Date.Add($"{strings[0]}");
-                        SalesHeader_Customer.Add($"{strings[2]}");
+                        MessageBox.Show("Cannot add identical information");
                     }
+                }
+
+                if (SalesHeader_Date.Count == 0 && SalesHeader_Customer.Count == 0)
+                {
+                    SalesHeader_Date.Add($"{strings[0]}");
+                    SalesHeader_Customer.Add($"{strings[2]}");
+                }
+                if (SalesHeader_Date.Count > 0 && SalesHeader_Customer.Count > 0)
+                {
                     SalesOrderDisplay.Add($"{strings[1]}                              {strings[3]}      " +
                         $"                        {strings[4]}                              {strings[5]}");
+                }
+
 
                     AddSalesTrigger = 1;
-
-
                     SalesOrder.Clear();
                     strings.Clear();
                     ItemPriceConn = null;
@@ -251,15 +260,19 @@ namespace Module.ViewModels
         {
             // This logic is flawed... Sometimes deletes more than one line due to targeting logic not being specific enough
             for ( int i = 0; i < SalesOrderDisplay.Count; i++)
-            if(SalesOrderDisplay.Contains(SelOrderLine))
             {
-                SalesOrderDisplay.RemoveAt(i);
+                if (SalesOrderDisplay[i] == SelOrderLine)
+                {
+                    SalesOrderDisplay.RemoveAt(i);
+                }
             }
             if(SalesOrderDisplay.Count() == 0)
             {
                 AddSalesTrigger = 0;
             }
+            
         }
+        //SalesOrderDisplay.Contains(SelOrderLine)
         private bool CanDelete()
         {
             if (SelOrderLine == null)
@@ -271,11 +284,6 @@ namespace Module.ViewModels
                 return true;
             }
         }
-
-        //SalesOrderDisplay.Clear();
-        //strings.Clear();
-        //SalesHeader_Date.Clear();
-        //SalesHeader_Customer.Clear();
 
         private bool CanSubmitSalesOrder()
         {

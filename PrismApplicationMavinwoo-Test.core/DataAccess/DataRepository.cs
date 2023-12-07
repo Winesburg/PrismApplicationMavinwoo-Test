@@ -19,6 +19,7 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<SalespersonModel> SelectSalesperson();
         public List<CustomerModel> SelectCustomers();
         public List<CustomerAddDialogModel> AddCustomers(string value1, string value2, string value3, string value4, string value5, string value6);
+        public List<CustomerAddDialogModel> AddSalesperson(string value1, string value2, decimal value3);
         public List<InventoryAddDialogModel> AddInventory(string value1, string value2, string? value3, DateTime value4, string value5);
         public List<InventoryAddDialogModel> AddInventoryNull(string value1, string value2, string value3);
         public List<InventoryAddDialogModel> GetInventory();
@@ -118,7 +119,15 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
                 return P;
             }
         }
-        
+
+        public List<CustomerAddDialogModel> AddSalesperson(string value1, string value2, decimal value3)
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                List<CustomerAddDialogModel> P = Conn.Query<CustomerAddDialogModel>(" INSERT INTO Salespersons (Name, State, Commission)  VALUES ('" + value1 + "', '" + value2 + "', '" + value3 + "') ").AsList();
+                return P;
+            }
+        }
 
         public List<InventoryAddDialogModel> AddInventory(string value1, string value2, string? value3, DateTime value4, string value5)
         {

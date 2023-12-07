@@ -3,36 +3,93 @@ using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using PrismApplicationMavinwoo_Test.core.DataAccess;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 
 namespace Module.ViewModels
 {
     public class AddSalespersonDialogViewModel : BindableBase, IDialogAware
     {
         private IDataRepository _dataRepository;
-        private IDialogService _dialogService;
-        
 
-        public AddSalespersonDialogViewModel(IDataRepository dataRepository, IDialogService dialogService) 
+        private string? _name;
+        private string? _state;
+        private string? _commission;
+
+        public string? Name
+        {
+            get { return _name; }
+            set 
+            { 
+                SetProperty( ref _name, value);
+                RaisePropertyChanged( nameof(Name) );
+                AddSalespersonCommand.RaiseCanExecuteChanged();
+                
+            }
+        }
+
+        public string? State
+        {
+            get { return _state; }
+            set 
+            { 
+                SetProperty(ref _state, value);
+                RaisePropertyChanged( nameof(State) );
+                AddSalespersonCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public string? Commission
+        {
+            get { return _commission; }
+            set 
+            { 
+                SetProperty(ref _commission, value); 
+                RaisePropertyChanged( nameof(Commission) );
+                AddSalespersonCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public DelegateCommand AddSalespersonCommand { get; set; }
+
+
+
+
+        public AddSalespersonDialogViewModel(IDataRepository dataRepository) 
         {
             _dataRepository = dataRepository;
-            _dialogService = dialogService;
-            
+            AddSalespersonCommand = new DelegateCommand(AddSalesperson, CanAddSalesperson);
         }
-            
 
+        public void AddSalesperson()
+        {
+            if(Name != null && State != null && Commission != null)
+            {
+                decimal commConv = Convert.ToDecimal(Commission);
+                if (commConv > 1)
+                {
+                    MessageBox.Show("Commission must be a decimal representation of a percentage! Example:     '5%'     =     '0.05' ");
+                }
+                else
+                {
+                    _dataRepository.AddSalesperson(Name, State, commConv);
+                    Name = "";
+                    State = "";
+                    Commission = "";
+                }
+            }
+        }
 
-
-
-
-
-
-
-
-
+        public bool CanAddSalesperson()
+        {
+            if (Name != null && State != null && Commission != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         public string Title => "Add Salesperson";
 
@@ -50,17 +107,12 @@ namespace Module.ViewModels
 
         private void CloseDialog()
         {
-            var result = ButtonResult.OK;
-
-            var p = new DialogParameters();
-            p.Add("myParam", "The dialog was closed by the user");
-
-            RequestClose.Invoke(new DialogResult(result, p));
+            return;
         }
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
-            //Message = parameters.GetValue<string>("message");
+            return;
         }
     }
 }
