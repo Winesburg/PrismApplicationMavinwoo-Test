@@ -17,6 +17,7 @@ namespace PrismApplicationMavinwoo_Test.core.Models
         public string Item { get; set; }
         public decimal? Price { get; set; }
         public int? Quantity { get; set; }
+        public decimal? Total {  get; set; }
         public string ReturnItem()
         {
             return Item;
@@ -31,7 +32,7 @@ namespace PrismApplicationMavinwoo_Test.core.Models
             Item = I;
             Price = P;
             Quantity = Q;
-
+            Total = (decimal)(Price * Quantity);
         }
     }
 }

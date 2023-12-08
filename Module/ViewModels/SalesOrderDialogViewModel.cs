@@ -46,7 +46,11 @@ namespace Module.ViewModels
         private string _item;
         private decimal _price;
         private int _quantity;
+        private Dictionary<int, CompletedSalesOrderModel> _orderLineDictionary;
+        private int _dictionaryKey = 0;
 
+        public int DictionaryKey { get => _dictionaryKey; set => _dictionaryKey = value; }
+        public Dictionary<int, CompletedSalesOrderModel> OrderLineDictionary { get => _orderLineDictionary; set => _orderLineDictionary = value; }
         public int AddSalesTrigger 
         { 
             get => _addSalesTrigger;
@@ -186,6 +190,7 @@ namespace Module.ViewModels
             //SelOrderLine = new ObservableCollection<CompletedSalesOrderModel>();
             //SelOrderLine = new CompletedSalesOrderModel(SalesOrderID, DateSold, ItemSalesperson, Customer, Item, Price, Quantity);
             _propertyNameToErrorsDictionary = new Dictionary<string, List<string>>();
+            OrderLineDictionary = new Dictionary<int, CompletedSalesOrderModel>();
             GenerateInvList();
             FormatInputs();
         }
@@ -204,53 +209,102 @@ namespace Module.ViewModels
 
         private void AddSalesLine()
         {
+
+
+            OrderLineDictionary.Clear();
+
+            //bool trigger = false;
             
-            
+            // This is constantly causing an override of the same value withing dictionary
                 if (ItemDateConn != null && ItemPriceConn != null && ItemQuantityConn != null && SelItem != null)
                 {
-                    string item_date = ItemDateConn.Replace(" 12:00:00 AM", "");
-                    string ItemSalesperson = ItemSalespersonConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
-                    string item_customer = ItemCustomerConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
-                    string item_item = SelItem.Item;
-                    decimal? item_price = ItemPriceConn;
-                    int? item_quantity = ItemQuantityConn;
-                    SalesOrder.Add(new CompletedSalesOrderModel(SalesOrderID, item_date, ItemSalesperson, item_customer, item_item, item_price, item_quantity));
+                string item_date = ItemDateConn.Replace(" 12:00:00 AM", "");
+                string ItemSalesperson = ItemSalespersonConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+                string item_customer = ItemCustomerConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+                string item_item = SelItem.Item;
+                decimal? item_price = ItemPriceConn;
+                int? item_quantity = ItemQuantityConn;
+                SalesOrder.Add(new CompletedSalesOrderModel(SalesOrderID, item_date, ItemSalesperson, item_customer, item_item, item_price, item_quantity));
+                    OrderLineDictionary.Add(++DictionaryKey, SalesOrder[0]);
                     OrderLineView.Add(SalesOrder[SalesOrder.Count - 1]);
-                    strings.AddRange(SalesOrder.Select(w => w.Date_Sold.ToString()).ToList());
-                    strings.AddRange(SalesOrder.Select(t => t.Salesperson).ToList());
-                    strings.AddRange(SalesOrder.Select(e => e.Customer.ToString()).ToList());
-                    strings.AddRange(SalesOrder.Select(s => s.Item).ToList());
-                    strings.AddRange(SalesOrder.Select(u => u.Price.ToString()).ToList());
-                    strings.AddRange(SalesOrder.Select(c => c.Quantity.ToString()).ToList());
 
-                for (int i = 0; i < OrderLineView.Count; i++)
+                if(OrderLineDictionary.Count > 1)
                 {
-                    if (OrderLineView[i] == SalesOrder[0])
+                    for (int i = 0;  i < OrderLineDictionary.Count; i++)
                     {
-                        MessageBox.Show("Cannot add identical information");
+                        if (OrderLineDictionary[i] == SalesOrder[SalesOrder.Count-1])
+                        {
+                            OrderLineDictionary.Remove(i);
+                            SalesOrder.RemoveAt(i);
+                        }
                     }
                 }
 
-                if (SalesHeader_Date.Count == 0 && SalesHeader_Customer.Count == 0)
-                {
-                    SalesHeader_Date.Add($"{strings[0]}");
-                    SalesHeader_Customer.Add($"{strings[2]}");
-                }
-                if (SalesHeader_Date.Count > 0 && SalesHeader_Customer.Count > 0)
-                {
-                    SalesOrderDisplay.Add($"{strings[1]}                              {strings[3]}      " +
-                        $"                        {strings[4]}                              {strings[5]}");
-                }
+
+
+
+                // Figure out how to dynamically add checkboxes with every new Order line -- perhaps incorporate
+                //  functionality within ${ CompletedSalesOrderModel }
+                //    --  tie checkbox id to dictionaryKey
+
+
+
+
+
+
+
+
+                    //strings.AddRange(SalesOrder.Select(w => w.Date_Sold.ToString()).ToList());
+                    //strings.AddRange(SalesOrder.Select(t => t.Salesperson).ToList());
+                    //strings.AddRange(SalesOrder.Select(e => e.Customer.ToString()).ToList());
+                    //strings.AddRange(SalesOrder.Select(s => s.Item).ToList());
+                    //strings.AddRange(SalesOrder.Select(u => u.Price.ToString()).ToList());
+                    //strings.AddRange(SalesOrder.Select(c => c.Quantity.ToString()).ToList());
+
+                //if(OrderLineView.Count > 1) 
+                //{ 
+                //    for (int i = 0; i < OrderLineView.Count; i++)
+                //    {
+                //        if (OrderLineView[i] == SalesOrder[0])
+                //        {
+                //            MessageBox.Show("Cannot add identical information");
+                //            OrderLineView.RemoveAt(OrderLineView.Count - 1);
+                //        }
+                //    }
+
+                //    //trigger = true;
+                //}
+
+
+                
+
+                    //if (SalesHeader_Date.Count == 0 && SalesHeader_Customer.Count == 0)
+                    //{
+                    //    SalesHeader_Date.Add($"{strings[0]}");
+                    //    SalesHeader_Customer.Add($"{strings[2]}");
+                    //}
+
+                    //if (trigger == false)
+                    //{
+                    //    SalesOrderDisplay.Add($"{strings[1]}                              {strings[3]}      " +
+                    //        $"                        {strings[4]}                              {strings[5]}");
+                    //}
+                    //else
+                    //{
+                    //    return;
+                    //}
+                    
 
 
                     AddSalesTrigger = 1;
-                    SalesOrder.Clear();
-                    strings.Clear();
-                    ItemPriceConn = null;
-                    ItemQuantityConn = null;
-                    SelItem = null;
-                }
-                else if (ItemDateConn == null || ItemPriceConn == null || ItemQuantityConn == null || SelItem == null)
+                        //SalesOrder.Clear();
+                        strings.Clear();
+                        ItemPriceConn = null;
+                        ItemQuantityConn = null;
+                        SelItem = null;
+                
+            }
+            else if (ItemDateConn == null || ItemPriceConn == null || ItemQuantityConn == null || SelItem == null)
                 {
                     MessageBox.Show("Invalid Input: Make sure all input fields are complete!");
                 }

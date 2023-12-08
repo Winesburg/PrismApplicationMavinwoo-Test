@@ -227,13 +227,96 @@
                    Height="30" />
         <!--</StackPanel>-->
 
-        <ListView Grid.Row="6"
+        <!--<ListView Grid.Row="6"
                   Grid.ColumnSpan="3"
                   ItemsSource="{Binding SalesOrderDisplay}"
                   SelectedValue="{Binding SelOrderLine}"
                   HorizontalContentAlignment="Left"
-                  />
-        
+                  />-->
+
+        <Grid Grid.Row="6"
+              Grid.ColumnSpan="3"
+              Background="White">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition Width="30"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <TextBlock Background="#404040"
+                       Foreground="#f7f7fa"
+                       FontSize="18"
+                       Text="Salesperson"
+                       TextAlignment="Center" />
+            <ListView Grid.Row="1"
+                      ItemsSource="{Binding SalesOrder}"
+                      SelectedItem="{Binding SelectedBinder}"
+                      DisplayMemberPath="Salesperson"
+                      BorderBrush="Transparent"/>
+            <TextBlock Grid.Column="1"
+                       Background="#404040"
+                       Foreground="#f7f7fa"
+                       FontSize="18"
+                       Text="Item"
+                       TextAlignment="Center" />
+            <ListView Grid.Row="1"
+                      HorizontalAlignment="Center"
+                      ItemsSource="{Binding SalesOrder}"
+                      DisplayMemberPath="Item"
+                      Grid.Column="1"
+                      BorderBrush="Transparent"/>
+            <TextBlock Grid.Column="2"
+                       Background="#404040"
+                       Foreground="#f7f7fa"
+                       FontSize="18"
+                       Text="Price"
+                       TextAlignment="Center" />
+            <ListView Grid.Row="1"
+                      Grid.Column="2"
+                      HorizontalAlignment="Center"
+                      ItemsSource="{Binding SalesOrder}"
+                      DisplayMemberPath="Price"
+                      BorderBrush="Transparent"/>
+            <TextBlock Grid.Column="3"
+                       Background="#404040"
+                       Foreground="#f7f7fa"
+                       FontSize="18"
+                       Text="Quantity"
+                       TextAlignment="Center" />
+            <ListView Grid.Row="1"
+                      Grid.Column="3"
+                      HorizontalAlignment="Center"
+                      ItemsSource="{Binding SalesOrder}"
+                      DisplayMemberPath="Quantity"
+                      BorderBrush="Transparent"/>
+            <TextBlock Grid.Column="4"
+                       Background="#404040"
+                       Foreground="#f7f7fa"
+                       FontSize="18"
+                       Text="Total"
+                       TextAlignment="Center" />
+            <ListView Grid.Row="1"
+                      Grid.Column="4"
+                      BorderBrush="Transparent"
+                      ItemsSource="{Binding SalesOrder}"
+                      DisplayMemberPath="Total"/>
+            <TextBlock Grid.Column="5"
+                       Background="#404040"
+                       />
+            <ListView Grid.Row="1"
+                      Grid.Column="5">
+                <CheckBox />
+            </ListView>
+
+        </Grid>
+
         <Button Command="{Binding SubmitSalesOrderCommand}"
                     Content="Submit"
                     FontSize="16"
