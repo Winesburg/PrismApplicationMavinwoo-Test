@@ -125,6 +125,7 @@ namespace Module.ViewModels
             SalesHeader_Salesperson.Clear();
             SalesOrder.Clear();
             AddSalesTrigger = 0;
+            CanClickSalesOrder();
         }
 
         private void FormatInputs()
@@ -194,11 +195,18 @@ namespace Module.ViewModels
                     SalesOrder.RemoveAt(i);
                 }
             }
+            if (SalesOrder.Count == 0)
+            {
+                SalesOrder.Clear();
+                CanClickSalesOrder();
+            }
 
         }
+
+        // Figure this out later
         private bool CanClickSalesOrder()
         {
-            if(AddSalesTrigger > 0)
+            if(SalesOrder.Count > 0)
             {
                 return true;
             }
@@ -212,8 +220,29 @@ namespace Module.ViewModels
             SalesHeader_Date.Clear();
             SalesHeader_Customer.Clear();
             SalesHeader_Salesperson.Clear();
-            SalesOrder.Clear();
             AddSalesTrigger = 0;
+            if (SalesOrder.Count > 0)
+            {
+                List<string> IncorrectQuantity = new List<string>();
+                for (int i = 0; i < SalesOrder.Count; i++)
+                {
+                    int currentStock = _dataRepository.GetCurrentStock(SalesOrder[i].Item);
+                    _dataRepository.SetStock(currentStock - SalesOrder[i].Quantity, SalesOrder[i].Item);
+                    if(currentStock < SalesOrder[i].Quantity)
+                    {
+                        IncorrectQuantity.Add(SalesOrder[i].Item);
+                    }
+                }
+                if (IncorrectQuantity.Count > 0)
+                {
+                    for (int i = 0; i < IncorrectQuantity.Count; i++)
+                    {
+                        // Loop through list and create a dynamic string to tell user which sale lines
+                        // exceed the inventory in stock
+                    }
+                }
+            }
+            SalesOrder.Clear();
         }
 
         public void GenerateInvList()

@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using PrismApplicationMavinwoo_Test.core.Models;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace PrismApplicationMavinwoo_Test.core.DataAccess
 {
@@ -32,6 +33,8 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<InventoryAddDialogModel> UpdateInventory(string x, string i, string v);
         public List<InventoryAddDialogModel> UpdateNullInventory(string x, string v);
         public List<InventoryAddDialogModel> DeleteInvLine(string v);
+        public int GetCurrentStock(string v);
+        public int SetStock(int v, string x);
 
     }
     public class DataRepository : IDataRepository
@@ -227,6 +230,55 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
             {
                 List<InventoryAddDialogModel> P = Conn.Query<InventoryAddDialogModel>(" Delete from Inventory WHERE Item = '" + v + "' ").AsList();
                 return P;
+            }
+        }
+        public int GetCurrentStock(string v)
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                string sql = " Select In_Stock from Inventory WHERE Item = @value1 ";
+                MySqlCommand cmd = new MySqlCommand(sql, Conn);
+                cmd.Parameters.AddWithValue("@value1", v);
+                int result;
+
+                try
+                {
+                    Conn.Open();
+                    // Use ExecuteScalar for queries that return a single value
+                    result = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    throw;
+                }
+
+                return result;
+            }
+        }
+
+        public int SetStock(int v, string x)
+        {
+            using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                string sql = " UPDATE Inventory SET In_Stock = @value1 WHERE Item = @value2 ";
+                MySqlCommand cmd = new MySqlCommand(sql, Conn);
+                cmd.Parameters.AddWithValue("@value1", v);
+                cmd.Parameters.AddWithValue("@value2", x);
+                int result;
+
+                try
+                {
+                    Conn.Open();
+                    result = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    throw;
+                }
+                
+                return result;
             }
         }
     }
