@@ -224,25 +224,62 @@ namespace Module.ViewModels
             if (SalesOrder.Count > 0)
             {
                 List<string> IncorrectQuantity = new List<string>();
+                string display = "";
                 for (int i = 0; i < SalesOrder.Count; i++)
                 {
                     int currentStock = _dataRepository.GetCurrentStock(SalesOrder[i].Item);
-                    _dataRepository.SetStock(currentStock - SalesOrder[i].Quantity, SalesOrder[i].Item);
+                    
                     if(currentStock < SalesOrder[i].Quantity)
                     {
                         IncorrectQuantity.Add(SalesOrder[i].Item);
+                    }
+                    else
+                    {
+                        _dataRepository.SetStock((currentStock - SalesOrder[i].Quantity), SalesOrder[i].Item);
                     }
                 }
                 if (IncorrectQuantity.Count > 0)
                 {
                     for (int i = 0; i < IncorrectQuantity.Count; i++)
                     {
-                        // Loop through list and create a dynamic string to tell user which sale lines
-                        // exceed the inventory in stock
+                        display += ($"{IncorrectQuantity[i]} \n");
                     }
+                    MessageBoxResult result =  MessageBox.Show($"The following items do not have enough inventory in stock to fill order:\n " +
+                        $"Would you like to automatically reduce order amount to the number available? \n {display}", "", MessageBoxButton.YesNoCancel);
+                    switch(result)
+                    {
+                        case MessageBoxResult.Yes:
+                            MessageBox.Show("Yes selected");
+                            for (int i = 0; i < SalesOrder.Count; i++)
+                            {
+                                for (int j = 0; j < IncorrectQuantity.Count; j++)
+                                {
+                                    if (IncorrectQuantity[j] == SalesOrder[i].Item)
+                                    {
+                                        SalesOrder[i].Quantity = _dataRepository.GetCurrentStock(SalesOrder[i].Item);
+                                    }
+                                }
+                            }
+                            break;
+                        case MessageBoxResult.No:
+                            MessageBoxResult result2 = MessageBox.Show("Would you like to process the Sale as it is?", "", MessageBoxButton.YesNoCancel);
+                            switch (result2)
+                            {
+                                case MessageBoxResult.Yes:
+                                    MessageBox.Show("An order reminder email has been send to 'Dutty@Example.com' ");
+                                    break;
+                            }
+                            break;
+                        case MessageBoxResult.Cancel:
+                            break;
+                    }
+                    IncorrectQuantity.Clear();
+                }
+                else if (IncorrectQuantity.Count == 0)
+                {
+                    SalesOrder.Clear();
                 }
             }
-            SalesOrder.Clear();
         }
 
         public void GenerateInvList()

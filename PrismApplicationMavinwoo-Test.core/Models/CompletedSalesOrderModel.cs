@@ -16,7 +16,7 @@ namespace PrismApplicationMavinwoo_Test.core.Models
         public string Customer { get; set; }
         public string Item { get; set; }
         public decimal? Price { get; set; }
-        public int Quantity { get; set; }
+        public int? Quantity { get; set; }
         public decimal? Total {  get; set; }
         public bool IsClicked { get; set; }
         public string ReturnItem()
@@ -24,7 +24,7 @@ namespace PrismApplicationMavinwoo_Test.core.Models
             return Item;
         }
 
-        public CompletedSalesOrderModel(string DS, string SP, string C, string I, decimal? P, int Q)
+        public CompletedSalesOrderModel(string DS, string SP, string C, string I, decimal? P, int? Q)
         {
             //ID = I_D;
             Date_Sold = DS;

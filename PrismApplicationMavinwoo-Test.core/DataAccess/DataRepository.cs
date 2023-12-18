@@ -34,7 +34,7 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<InventoryAddDialogModel> UpdateNullInventory(string x, string v);
         public List<InventoryAddDialogModel> DeleteInvLine(string v);
         public int GetCurrentStock(string v);
-        public int SetStock(int v, string x);
+        public int SetStock(int? v, string x);
 
     }
     public class DataRepository : IDataRepository
@@ -257,7 +257,7 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
             }
         }
 
-        public int SetStock(int v, string x)
+        public int SetStock(int? v, string x)
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
