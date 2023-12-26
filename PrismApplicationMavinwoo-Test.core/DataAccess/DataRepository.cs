@@ -1,9 +1,12 @@
 ﻿using Dapper;
 using Google.Protobuf.WellKnownTypes;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Common;
+using MySqlX.XDevAPI.Relational;
 using PrismApplicationMavinwoo_Test.core.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 
 namespace PrismApplicationMavinwoo_Test.core.DataAccess
@@ -35,6 +38,11 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public List<InventoryAddDialogModel> DeleteInvLine(string v);
         public int GetCurrentStock(string v);
         public int SetStock(int? v, string x);
+        public List<CustomerAddDialogModel> GetCustomerForSale();
+        public List<Salesperson> GetSalespersonForSale();
+        public int GetSalesOrderNo();
+        public void UpdateSalesOrder(int orderNo, DateTime dateSold, int salesPerson, int customer, decimal Price);
+        public void UpdateOrderLines(string item, decimal price, int unitSold, int orderNo);
 
     }
     public class DataRepository : IDataRepository
@@ -44,7 +52,7 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         {
             using (MySqlConnection Conn = new MySqlConnection(SqlHelper.ConMySQL))
             {
-                return Conn.Query<OrderInfoModel>(" select Order_No, Date_Sold, Salesperson, Customer, Price from Sales_Order ").AsList() ;
+                return Conn.Query<OrderInfoModel>(" select Order_No, Date_Sold, Salesperson, Customer, Price from Sales_Order ").AsList();
             }
         }
         public List<OrderInfoModel> FilterSale(DateTime start, DateTime end)
@@ -277,8 +285,144 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
                     MessageBox.Show(ex.Message);
                     throw;
                 }
-                
+
                 return result;
+            }
+        }
+
+        public List<CustomerAddDialogModel> GetCustomerForSale()
+        {
+            using (MySqlConnection connection = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                connection.Open();
+                string query = "Select Customer, Name from Customer";
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                List<CustomerAddDialogModel> P = connection.Query<CustomerAddDialogModel>(query).ToList();
+                return P;
+            }
+        }
+
+        public List<Salesperson> GetSalespersonForSale()
+        {
+            using (MySqlConnection connection = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                connection.Open();
+                string query = "Select ID, Name from Salespersons";
+                List<Salesperson> P = connection.Query<Salesperson>(query).ToList();
+                return P;
+            }
+        }
+
+        public int GetSalesOrderNo()
+        {
+            using(MySqlConnection connection = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                string query = "Select MAX(Order_No) from Sales_Order";
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                int result;
+
+                try
+                {
+                    connection.Open();
+                    result = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    throw;
+                }
+                return result;
+
+            }
+        }
+        //public int GetCustomerCount()
+        //{
+        //    using (MySqlConnection connection = new MySqlConnection(SqlHelper.ConMySQL))
+        //    {
+        //        string query = "Select Count(Customer) From Customer";
+        //        MySqlCommand cmd = new MySqlCommand(query, connection);
+        //        int result;
+
+        //        try
+        //        {
+        //            connection.Open();
+        //            result = Convert.ToInt32(cmd.ExecuteScalar());
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show(ex.Message);
+        //            throw;
+        //        }
+        //        return result;
+        //    }
+        //}
+
+        //public int GetSalespersonCount()
+        //{
+        //    using (MySqlConnection connection = new MySqlConnection(SqlHelper.ConMySQL))
+        //    {
+        //        string query = "Select Count(Customer) From Customer";
+        //        MySqlCommand cmd = new MySqlCommand(query, connection);
+        //        int result;
+
+        //        try
+        //        {
+        //            connection.Open();
+        //            result = Convert.ToInt32(cmd.ExecuteScalar());
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show(ex.Message);
+        //            throw;
+        //        }
+        //        return result;
+        //    }
+        //}
+        public void UpdateSalesOrder(int orderNo, DateTime dateSold, int salesPerson, int customer, decimal Price)
+        {
+            using (MySqlConnection connection = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                string query = "Insert Into Sales_Order(Order_No, Date_Sold, Salesperson, Customer, Price) Value(@value1, @value2, @value3, @value4, @value5)";
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@value1", orderNo);
+                cmd.Parameters.AddWithValue("@value2", dateSold);
+                cmd.Parameters.AddWithValue("@value3", salesPerson);
+                cmd.Parameters.AddWithValue("@value4", customer);
+                cmd.Parameters.AddWithValue("@value5", Price);
+
+                try
+                {
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    throw;
+                }
+            }
+        }
+        public void UpdateOrderLines(string item, decimal price, int unitSold, int orderNo)
+        {
+            using (MySqlConnection connection = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                string query = "Insert Into Order_Lines (Item, Price, Units_Sold, Order_No) Value (@value1, @value2, @value3, @value4)";
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@value1", item);
+                cmd.Parameters.AddWithValue("@value2", price);
+                cmd.Parameters.AddWithValue("@value3", unitSold);
+                cmd.Parameters.AddWithValue("@value4", orderNo);
+
+                try
+                {
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    throw;
+                }
             }
         }
     }

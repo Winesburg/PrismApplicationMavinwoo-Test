@@ -17,7 +17,7 @@
             <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterScreen" />
         </Style>
     </prism:Dialog.WindowStyle>
-    
+
     <Grid Margin="25">
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
@@ -28,7 +28,7 @@
             <RowDefinition Height="30" />
             <RowDefinition />
             <RowDefinition Height="30"/>
-            
+
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -61,7 +61,7 @@
                  NoneDateText="Select the Date"
                  ShowMaskOnNullValue="False"
                  IsEmptyDateEnabled="True">
-                
+
             </syncfusion:DateTimeEdit>
         </StackPanel>
         <StackPanel Grid.Column="1"
@@ -110,18 +110,18 @@
                     </Button.Resources>
                 </Button>
             </StackPanel>
-             <ComboBox Width="150"
+            <ComboBox Width="150"
                        Height="25"
                        SelectedItem="{Binding ItemCustomerConn}">
-                 <ComboBoxItem Content="Mountain Outfitters"/>
-                 <ComboBoxItem Content="East Coast Customs"/>
-                 <ComboBoxItem Content="Denver Exporters"/>
-                 <ComboBoxItem Content="Pheonix Resell"/>
-                 <ComboBoxItem Content="Miami Money"/>
-                 <ComboBoxItem Content="Cali-Flowers"/>
-                 <ComboBoxItem Content="Cleveland Retail"/>
-                 <ComboBoxItem Content="Chicago GoodSales"/>
-             </ComboBox>
+                <ComboBoxItem Content="Mountain Outfitters"/>
+                <ComboBoxItem Content="East Coast Customs"/>
+                <ComboBoxItem Content="Denver Exporters"/>
+                <ComboBoxItem Content="Pheonix Resell"/>
+                <ComboBoxItem Content="Miami Money"/>
+                <ComboBoxItem Content="Cali-Flowers"/>
+                <ComboBoxItem Content="Cleveland Retail"/>
+                <ComboBoxItem Content="Chicago GoodSales"/>
+            </ComboBox>
         </StackPanel>
 
         <StackPanel Grid.Row="2"
@@ -134,7 +134,7 @@
                        Margin="0 4 0 0">
             </TextBlock>
         </StackPanel>
-        
+
 
         <ListView Grid.Row="3"
                   Grid.RowSpan="2"
@@ -185,7 +185,7 @@
                 </Button.Resources>
             </Button>
         </StackPanel>
-        
+
         <ListView  ItemsSource ="{Binding SalesHeader_Date}"
                        Background="LightGray"
                        BorderBrush="LightGray"
@@ -224,9 +224,10 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition />
+                <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
 
-    
+
             <TextBlock 
                        Background="#404040"
                        Foreground="#f7f7fa"
@@ -249,7 +250,7 @@
                       HorizontalAlignment="Center"
                       ItemsSource="{Binding SalesOrder}"
                       DisplayMemberPath="Price"
-                      BorderBrush="Transparent"/>
+                      BorderBrush="Transparent" />
             <TextBlock Grid.Column="2"
                        Background="#404040"
                        Foreground="#f7f7fa"
@@ -293,6 +294,28 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
+            <TextBlock 
+                Background="#404040"
+                Foreground="#f7f7fa"
+                Grid.Row="3"
+                FontSize="18"
+                Text="Amount Due"
+                TextAlignment="Center" />
+            <TextBlock 
+                Background="#404040"
+                Grid.Row="3"
+                Grid.Column="1"
+                Grid.ColumnSpan="2"/>
+            <TextBlock 
+                Background="#404040"
+                Foreground="#f7f7fa"
+                Grid.Row="3"
+                Grid.Column="3"
+                Grid.ColumnSpan="2"
+                FontSize="18"
+                Text="{Binding AmountDue}"
+                TextAlignment="Center" />
+
         </Grid>
 
         <Button Command="{Binding SubmitSalesOrderCommand}"
@@ -303,12 +326,12 @@
                     HorizontalAlignment="Stretch"
                     Margin="10 2 10 0"
                     Grid.Row="7">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="5"/>
-                    </Style>
-                </Button.Resources>
-                
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="5"/>
+                </Style>
+            </Button.Resources>
+
         </Button>
         <Button Command="{Binding ClearSalesOrderCommand}"
                 Content="Clear"
@@ -335,14 +358,14 @@
                     VerticalAlignment="Center"
                     HorizontalAlignment="Stretch"
                     Margin="10 2 10 0">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="5"/>
-                    </Style>
-                </Button.Resources>
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="5"/>
+                </Style>
+            </Button.Resources>
 
-            </Button>
-        
+        </Button>
+
 
     </Grid>
 </UserControl>

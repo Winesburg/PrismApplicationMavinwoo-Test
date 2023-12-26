@@ -9,7 +9,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Windows;
+using System.Windows.Controls;
+using System.Threading;
 
 namespace Module.ViewModels
 {
@@ -29,8 +33,26 @@ namespace Module.ViewModels
         private ObservableCollection<string> _salesHeader_Salesperson;
         private ObservableCollection<string> _salesHeader_Customer;
         private int _addSalesTrigger;
+        private decimal? _amountDue = 0;
+        private Dictionary<string, int> _customers;
 
-
+        public Dictionary<string, int> Customers
+        {
+            get => _customers;
+            set
+            {
+                SetProperty(ref _customers, value);
+            }
+        }
+        public decimal? AmountDue
+        {
+            get => _amountDue;
+            set
+            {
+                SetProperty(ref _amountDue, value);
+                RaisePropertyChanged(nameof(AmountDue));
+            }
+        }
         public int AddSalesTrigger 
         { 
             get => _addSalesTrigger;
@@ -84,8 +106,14 @@ namespace Module.ViewModels
             get => _salesOrder; 
             set 
             { 
-                SetProperty(ref _salesOrder, value);
-                RaisePropertyChanged(nameof(SalesOrder));
+                //SetProperty(ref _salesOrder, value);
+                //RaisePropertyChanged(nameof(SalesOrder));
+                
+                if (_salesOrder != value)
+                {
+                    _salesOrder = value;                           
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SalesOrder)));
+                }
             } 
         }
         public InventoryAddDialogModel SelItem { get => _selItem; set { SetProperty(ref _selItem, value); } }
@@ -120,12 +148,12 @@ namespace Module.ViewModels
 
         private void ClearSalesOrder()
         {
-            SalesHeader_Date.Clear();
-            SalesHeader_Customer.Clear();
-            SalesHeader_Salesperson.Clear();
-            SalesOrder.Clear();
-            AddSalesTrigger = 0;
-            CanClickSalesOrder();
+            //SalesHeader_Date.Clear();
+            //SalesHeader_Customer.Clear();
+            //SalesHeader_Salesperson.Clear();
+            //SalesOrder.Clear();
+            //AddSalesTrigger = 0;
+            //CanClickSalesOrder();
         }
 
         private void FormatInputs()
@@ -143,17 +171,18 @@ namespace Module.ViewModels
 
         private void AddSalesLine()
         {
-                if (ItemDateConn != null && ItemPriceConn != null && ItemQuantityConn != null && SelItem != null)
-                {
-                    string item_date = ItemDateConn.Replace(" 12:00:00 AM", "");
-                    string ItemSalesperson = ItemSalespersonConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
-                    string item_customer = ItemCustomerConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
-                    string item_item = SelItem.Item;
-                    decimal? item_price = ItemPriceConn;
-                    int? item_quantity = ItemQuantityConn;
-                    SalesOrder.Add(new CompletedSalesOrderModel(item_date, ItemSalesperson, item_customer, item_item, item_price, item_quantity));
-
-                    if(SalesOrder.Count > 1)
+            if (ItemDateConn != null && ItemPriceConn != null && ItemQuantityConn != null && SelItem != null)
+            {
+                string item_date = ItemDateConn.Replace(" 12:00:00 AM", "");
+                string ItemSalesperson = ItemSalespersonConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+                string item_customer = ItemCustomerConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+                string item_item = SelItem.Item;
+                decimal? item_price = ItemPriceConn;
+                int? item_quantity = ItemQuantityConn;
+                SalesOrder.Add(new CompletedSalesOrderModel(item_date, ItemSalesperson, item_customer, item_item, item_price, item_quantity));
+                AmountDue += SalesOrder[SalesOrder.Count-1].Total;
+               
+                    if (SalesOrder.Count > 1)
                     {
                         for (int i = 1;  i < SalesOrder.Count; i++)
                         {
@@ -192,6 +221,7 @@ namespace Module.ViewModels
             {
                 if (SalesOrder[i].IsClicked == true)
                 {
+                    AmountDue -= SalesOrder[i].Total;
                     SalesOrder.RemoveAt(i);
                 }
             }
@@ -223,43 +253,58 @@ namespace Module.ViewModels
             AddSalesTrigger = 0;
             if (SalesOrder.Count > 0)
             {
+
+                //Updates Order_Lines Table
+                UpdateOrderLineTable();
+                //  Updates Sales_Order Table
+                DateTime item_date = Convert.ToDateTime(ItemDateConn.Replace(" 12:00:00 AM", ""));
+                _dataRepository.UpdateSalesOrder(FindSalesOrderNumber() + 1, item_date, FindSaleSalesperson(), FindSaleCustomer(), (decimal)AmountDue);
+
+
+                // Initial loop that iterates through the entire Sales Order
                 List<string> IncorrectQuantity = new List<string>();
-                string display = "";
                 for (int i = 0; i < SalesOrder.Count; i++)
                 {
                     int currentStock = _dataRepository.GetCurrentStock(SalesOrder[i].Item);
-                    
-                    if(currentStock < SalesOrder[i].Quantity)
+
+                    if (currentStock < SalesOrder[i].Quantity)
                     {
                         IncorrectQuantity.Add(SalesOrder[i].Item);
                     }
                     else
                     {
+                        //  Updates Inventory Table
                         _dataRepository.SetStock((currentStock - SalesOrder[i].Quantity), SalesOrder[i].Item);
+
                     }
                 }
+
+                string display = ""; 
                 if (IncorrectQuantity.Count > 0)
                 {
                     for (int i = 0; i < IncorrectQuantity.Count; i++)
                     {
                         display += ($"{IncorrectQuantity[i]} \n");
                     }
-                    MessageBoxResult result =  MessageBox.Show($"The following items do not have enough inventory in stock to fill order:\n " +
-                        $"Would you like to automatically reduce order amount to the number available? \n {display}", "", MessageBoxButton.YesNoCancel);
-                    switch(result)
+                    MessageBoxResult result = MessageBox.Show($"The following items do not have enough inventory in stock to fill order:\n {display} \n " +
+                        $"Would you like to automatically reduce order amount to the number available?", "", MessageBoxButton.YesNoCancel);
+                    switch (result)
                     {
                         case MessageBoxResult.Yes:
-                            MessageBox.Show("Yes selected");
                             for (int i = 0; i < SalesOrder.Count; i++)
                             {
                                 for (int j = 0; j < IncorrectQuantity.Count; j++)
                                 {
                                     if (IncorrectQuantity[j] == SalesOrder[i].Item)
                                     {
+                                        Console.Write(SalesOrder[i].Quantity);
                                         SalesOrder[i].Quantity = _dataRepository.GetCurrentStock(SalesOrder[i].Item);
+                                        Console.Write(SalesOrder[i].Quantity);
+                                        _dataRepository.SetStock(SalesOrder[i].Quantity - SalesOrder[i].Quantity, SalesOrder[i].Item);
                                     }
                                 }
                             }
+
                             break;
                         case MessageBoxResult.No:
                             MessageBoxResult result2 = MessageBox.Show("Would you like to process the Sale as it is?", "", MessageBoxButton.YesNoCancel);
@@ -279,7 +324,96 @@ namespace Module.ViewModels
                 {
                     SalesOrder.Clear();
                 }
+
             }
+            
+            
+
+
+                ///////// Sets up and sends auto email
+               
+            //string senderEmail = "11kurtzd@gmail.com";
+            //string senderPassword = "rrjc ocml wthc xzjj";
+            //string recipientEmail = "11kurtzd@gmail.com";
+
+            //string smtpServer = "smtp.gmail.com";
+            //int smtpPort = 587; // For Gmail, use 587
+
+            //// Create a new MailMessage
+            //MailMessage mail = new MailMessage(senderEmail, recipientEmail);
+            //mail.Subject = "Test Email";
+            ////mail.IsBodyHtml = true;
+            //string htmlBody = "<p>This is an intro</p><p>This is a paragraph</p>";
+
+            ////<img src='cid:emailPhoto'></img>
+            ////string imagePath = @"C:\\Users\\dustin\\source\\repos\\PrismApplicationMavinwoo-Test\\PrismApplicationMavinwoo-Test\\Resources\\delete.png";
+            ////LinkedResource linkedImage = new LinkedResource(imagePath);
+            ////linkedImage.ContentId = "emailPhoto";
+            ////mail.Attachments.Add(new Attachment(imagePath));
+            //AlternateView htmlView = AlternateView.CreateAlternateViewFromString(htmlBody, null, "text/html");
+            ////htmlView.LinkedResources.Add(linkedImage);
+            //mail.AlternateViews.Add(htmlView);
+
+
+            //// Configure the SMTP client
+            //SmtpClient smtpClient = new SmtpClient(smtpServer);
+            //smtpClient.Port = smtpPort;
+            //smtpClient.Credentials = new NetworkCredential(senderEmail, senderPassword);
+            //smtpClient.EnableSsl = true; // Enable SSL for secure connections
+
+            //try
+            //{
+            //    // Send the email
+            //    smtpClient.Send(mail);
+            //    Console.WriteLine("Email sent successfully.");
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"Error: {ex.Message}");
+            //}
+        }
+
+        private int FindSalesOrderNumber()
+        {
+            int id = _dataRepository.GetSalesOrderNo();
+            return id;
+        }
+        private int FindSaleCustomer()
+        {
+            List<CustomerAddDialogModel> listOfCustomers = _dataRepository.GetCustomerForSale();
+            string replacementCustomer = ItemCustomerConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            for (int x = 0; x < listOfCustomers.Count; x++)
+            {
+                if (listOfCustomers[x].Name == replacementCustomer)
+                {
+                    return listOfCustomers[x].Customer;
+                }
+            }
+            return 0;
+        }
+
+        private int FindSaleSalesperson()
+        {
+            List<Salesperson> listOfCustomers = _dataRepository.GetSalespersonForSale();
+            string replacementSalesperson = ItemSalespersonConn.Replace("System.Windows.Controls.ComboBoxItem: ", "");
+            for (int x = 0; x < listOfCustomers.Count; x++)
+            {
+                if (listOfCustomers[x].Name == replacementSalesperson)
+                {
+                    return listOfCustomers[x].Id;
+                }
+            }
+            return 0;
+        }
+
+        private void UpdateOrderLineTable()
+        {
+            int orderNumber = FindSalesOrderNumber() + 1;
+            for (int i = 0; i < SalesOrder.Count; i++)
+            {
+                _dataRepository.UpdateOrderLines(SalesOrder[i].Item, (decimal)SalesOrder[i].Price, (int)SalesOrder[i].Quantity, orderNumber);
+            }
+
         }
 
         public void GenerateInvList()
