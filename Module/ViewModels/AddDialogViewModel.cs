@@ -9,6 +9,8 @@ using System.Windows;
 
 namespace Module.ViewModels
 {
+
+    // Defines the logic for Dialog View that adds a new Customer
     public class AddDialogViewModel : BindableBase, IDialogAware
     {
         private IDataRepository _dataRepository;
@@ -20,6 +22,7 @@ namespace Module.ViewModels
         private string _zip;
         private string _phone;
         private ObservableCollection<CustomerAddDialogModel> _addCust;
+
         public string Name { get => _name; set => _name = value; }
         public string Address { get => _address; set => _address = value; }
         public string City { get => _city; set => _city = value; }
@@ -31,13 +34,14 @@ namespace Module.ViewModels
             get { return _message; }
             set { SetProperty(ref _message, value); }
         }
-        public DelegateCommand CloseDialogCommand { get; }
-        public DelegateCommand AddCustomerCommand { get; }
         public ObservableCollection<CustomerAddDialogModel> AddCust
         {
             get { return _addCust; }
             set { SetProperty(ref _addCust, value); }
         }
+        public DelegateCommand CloseDialogCommand { get; }
+        public DelegateCommand AddCustomerCommand { get; }
+        
         public AddDialogViewModel(IDataRepository dataRepository)
         {
             _dataRepository = dataRepository;
@@ -48,11 +52,11 @@ namespace Module.ViewModels
 
         private void AddCustomer()
         {
-            // Add data validation
             try
             { 
                 if (Name != null && Address != null && City != null && State != null && Zip != null && Phone != null) 
                 {
+                    //  Checks to see if numbers to entered into these fields
                     try
                     {
                         Convert.ToInt32(Zip);
@@ -63,7 +67,7 @@ namespace Module.ViewModels
                         MessageBox.Show("Invalid Input", "", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
 
-                    string formattedPhone = string.Empty;
+                    //  Cycles through and formats Phone number in order for it to be entered in database
                     if (Phone.Contains('-') == true || Phone.Contains('(') == true || Phone.Contains(')') == true || Phone.Contains('/') == true)
                     {
                         string Phone1 = Phone.Replace("(", "");
@@ -82,9 +86,9 @@ namespace Module.ViewModels
                     MessageBox.Show("Invalid Input", "", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Invalid Input", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, "", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -109,7 +113,7 @@ namespace Module.ViewModels
 
         public void OnDialogClosed()
         {
-            
+            return;
         }
 
         public void OnDialogOpened(IDialogParameters parameters)

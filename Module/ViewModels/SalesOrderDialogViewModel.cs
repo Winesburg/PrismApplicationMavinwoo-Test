@@ -21,27 +21,63 @@ namespace Module.ViewModels
     {
         private IDataRepository _dataRepository;
         private IDialogService _dialogService;
-        private ObservableCollection<InventoryAddDialogModel> _listOfInv;
-        private InventoryAddDialogModel _selItem;
-        private ObservableCollection<CompletedSalesOrderModel> _salesOrder;
         private string? _itemDateConn;
         private string _itemSalespersonConn;
         private string _itemCustomerConn;
         private decimal? _itemPriceConn;
         private int? _itemQuantityConn;
+        private int _addSalesTrigger;
+        private decimal? _amountDue = 0;
+        private InventoryAddDialogModel _selItem;
         private ObservableCollection<string> _salesHeader_Date;
         private ObservableCollection<string> _salesHeader_Salesperson;
         private ObservableCollection<string> _salesHeader_Customer;
-        private int _addSalesTrigger;
-        private decimal? _amountDue = 0;
-        private Dictionary<string, int> _customers;
+        private ObservableCollection<InventoryAddDialogModel> _listOfInv;
+        private ObservableCollection<CompletedSalesOrderModel> _salesOrder;
 
-        public Dictionary<string, int> Customers
+        //private Dictionary<string, int> _customers;
+
+        //public Dictionary<string, int> Customers
+        //{
+        //    get => _customers;
+        //    set
+        //    {
+        //        SetProperty(ref _customers, value);
+        //    }
+        //}
+        public string? ItemDateConn { get => _itemDateConn; set { SetProperty(ref _itemDateConn, value); } }
+        public string ItemSalespersonConn { get => _itemSalespersonConn; set { SetProperty(ref _itemSalespersonConn, value); } }
+        public string ItemCustomerConn { get => _itemCustomerConn; set { SetProperty(ref _itemCustomerConn, value); } }
+        public decimal? ItemPriceConn
         {
-            get => _customers;
+            get => _itemPriceConn;
             set
             {
-                SetProperty(ref _customers, value);
+                SetProperty(ref _itemPriceConn, value);
+                RaisePropertyChanged(nameof(_itemPriceConn));
+                AddSalesLineCommand.RaiseCanExecuteChanged();
+            }
+        }
+        public int? ItemQuantityConn
+        {
+            get => _itemQuantityConn;
+            set
+            {
+                SetProperty(ref _itemQuantityConn, value);
+                RaisePropertyChanged(nameof(_itemQuantityConn));
+                AddSalesLineCommand.RaiseCanExecuteChanged();
+            }
+        }
+        public int AddSalesTrigger
+        {
+            get => _addSalesTrigger;
+            set
+            {
+                SetProperty(ref _addSalesTrigger, value);
+                RaisePropertyChanged(nameof(_addSalesTrigger));
+                SubmitSalesOrderCommand.RaiseCanExecuteChanged();
+                ClearSalesOrderCommand.RaiseCanExecuteChanged();
+                DeleteOrderLineCommand.RaiseCanExecuteChanged();
             }
         }
         public decimal? AmountDue
@@ -53,42 +89,7 @@ namespace Module.ViewModels
                 RaisePropertyChanged(nameof(AmountDue));
             }
         }
-        public int AddSalesTrigger 
-        { 
-            get => _addSalesTrigger;
-            set 
-            { 
-                SetProperty(ref _addSalesTrigger, value);
-                RaisePropertyChanged(nameof(_addSalesTrigger));
-                SubmitSalesOrderCommand.RaiseCanExecuteChanged();
-                ClearSalesOrderCommand.RaiseCanExecuteChanged();
-                DeleteOrderLineCommand.RaiseCanExecuteChanged();
-            } 
-        }
-        public string? ItemDateConn { get => _itemDateConn; set { SetProperty(ref _itemDateConn, value); } }
-        public string ItemSalespersonConn { get => _itemSalespersonConn; set { SetProperty(ref _itemSalespersonConn, value); } }
-        public string ItemCustomerConn { get => _itemCustomerConn; set { SetProperty(ref _itemCustomerConn, value); } }
-        public decimal? ItemPriceConn 
-        { 
-            get => _itemPriceConn; 
-            set 
-            { 
-                SetProperty(ref _itemPriceConn, value);
-                RaisePropertyChanged(nameof(_itemPriceConn));
-                AddSalesLineCommand.RaiseCanExecuteChanged();
-            } 
-        }
-        public int? ItemQuantityConn 
-        { 
-            get => _itemQuantityConn; 
-            set 
-            { 
-                SetProperty(ref _itemQuantityConn, value);
-                RaisePropertyChanged(nameof(_itemQuantityConn));
-                AddSalesLineCommand.RaiseCanExecuteChanged();
-            } 
-        }
-
+        public InventoryAddDialogModel SelItem { get => _selItem; set { SetProperty(ref _selItem, value); } }
         public ObservableCollection<string> SalesHeader_Date 
         { 
             get => _salesHeader_Date; 
@@ -98,9 +99,9 @@ namespace Module.ViewModels
                 RaisePropertyChanged(nameof(SalesHeader_Date));
             }
         }
-
         public ObservableCollection<string> SalesHeader_Salesperson { get => _salesHeader_Salesperson; set { SetProperty(ref _salesHeader_Salesperson, value); } }
         public ObservableCollection<string> SalesHeader_Customer { get => _salesHeader_Customer; set { SetProperty(ref _salesHeader_Customer, value); } }
+        public ObservableCollection<InventoryAddDialogModel> ListOfInv { get => _listOfInv; set { SetProperty(ref _listOfInv, value); } }
         public ObservableCollection<CompletedSalesOrderModel> SalesOrder 
         { 
             get => _salesOrder; 
@@ -116,8 +117,6 @@ namespace Module.ViewModels
                 }
             } 
         }
-        public InventoryAddDialogModel SelItem { get => _selItem; set { SetProperty(ref _selItem, value); } }
-        public ObservableCollection<InventoryAddDialogModel> ListOfInv { get => _listOfInv; set { SetProperty(ref _listOfInv, value); } }
         public DelegateCommand NewCustomerCommand { get; set; }
         public DelegateCommand TestCommand { get; set; }
         public DelegateCommand AddSalesLineCommand { get; set; }
@@ -148,12 +147,12 @@ namespace Module.ViewModels
 
         private void ClearSalesOrder()
         {
-            //SalesHeader_Date.Clear();
-            //SalesHeader_Customer.Clear();
-            //SalesHeader_Salesperson.Clear();
-            //SalesOrder.Clear();
-            //AddSalesTrigger = 0;
-            //CanClickSalesOrder();
+            SalesHeader_Date.Clear();
+            SalesHeader_Customer.Clear();
+            SalesHeader_Salesperson.Clear();
+            SalesOrder.Clear();
+            AddSalesTrigger = 0;
+            CanClickSalesOrder();
         }
 
         private void FormatInputs()
@@ -232,8 +231,6 @@ namespace Module.ViewModels
             }
 
         }
-
-        // Figure this out later
         private bool CanClickSalesOrder()
         {
             if(SalesOrder.Count > 0)
@@ -255,10 +252,10 @@ namespace Module.ViewModels
             {
 
                 //Updates Order_Lines Table
-                UpdateOrderLineTable();
+                //UpdateOrderLineTable();
                 //  Updates Sales_Order Table
                 DateTime item_date = Convert.ToDateTime(ItemDateConn.Replace(" 12:00:00 AM", ""));
-                _dataRepository.UpdateSalesOrder(FindSalesOrderNumber() + 1, item_date, FindSaleSalesperson(), FindSaleCustomer(), (decimal)AmountDue);
+                //_dataRepository.UpdateSalesOrder(FindSalesOrderNumber() + 1, item_date, FindSaleSalesperson(), FindSaleCustomer(), (decimal)AmountDue);
 
 
                 // Initial loop that iterates through the entire Sales Order
@@ -275,10 +272,10 @@ namespace Module.ViewModels
                     {
                         //  Updates Inventory Table
                         _dataRepository.SetStock((currentStock - SalesOrder[i].Quantity), SalesOrder[i].Item);
-
+                        _dataRepository.UpdateSalesOrder(FindSalesOrderNumber() + 1, item_date, FindSaleSalesperson(), FindSaleCustomer(), (decimal)AmountDue);
+                        UpdateOrderLineTable();
                     }
                 }
-
                 string display = ""; 
                 if (IncorrectQuantity.Count > 0)
                 {
@@ -297,10 +294,11 @@ namespace Module.ViewModels
                                 {
                                     if (IncorrectQuantity[j] == SalesOrder[i].Item)
                                     {
-                                        Console.Write(SalesOrder[i].Quantity);
+                                        // Need to update Sales and order Tables after decision is made
                                         SalesOrder[i].Quantity = _dataRepository.GetCurrentStock(SalesOrder[i].Item);
-                                        Console.Write(SalesOrder[i].Quantity);
-                                        _dataRepository.SetStock(SalesOrder[i].Quantity - SalesOrder[i].Quantity, SalesOrder[i].Item);
+                                        UpdateOrderLineTable();
+                                        _dataRepository.UpdateSalesOrder(FindSalesOrderNumber() + 1, item_date, FindSaleSalesperson(), FindSaleCustomer(), (decimal)AmountDue);
+                                        _dataRepository.SetStock(0, SalesOrder[i].Item);
                                     }
                                 }
                             }
@@ -311,7 +309,43 @@ namespace Module.ViewModels
                             switch (result2)
                             {
                                 case MessageBoxResult.Yes:
-                                    MessageBox.Show("An order reminder email has been send to 'Dutty@Example.com' ");
+
+                                    ///////// Sets up and sends auto email
+                                    string senderEmail = "11kurtzd@gmail.com";
+                                    string senderPassword = "rrjc ocml wthc xzjj";
+                                    string recipientEmail = "11kurtzd@gmail.com";
+
+                                    string smtpServer = "smtp.gmail.com";
+                                    int smtpPort = 587;
+
+                                    // Create a new MailMessage
+                                    MailMessage mail = new MailMessage(senderEmail, recipientEmail);
+                                    mail.Subject = "Test Email";
+                                    string htmlBody = $"<p>The inventory of the following item(s) should be checked.</p>" +
+                                                      $"<p>The quantity sold surpassed the quantity in stock in Order Number: <b>{FindSalesOrderNumber()}</b></p><br>" +
+                                                      $"<p>{display}</p>";
+                                    AlternateView htmlView = AlternateView.CreateAlternateViewFromString(htmlBody, null, "text/html");
+                                    mail.AlternateViews.Add(htmlView);
+
+
+                                    // Configure the SMTP client
+                                    SmtpClient smtpClient = new SmtpClient(smtpServer);
+                                    smtpClient.Port = smtpPort;
+                                    smtpClient.Credentials = new NetworkCredential(senderEmail, senderPassword);
+                                    smtpClient.EnableSsl = true; // Enable SSL for secure connections
+
+                                    try
+                                    {
+                                        // Send the email
+                                        smtpClient.Send(mail);
+                                        MessageBox.Show("An order reminder email has been send to 'Email@Example.com' ");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        MessageBox.Show($"Error: {ex.Message}");
+                                    }
+                                    break;
+                                case MessageBoxResult.No:
                                     break;
                             }
                             break;
@@ -326,51 +360,13 @@ namespace Module.ViewModels
                 }
 
             }
-            
-            
 
 
-                ///////// Sets up and sends auto email
-               
-            //string senderEmail = "11kurtzd@gmail.com";
-            //string senderPassword = "rrjc ocml wthc xzjj";
-            //string recipientEmail = "11kurtzd@gmail.com";
-
-            //string smtpServer = "smtp.gmail.com";
-            //int smtpPort = 587; // For Gmail, use 587
-
-            //// Create a new MailMessage
-            //MailMessage mail = new MailMessage(senderEmail, recipientEmail);
-            //mail.Subject = "Test Email";
-            ////mail.IsBodyHtml = true;
-            //string htmlBody = "<p>This is an intro</p><p>This is a paragraph</p>";
-
-            ////<img src='cid:emailPhoto'></img>
-            ////string imagePath = @"C:\\Users\\dustin\\source\\repos\\PrismApplicationMavinwoo-Test\\PrismApplicationMavinwoo-Test\\Resources\\delete.png";
-            ////LinkedResource linkedImage = new LinkedResource(imagePath);
-            ////linkedImage.ContentId = "emailPhoto";
-            ////mail.Attachments.Add(new Attachment(imagePath));
-            //AlternateView htmlView = AlternateView.CreateAlternateViewFromString(htmlBody, null, "text/html");
-            ////htmlView.LinkedResources.Add(linkedImage);
-            //mail.AlternateViews.Add(htmlView);
 
 
-            //// Configure the SMTP client
-            //SmtpClient smtpClient = new SmtpClient(smtpServer);
-            //smtpClient.Port = smtpPort;
-            //smtpClient.Credentials = new NetworkCredential(senderEmail, senderPassword);
-            //smtpClient.EnableSsl = true; // Enable SSL for secure connections
 
-            //try
-            //{
-            //    // Send the email
-            //    smtpClient.Send(mail);
-            //    Console.WriteLine("Email sent successfully.");
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Error: {ex.Message}");
-            //}
+
+           
         }
 
         private int FindSalesOrderNumber()
@@ -468,12 +464,12 @@ namespace Module.ViewModels
 
         public void OnDialogClosed()
         {
-            
+            return;
         }
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
-           
+            return;
         }
     }
 }

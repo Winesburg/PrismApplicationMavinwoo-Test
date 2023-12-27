@@ -23,43 +23,51 @@ namespace Module.ViewModels
         private int _displayAddIndex = 2;
         private int _displayDeleteIndex = 0;
         private int _displayUpdateIndex = 0;
+        //private int delDateFormat;
         private string? _selection;
         private string _propertySelection;
         private string _newPropertyValue;
         private InventoryAddDialogModel _selectedInventory;
+        private InventoryAddDialogModel? _delInv;
         private ObservableCollection<InventoryAddDialogModel> _inventoryData;
         private ObservableCollection<InventoryAddDialogModel> _invItems;
         private ObservableCollection<InventoryAddDialogModel> _listOfInv;
-        private int delDateFormat;
-        private InventoryAddDialogModel? _delInv;
-
-
-        public InventoryAddDialogModel? DelInv
+        public string Item
         {
-            get => _delInv;
-            set
-            {
-                SetProperty(ref _delInv, value);
-                RaisePropertyChanged(nameof(DelInv));
-            }
-        }
-        public int DelDateFormat 
-        { 
-            get => delDateFormat;
-            set
-            { 
-                SetProperty(ref delDateFormat, value); 
-                RaisePropertyChanged(nameof(DelDateFormat));
-            } 
-        }
-        public string Item 
-        { 
             get => _item;
             set
             {
                 SetProperty(ref _item, value);
                 RaisePropertyChanged(nameof(Item));
                 AddInventoryCommand.RaiseCanExecuteChanged();
+            }
+        }
+        public string ReorderLimit
+        {
+            get => _reorderLimit;
+            set
+            {
+                SetProperty(ref _reorderLimit, value);
+                RaisePropertyChanged(nameof(ReorderLimit));
+                AddInventoryCommand.RaiseCanExecuteChanged();
+            }
+        }
+        public string? DeliveryDate
+        {
+            get => _deliveryDate;
+            set
+            {
+                SetProperty(ref _deliveryDate, value);
+                RaisePropertyChanged(nameof(DeliveryDate));
+            }
+        }
+        public string? OnOrder
+        {
+            get => _onOrder;
+            set
+            {
+                SetProperty(ref _onOrder, value);
+                RaisePropertyChanged(nameof(OnOrder));
             }
         }
         public string InStock
@@ -72,66 +80,28 @@ namespace Module.ViewModels
                 AddInventoryCommand.RaiseCanExecuteChanged();
             }
         }
-        public string? OnOrder 
-        { 
-            get => _onOrder;
-            set 
-            { 
-                SetProperty(ref _onOrder, value);
-                RaisePropertyChanged(nameof(OnOrder));
-            } 
-        }
-        public string? DeliveryDate 
-        { 
-            get => _deliveryDate;
-            set
-            {
-                SetProperty(ref _deliveryDate, value);
-                RaisePropertyChanged(nameof(DeliveryDate));
-            } 
-        }
-        public string ReorderLimit
-        {
-            get => _reorderLimit;
-            set
-            {
-                SetProperty(ref _reorderLimit, value);
-                RaisePropertyChanged(nameof(ReorderLimit));
-                AddInventoryCommand.RaiseCanExecuteChanged();
-            }
-        }
         public int DisplayInventoryIndex { get => _displayInventoryIndex; set { SetProperty(ref _displayInventoryIndex, value); } }
         public int DisplayAddIndex { get => _displayAddIndex; set { SetProperty(ref _displayAddIndex, value); } }
         public int DisplayDeleteIndex { get => _displayDeleteIndex; set { SetProperty(ref _displayDeleteIndex, value); } }
         public int DisplayUpdateIndex { get => _displayUpdateIndex; set { SetProperty(ref _displayUpdateIndex, value); } }
-        public string NewPropertyValue 
-        { 
-            get => _newPropertyValue; 
-            set 
-            { 
-                SetProperty(ref _newPropertyValue, value);
-                RaisePropertyChanged(nameof(_newPropertyValue));
-            } 
-        }
-        public InventoryAddDialogModel SelectedInventory
+        //public int DelDateFormat
+        //{
+        //    get => delDateFormat;
+        //    set
+        //    {
+        //        SetProperty(ref delDateFormat, value);
+        //        RaisePropertyChanged(nameof(DelDateFormat));
+        //    }
+        //}
+        public string? Selection
         {
-            get => _selectedInventory;
+            get => _selection;
             set
             {
-                SetProperty( ref _selectedInventory, value);
-                RaisePropertyChanged(nameof(SelectedInventory));
-                EditOptionsCommand.RaiseCanExecuteChanged();
-            }
-        }
-        public string? Selection 
-        { 
-            get => _selection; 
-            set 
-            { 
                 SetProperty(ref _selection, value);
                 RaisePropertyChanged(nameof(Selection));
                 DisplaySelectedCommand.RaiseCanExecuteChanged();
-            } 
+            }
         }
         public string PropertySelection
         {
@@ -143,6 +113,36 @@ namespace Module.ViewModels
                 UpdateInvCommand.RaiseCanExecuteChanged();
             }
         }
+        public string NewPropertyValue
+        {
+            get => _newPropertyValue;
+            set
+            {
+                SetProperty(ref _newPropertyValue, value);
+                RaisePropertyChanged(nameof(_newPropertyValue));
+            }
+        }
+        public InventoryAddDialogModel SelectedInventory
+        {
+            get => _selectedInventory;
+            set
+            {
+                SetProperty(ref _selectedInventory, value);
+                RaisePropertyChanged(nameof(SelectedInventory));
+                EditOptionsCommand.RaiseCanExecuteChanged();
+            }
+        }
+        public InventoryAddDialogModel? DelInv
+        {
+            get => _delInv;
+            set
+            {
+                SetProperty(ref _delInv, value);
+                RaisePropertyChanged(nameof(DelInv));
+            }
+        }
+        //  Inventory Data Display
+        public ObservableCollection<InventoryAddDialogModel> InventoryData { get => _inventoryData; set { SetProperty(ref _inventoryData, value); } }
         public ObservableCollection<InventoryAddDialogModel> InvItems
         {
             get => _invItems;
@@ -152,10 +152,7 @@ namespace Module.ViewModels
                 RaisePropertyChanged(nameof(InvItems));
             }
         }
-
         public ObservableCollection<InventoryAddDialogModel> ListOfInv { get => _listOfInv; set { SetProperty(ref _listOfInv, value); } }
-        //  Inventory Data Display
-        public ObservableCollection<InventoryAddDialogModel> InventoryData { get => _inventoryData; set { SetProperty(ref _inventoryData, value); } }
         public DelegateCommand DisplaySelectedCommand {  get; private set; }
         public DelegateCommand EditOptionsCommand { get; private set; }
         public DelegateCommand UpdateInvCommand { get; private set; }
@@ -165,6 +162,7 @@ namespace Module.ViewModels
 
         public InventoryDialogViewModel(IDataRepository dataRepository)
         {
+            _dataRepository = dataRepository;
             _dataRepository = dataRepository;
             DisplaySelectedCommand = new DelegateCommand(DisplaySelected, CanClickSelection);
             EditOptionsCommand = new DelegateCommand(DisplayEditOptions, CanClickInventory);
@@ -228,6 +226,7 @@ namespace Module.ViewModels
         {
             try
             {
+                //  Limits set based on limits defined within database
                 if(Item.Length >= 50 || InStock.Length >= 10 || OnOrder.Length >=10 ||  ReorderLimit.Length >= 10)
                 {
                     MessageBox.Show("Input is too large", "", MessageBoxButton.OK);

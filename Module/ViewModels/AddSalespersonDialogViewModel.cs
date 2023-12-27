@@ -7,6 +7,8 @@ using System.Windows;
 
 namespace Module.ViewModels
 {
+
+    // Defines the logic for Dialog View that adds a new Salesperson
     public class AddSalespersonDialogViewModel : BindableBase, IDialogAware
     {
         private IDataRepository _dataRepository;
@@ -48,10 +50,7 @@ namespace Module.ViewModels
                 AddSalespersonCommand.RaiseCanExecuteChanged();
             }
         }
-
         public DelegateCommand AddSalespersonCommand { get; set; }
-
-
 
 
         public AddSalespersonDialogViewModel(IDataRepository dataRepository) 

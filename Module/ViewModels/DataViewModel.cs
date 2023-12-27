@@ -11,40 +11,46 @@ using System.Windows;
 
 namespace Module.ViewModels
 {
-
-    internal class DataViewModel : BindableBase
+    // Defines the logic for the Main Application View -- 'Data.xaml'
+    public class DataViewModel : BindableBase
     {
-        // "_dataRepository" field is declared as an IDataRepository
         private IDataRepository _dataRepository;
         private IDialogService _dialogService;
-
-        // "_title" field is declared as a "List" of type "OrderInfoModel"
-        private List<OrderInfoModel> _title;
         private DateTime _date_Start;
         private DateTime _date_End;
+        private List<OrderInfoModel> _title;
         private List<OrderInfoModel> _filterData;
         private ObservableCollection<OrderInfoModel> _filterD;
         private ObservableCollection<OrderInfoModel> _searchD;
         private ObservableCollection<SalespersonModel> _selectedSalespersons;
         private ObservableCollection<CustomerModel> _selectedCustomers;
-        private string _keyword;
-        private string _selection;
         private int _displaySalesperson;
         private int _displayCustomer;
+        private string _keyword;
         private string _messageReceived;
+        private string _selection;
 
-        public string MessageReceived {  get => _messageReceived; set { SetProperty(ref _messageReceived, value); } }
-
-
-        // "Title" property is declared and the "getter" and "setter" are both created
+        public DateTime Date_Start { get => _date_Start; set { SetProperty(ref _date_Start, value); } }
+        public DateTime Date_End { get => _date_End; set { SetProperty(ref _date_End, value); } }
         public List<OrderInfoModel> Title
         {
             get => _title;
-            //  The original setter read: set { _testbox = value } 
-            //  Needed to use SetProperty() for DelegateCommand to work
             set
             {
+                //  Needed to use SetProperty() for DelegateCommand to work
                 SetProperty(ref _title, value);
+            }
+        }
+        public List<OrderInfoModel> FilterData { get => _filterData; set { SetProperty(ref _filterData, value); } }
+        public ObservableCollection<OrderInfoModel> FilterD { get => _filterD; set { SetProperty(ref _filterD, value); } }
+
+        public ObservableCollection<OrderInfoModel> SearchD { get => _searchD; set { SetProperty(ref _searchD, value); } }
+        public ObservableCollection<SalespersonModel> SelectedSalespersons { get => _selectedSalespersons; set { SetProperty(ref _selectedSalespersons, value); } }
+        public ObservableCollection<CustomerModel> SelectedCustomers
+        {
+            get => _selectedCustomers; set
+            {
+                SetProperty(ref _selectedCustomers, value);
             }
         }
         public int DisplaySalesperson 
@@ -68,44 +74,35 @@ namespace Module.ViewModels
             get { return _keyword; }
             set { _keyword = value; }
         }
-        public string Selection { get => _selection; 
+        public string MessageReceived { get => _messageReceived; set { SetProperty(ref _messageReceived, value); } }
+        public string Selection 
+        { 
+            get => _selection; 
             set 
             { 
                 SetProperty(ref _selection, value);
 
-            } }
-        public DateTime Date_Start { get => _date_Start; set { SetProperty(ref _date_Start, value); } }
-        public DateTime Date_End { get => _date_End; set { SetProperty(ref _date_End, value); } }
-        public List<OrderInfoModel> FilterData { get => _filterData; set { SetProperty(ref _filterData, value); } }
+            } 
+        }
         public DelegateCommand SelectedData {  get; private set; }
         public DelegateCommand FilterDataResults { get; private set; }
         public DelegateCommand SearchDataResults {  get; private set; }
         public DelegateCommand ShowDialogCommand { get; private set; }
         public DelegateCommand EditInventoryCommand { get; private set; }
         public DelegateCommand SalesOrderCommand {  get; private set; }
-        public ObservableCollection<OrderInfoModel> FilterD { get => _filterD; set { SetProperty(ref _filterD, value); } }
-
-        public ObservableCollection<OrderInfoModel> SearchD {  get => _searchD; set { SetProperty(ref _searchD, value); } }
-        public ObservableCollection<SalespersonModel> SelectedSalespersons { get => _selectedSalespersons; set { SetProperty(ref _selectedSalespersons, value); } }
-        public ObservableCollection<CustomerModel> SelectedCustomers { get => _selectedCustomers; set { SetProperty(ref _selectedCustomers, value); } }
+        
 
 
 
         // DataViewModel Constructor
         public DataViewModel(IDataRepository dataRepository, IDialogService dialogService)
         {
-            _dialogService = dialogService;
             // DataViewModel parameter "dataRepository" assigned to private field "_dataRepository"
             _dataRepository = dataRepository;
-            
+            _dialogService = dialogService;
+
             // Title is now initialized with an instance of "List<OrderInfoModel"
             Title = new List<OrderInfoModel>();
-
-            // "GetData()" clears anything within Title, then adds the info retrieved from GetData() query in _dataRepository
-            //GetData();
-            GetData();
-
-
             SelectedData = new DelegateCommand(SelectDataGrid, CanClick);
             SearchDataResults = new DelegateCommand(Search, CanClick);
             FilterDataResults = new DelegateCommand(Filter, CanClick);
@@ -119,49 +116,15 @@ namespace Module.ViewModels
             SearchD = new ObservableCollection<OrderInfoModel>();
             SelectedSalespersons = new ObservableCollection<SalespersonModel>();
             SelectedCustomers = new ObservableCollection<CustomerModel>();
+            GetData();
         }
-
-        private void ShowSalesDialog()
+        private void GetData()
         {
-            var p = new DialogParameters();
-            _dialogService.ShowDialog("SalesOrderDialogView", p, result =>
-            {
-
-            });
+            Title.Clear();
+            Title.AddRange(_dataRepository.GetData());
         }
 
-            private void ShowDialog()
-        {
-            var p = new DialogParameters();
-            _dialogService.ShowDialog("AddDialogView", p, result =>
-            {
-                if (result.Result == ButtonResult.OK)
-                {
-                    MessageReceived = result.Parameters.GetValue<string>("myParam");
-                }
-                else
-                {
-                    MessageReceived = "Okay button not clicked";
-                }
-            } );
-        }
-
-        private void ShowInventoryDialog()
-        {
-            var p = new DialogParameters();
-
-            _dialogService.ShowDialog("InventoryDialogView", p, result =>
-            {
-                //if (result.Result == ButtonResult.OK)
-                //{
-                //    MessageReceived = result.Parameters.GetValue<string>("myParam");
-                //}
-                //else
-                //{
-                //    MessageReceived = "Okay button not clicked";
-                //}
-            });
-        }
+        //  Selects which data to display -- either joins Salespersons or Customer tables with Sales_Order Table
         private void SelectDataGrid()
         {
             if (Selection == "System.Windows.Controls.ComboBoxItem: Salespersons")
@@ -190,15 +153,9 @@ namespace Module.ViewModels
             }
         }
 
-        private void GetData()
-        {
-            Title.Clear();
-            Title.AddRange(_dataRepository.GetData());
-        }
-
+        //  Filters Data based on entered dates
         public void Filter()
         {
-            // Add data validation
             if (Date_Start > Date_End)
             {
                 MessageBox.Show("Invalid Filter Date Range");
@@ -233,9 +190,9 @@ namespace Module.ViewModels
 
         private void Search()
         {
-            // Add data validation
             if (Keyword != null)
             {
+                //  Checks for special characters
                 if
                     (Keyword.Contains("%") == true || Keyword.Contains(".") == true || Keyword.Contains(",") == true ||
                     Keyword.Contains("/") == true || Keyword.Contains("?") == true || Keyword.Contains("+") == true ||
@@ -282,6 +239,40 @@ namespace Module.ViewModels
         private bool CanClick()
         {
             return true;
+        }
+        private void ShowSalesDialog()
+        {
+            var p = new DialogParameters();
+            _dialogService.ShowDialog("SalesOrderDialogView", p, result =>
+            {
+
+            });
+        }
+
+        private void ShowDialog()
+        {
+            var p = new DialogParameters();
+            _dialogService.ShowDialog("AddDialogView", p, result =>
+            {
+                if (result.Result == ButtonResult.OK)
+                {
+                    MessageReceived = result.Parameters.GetValue<string>("myParam");
+                }
+                else
+                {
+                    MessageReceived = "Okay button not clicked";
+                }
+            });
+        }
+
+        private void ShowInventoryDialog()
+        {
+            var p = new DialogParameters();
+
+            _dialogService.ShowDialog("InventoryDialogView", p, result =>
+            {
+                return;
+            });
         }
     }
 }
