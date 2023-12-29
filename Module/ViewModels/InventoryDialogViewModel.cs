@@ -84,15 +84,6 @@ namespace Module.ViewModels
         public int DisplayAddIndex { get => _displayAddIndex; set { SetProperty(ref _displayAddIndex, value); } }
         public int DisplayDeleteIndex { get => _displayDeleteIndex; set { SetProperty(ref _displayDeleteIndex, value); } }
         public int DisplayUpdateIndex { get => _displayUpdateIndex; set { SetProperty(ref _displayUpdateIndex, value); } }
-        //public int DelDateFormat
-        //{
-        //    get => delDateFormat;
-        //    set
-        //    {
-        //        SetProperty(ref delDateFormat, value);
-        //        RaisePropertyChanged(nameof(DelDateFormat));
-        //    }
-        //}
         public string? Selection
         {
             get => _selection;

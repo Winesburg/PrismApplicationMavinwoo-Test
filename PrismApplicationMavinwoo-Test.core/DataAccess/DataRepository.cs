@@ -43,6 +43,7 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
         public int GetSalesOrderNo();
         public void UpdateSalesOrder(int orderNo, DateTime dateSold, int salesPerson, int customer, decimal Price);
         public void UpdateOrderLines(string item, decimal price, int unitSold, int orderNo);
+        public List<OrderLinesDialogModel> ViewOrderDetails(int orderNumber);
 
     }
     public class DataRepository : IDataRepository
@@ -335,49 +336,6 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
 
             }
         }
-        //public int GetCustomerCount()
-        //{
-        //    using (MySqlConnection connection = new MySqlConnection(SqlHelper.ConMySQL))
-        //    {
-        //        string query = "Select Count(Customer) From Customer";
-        //        MySqlCommand cmd = new MySqlCommand(query, connection);
-        //        int result;
-
-        //        try
-        //        {
-        //            connection.Open();
-        //            result = Convert.ToInt32(cmd.ExecuteScalar());
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            MessageBox.Show(ex.Message);
-        //            throw;
-        //        }
-        //        return result;
-        //    }
-        //}
-
-        //public int GetSalespersonCount()
-        //{
-        //    using (MySqlConnection connection = new MySqlConnection(SqlHelper.ConMySQL))
-        //    {
-        //        string query = "Select Count(Customer) From Customer";
-        //        MySqlCommand cmd = new MySqlCommand(query, connection);
-        //        int result;
-
-        //        try
-        //        {
-        //            connection.Open();
-        //            result = Convert.ToInt32(cmd.ExecuteScalar());
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            MessageBox.Show(ex.Message);
-        //            throw;
-        //        }
-        //        return result;
-        //    }
-        //}
         public void UpdateSalesOrder(int orderNo, DateTime dateSold, int salesPerson, int customer, decimal Price)
         {
             using (MySqlConnection connection = new MySqlConnection(SqlHelper.ConMySQL))
@@ -407,12 +365,13 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
             using (MySqlConnection connection = new MySqlConnection(SqlHelper.ConMySQL))
             {
                 string query = "Insert Into Order_Lines (Item, Price, Units_Sold, Order_No) Value (@value1, @value2, @value3, @value4)";
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@value1", item);
-                cmd.Parameters.AddWithValue("@value2", price);
-                cmd.Parameters.AddWithValue("@value3", unitSold);
-                cmd.Parameters.AddWithValue("@value4", orderNo);
 
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                    cmd.Parameters.AddWithValue("@value1", item);
+                    cmd.Parameters.AddWithValue("@value2", price);
+                    cmd.Parameters.AddWithValue("@value3", unitSold);
+                    cmd.Parameters.AddWithValue("@value4", orderNo);
+         
                 try
                 {
                     connection.Open();
@@ -423,6 +382,45 @@ namespace PrismApplicationMavinwoo_Test.core.DataAccess
                     MessageBox.Show(ex.Message);
                     throw;
                 }
+            }
+        }
+        public List<OrderLinesDialogModel> ViewOrderDetails(int orderNumber)
+        {
+            using (MySqlConnection connection = new MySqlConnection(SqlHelper.ConMySQL))
+            {
+                //  The Dapper Way
+                connection.Open();
+
+                string query = "Select Item, Price, Units_Sold from Order_Lines WHERE Order_No = @value1";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@value1", orderNumber);
+
+                List<OrderLinesDialogModel> returnedOrderLines = connection.Query<OrderLinesDialogModel>(query, parameters).ToList();
+                return returnedOrderLines;
+               
+
+                //// Not using dapper
+
+                //using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                //{
+                //    cmd.Parameters.AddWithValue("@value1", orderNumber);
+
+                //    using (MySqlDataReader reader = cmd.ExecuteReader())
+                //    {
+                        //while (reader.Read())
+                        //    {
+                    //        string item = reader.GetString(0);
+                    //        decimal price = reader.GetDecimal(1);
+                    //        int unitSold = reader.GetInt32(2);
+                    //        //  Would need to create new model and constructor
+                    //        OrderInfoModel returnedOrder = new OrderInfoModel(item, Price, unitSold);
+                    //        List<OrderInfoModel> list = new List<OrderInfoModel>();
+                    //        list.AddRange(returnedOrder);
+                    //        }
+                //        return list;
+                //    }
+                //}
             }
         }
     }

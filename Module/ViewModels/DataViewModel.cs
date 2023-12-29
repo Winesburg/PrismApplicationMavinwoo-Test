@@ -1,4 +1,7 @@
-﻿using Prism.Commands;
+﻿using Module.Events;
+using Module.Views;
+using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using PrismApplicationMavinwoo_Test.core.DataAccess;
@@ -6,7 +9,9 @@ using PrismApplicationMavinwoo_Test.core.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Module.ViewModels
@@ -16,8 +21,11 @@ namespace Module.ViewModels
     {
         private IDataRepository _dataRepository;
         private IDialogService _dialogService;
+        private IEventAggregator _eventAggregator;
         private DateTime _date_Start;
         private DateTime _date_End;
+        private List<OrderLinesDialogModel> _returnedOrderLines;
+        private OrderInfoModel _orderNumberView;
         private List<OrderInfoModel> _title;
         private List<OrderInfoModel> _filterData;
         private ObservableCollection<OrderInfoModel> _filterD;
@@ -29,7 +37,11 @@ namespace Module.ViewModels
         private string _keyword;
         private string _messageReceived;
         private string _selection;
-
+        private int _displayOrder;
+        
+        public int DisplayOrder { get => _displayOrder; set { SetProperty(ref _displayOrder, value); } }
+        public List<OrderLinesDialogModel> ReturnedOrderLines { get => _returnedOrderLines; set { SetProperty(ref _returnedOrderLines, value); } }
+        public OrderInfoModel OrderNumberView { get => _orderNumberView; set { SetProperty(ref _orderNumberView, value); } }
         public DateTime Date_Start { get => _date_Start; set { SetProperty(ref _date_Start, value); } }
         public DateTime Date_End { get => _date_End; set { SetProperty(ref _date_End, value); } }
         public List<OrderInfoModel> Title
@@ -39,6 +51,7 @@ namespace Module.ViewModels
             {
                 //  Needed to use SetProperty() for DelegateCommand to work
                 SetProperty(ref _title, value);
+                RaisePropertyChanged(nameof(Title));
             }
         }
         public List<OrderInfoModel> FilterData { get => _filterData; set { SetProperty(ref _filterData, value); } }
@@ -90,25 +103,30 @@ namespace Module.ViewModels
         public DelegateCommand ShowDialogCommand { get; private set; }
         public DelegateCommand EditInventoryCommand { get; private set; }
         public DelegateCommand SalesOrderCommand {  get; private set; }
+        public DelegateCommand DoubleClickCommand { get; }
+        public DelegateCommand ReturnCommand { get; private set; }
         
 
 
 
         // DataViewModel Constructor
-        public DataViewModel(IDataRepository dataRepository, IDialogService dialogService)
+        public DataViewModel(IDataRepository dataRepository, IDialogService dialogService, IEventAggregator eventAggregator)
         {
             // DataViewModel parameter "dataRepository" assigned to private field "_dataRepository"
             _dataRepository = dataRepository;
             _dialogService = dialogService;
+            _eventAggregator = eventAggregator;
 
             // Title is now initialized with an instance of "List<OrderInfoModel"
             Title = new List<OrderInfoModel>();
             SelectedData = new DelegateCommand(SelectDataGrid, CanClick);
+            ReturnCommand = new DelegateCommand(ReturnFromOrderView);
             SearchDataResults = new DelegateCommand(Search, CanClick);
             FilterDataResults = new DelegateCommand(Filter, CanClick);
             ShowDialogCommand = new DelegateCommand(ShowDialog, CanClick);
             EditInventoryCommand = new DelegateCommand(ShowInventoryDialog, CanClick);
             SalesOrderCommand = new DelegateCommand(ShowSalesDialog, CanClick);
+            DoubleClickCommand = new DelegateCommand(OnDoubleClick);
             Date_Start = DateTime.Now;
             Date_End = DateTime.Now;
             FilterData = new List<OrderInfoModel>();
@@ -117,6 +135,20 @@ namespace Module.ViewModels
             SelectedSalespersons = new ObservableCollection<SalespersonModel>();
             SelectedCustomers = new ObservableCollection<CustomerModel>();
             GetData();
+        }
+        private void ReturnFromOrderView()
+        {
+            DisplayOrder = 0;
+        } 
+        private void OnDoubleClick()
+        {
+
+            //  Find a way to communicate information to dialog window to display order lines in graph
+            ReturnedOrderLines = _dataRepository.ViewOrderDetails(OrderNumberView.Order_No);
+            DisplayOrder = 5;
+            //_eventAggregator.GetEvent<OrderLinesViewEvent>().Publish(ReturnedOrderLines);
+            //Title = _dataRepository.ViewOrderDetails(OrderNumberView.Order_No);
+            //ShowOrderLinesDialog();
         }
         private void GetData()
         {
@@ -143,12 +175,11 @@ namespace Module.ViewModels
                 SelectedCustomers.ToList();
                 DisplayCustomer = 2;
             }
-            if(Selection == "System.Windows.Controls.ComboBoxItem: Reset")
+            if(Selection == "System.Windows.Controls.ComboBoxItem: Refresh")
             {
                 DisplayCustomer = 0;
                 DisplaySalesperson = 0;
-                Title.Clear();
-                Title.AddRange( _dataRepository.GetData());
+                GetData();
                 Title.ToList();
             }
         }
@@ -245,10 +276,17 @@ namespace Module.ViewModels
             var p = new DialogParameters();
             _dialogService.ShowDialog("SalesOrderDialogView", p, result =>
             {
-
+                GetData();
             });
         }
 
+        //   Should be used in future to implement event aggregation
+        //private void ShowOrderLinesDialog()
+        //{
+        //    var p = new DialogParameters();
+        //    _dialogService.ShowDialog("OrderLinesDialogView", p, result =>
+        //    { });
+        //}
         private void ShowDialog()
         {
             var p = new DialogParameters();
@@ -273,6 +311,15 @@ namespace Module.ViewModels
             {
                 return;
             });
+        }
+        async Task SalesOrderCheck()
+        {
+            while (true)
+            {
+                GetData();
+                await Task.Delay(5000);
+            }
+            
         }
     }
 }

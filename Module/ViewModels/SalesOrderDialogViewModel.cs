@@ -14,6 +14,8 @@ using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Threading;
+using Prism.Events;
+using PrismApplicationMavinwoo_Test.core.Events;
 
 namespace Module.ViewModels
 {
@@ -21,6 +23,7 @@ namespace Module.ViewModels
     {
         private IDataRepository _dataRepository;
         private IDialogService _dialogService;
+        private IEventAggregator _eventAggregator;
         private string? _itemDateConn;
         private string _itemSalespersonConn;
         private string _itemCustomerConn;
@@ -125,10 +128,11 @@ namespace Module.ViewModels
         public DelegateCommand DeleteOrderLineCommand {  get; set; }
         public DelegateCommand ClearSalesOrderCommand { get; set; }
 
-        public SalesOrderDialogViewModel(IDataRepository dataRepository, IDialogService dialogService)
+        public SalesOrderDialogViewModel(IDataRepository dataRepository, IDialogService dialogService, IEventAggregator eventAggregator)
         {
             _dataRepository = dataRepository;
             _dialogService = dialogService;
+            _eventAggregator = eventAggregator;
             ListOfInv = new ObservableCollection<InventoryAddDialogModel>();
             SalesOrder = new ObservableCollection<CompletedSalesOrderModel>();
             SalesHeader_Date = new ObservableCollection<string>();
@@ -145,6 +149,12 @@ namespace Module.ViewModels
             FormatInputs();
         }
 
+        private void UpdateSalesOrder()
+        {
+            string test = "This works";
+            _eventAggregator.GetEvent<SalesOrderUpdateEvent>().Publish(test);
+
+        }
         private void ClearSalesOrder()
         {
             SalesHeader_Date.Clear();
@@ -250,62 +260,51 @@ namespace Module.ViewModels
             AddSalesTrigger = 0;
             if (SalesOrder.Count > 0)
             {
-
-                //Updates Order_Lines Table
-                //UpdateOrderLineTable();
-                //  Updates Sales_Order Table
                 DateTime item_date = Convert.ToDateTime(ItemDateConn.Replace(" 12:00:00 AM", ""));
-                //_dataRepository.UpdateSalesOrder(FindSalesOrderNumber() + 1, item_date, FindSaleSalesperson(), FindSaleCustomer(), (decimal)AmountDue);
-
+                string display = "";
+                List<string> IncorrectQuantity = new List<string>();
 
                 // Initial loop that iterates through the entire Sales Order
-                List<string> IncorrectQuantity = new List<string>();
                 for (int i = 0; i < SalesOrder.Count; i++)
                 {
+                    //  Checks if ordered quantity of any item is greater than quantity in inventory
                     int currentStock = _dataRepository.GetCurrentStock(SalesOrder[i].Item);
 
                     if (currentStock < SalesOrder[i].Quantity)
                     {
                         IncorrectQuantity.Add(SalesOrder[i].Item);
                     }
-                    else
-                    {
-                        //  Updates Inventory Table
-                        _dataRepository.SetStock((currentStock - SalesOrder[i].Quantity), SalesOrder[i].Item);
-                        _dataRepository.UpdateSalesOrder(FindSalesOrderNumber() + 1, item_date, FindSaleSalesperson(), FindSaleCustomer(), (decimal)AmountDue);
-                        UpdateOrderLineTable();
-                    }
                 }
-                string display = ""; 
+                
                 if (IncorrectQuantity.Count > 0)
                 {
                     for (int i = 0; i < IncorrectQuantity.Count; i++)
                     {
                         display += ($"{IncorrectQuantity[i]} \n");
                     }
-                    MessageBoxResult result = MessageBox.Show($"The following items do not have enough inventory in stock to fill order:\n {display} \n " +
-                        $"Would you like to automatically reduce order amount to the number available?", "", MessageBoxButton.YesNoCancel);
+                    MessageBoxResult result = MessageBox.Show($"The following items do not have enough inventory in stock to fill order:\n\n{display} \n " +
+                        $"Would you like to automatically reduce order amount to the number available?", "", MessageBoxButton.YesNo);
                     switch (result)
                     {
                         case MessageBoxResult.Yes:
+                            // Loops through Sales Order and IncorrectQuantity to update Inventory table
                             for (int i = 0; i < SalesOrder.Count; i++)
                             {
                                 for (int j = 0; j < IncorrectQuantity.Count; j++)
                                 {
                                     if (IncorrectQuantity[j] == SalesOrder[i].Item)
                                     {
-                                        // Need to update Sales and order Tables after decision is made
                                         SalesOrder[i].Quantity = _dataRepository.GetCurrentStock(SalesOrder[i].Item);
-                                        UpdateOrderLineTable();
-                                        _dataRepository.UpdateSalesOrder(FindSalesOrderNumber() + 1, item_date, FindSaleSalesperson(), FindSaleCustomer(), (decimal)AmountDue);
-                                        _dataRepository.SetStock(0, SalesOrder[i].Item);
                                     }
                                 }
+                                _dataRepository.SetStock(SalesOrder[i].Quantity, SalesOrder[i].Item);
                             }
-
+                            UpdateOrderLineTable();
+                            _dataRepository.UpdateSalesOrder(FindSalesOrderNumber() + 1, item_date, FindSaleSalesperson(), FindSaleCustomer(), (decimal)AmountDue);
+                            SalesOrder.Clear();
                             break;
                         case MessageBoxResult.No:
-                            MessageBoxResult result2 = MessageBox.Show("Would you like to process the Sale as it is?", "", MessageBoxButton.YesNoCancel);
+                            MessageBoxResult result2 = MessageBox.Show("Would you like to process the Sale as it is?", "", MessageBoxButton.YesNo);
                             switch (result2)
                             {
                                 case MessageBoxResult.Yes:
@@ -339,6 +338,15 @@ namespace Module.ViewModels
                                         // Send the email
                                         smtpClient.Send(mail);
                                         MessageBox.Show("An order reminder email has been send to 'Email@Example.com' ");
+                                        // Update Database
+                                        UpdateOrderLineTable();
+                                        _dataRepository.UpdateSalesOrder(FindSalesOrderNumber() + 1, item_date, FindSaleSalesperson(), FindSaleCustomer(), (decimal)AmountDue);
+                                        for (int i = 0; i < SalesOrder.Count; i++)
+                                        {
+                                            int currentStock = _dataRepository.GetCurrentStock(SalesOrder[i].Item);
+                                            _dataRepository.SetStock(currentStock - SalesOrder[i].Quantity, SalesOrder[i].Item);
+                                        }
+                                        SalesOrder.Clear();
                                     }
                                     catch (Exception ex)
                                     {
@@ -349,13 +357,20 @@ namespace Module.ViewModels
                                     break;
                             }
                             break;
-                        case MessageBoxResult.Cancel:
-                            break;
                     }
                     IncorrectQuantity.Clear();
                 }
                 else if (IncorrectQuantity.Count == 0)
                 {
+                    //  Updates Inventory Table
+                    
+                    for (int i = 0; i < SalesOrder.Count; i++)
+                    {
+                        int currentStock = _dataRepository.GetCurrentStock(SalesOrder[i].Item);
+                        _dataRepository.SetStock((currentStock - SalesOrder[i].Quantity), SalesOrder[i].Item);
+                    }
+                    UpdateOrderLineTable();
+                    _dataRepository.UpdateSalesOrder(FindSalesOrderNumber() + 1, item_date, FindSaleSalesperson(), FindSaleCustomer(), (decimal)AmountDue);
                     SalesOrder.Clear();
                 }
 
@@ -464,7 +479,7 @@ namespace Module.ViewModels
 
         public void OnDialogClosed()
         {
-            return;
+            UpdateSalesOrder();
         }
 
         public void OnDialogOpened(IDialogParameters parameters)

@@ -8,14 +8,12 @@ namespace PrismApplicationMavinwoo_Test.core.Models
 {
     public class SalespersonModel
     {
-        //private int _iD;
         private int _orderNo;
         private DateTime _dateSold;
         private string _name;
         private string _customer;
         private decimal _price;
 
-        //public int ID { get => _iD; set => _iD = value; }
         public int Order_No { get => _orderNo; set => _orderNo = value; }
         public DateTime Date_Sold { get => _dateSold; set => _dateSold = value; }
         public string Name { get => _name; set => _name = value; }

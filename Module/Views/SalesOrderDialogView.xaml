@@ -301,11 +301,14 @@
                 FontSize="18"
                 Text="Amount Due"
                 TextAlignment="Center" />
-            <TextBlock 
-                Background="#404040"
-                Grid.Row="3"
-                Grid.Column="1"
-                Grid.ColumnSpan="2"/>
+            <Border BorderBrush="#404040"
+                    Background="#404040"
+                    BorderThickness="1"
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2">
+            
+            </Border>
             <TextBlock 
                 Background="#404040"
                 Foreground="#f7f7fa"
