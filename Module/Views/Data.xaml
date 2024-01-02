@@ -206,7 +206,7 @@
                        Panel.ZIndex="{Binding DisplayOrder}" />
         <Grid Panel.ZIndex="{Binding DisplayOrder}"
               VerticalAlignment="Bottom"
-              Height="50"
+              Height="60"
               Background="White"/>
         <Button Command="{Binding ReturnCommand}"
                 VerticalAlignment="Bottom"
@@ -224,12 +224,12 @@
         </Button>
 
         <syncfusion:SfDataGrid ItemsSource="{Binding SelectedSalespersons}"
-                               SelectedItem="{Binding OrderNumberView}"
+                               SelectedItem="{Binding OrderViewSalesperson}"
                                Margin="0 80 0 0"    
                                ColumnSizer="Star" 
                                AllowSorting="False" 
-                               AllowTriStateSorting="True" 
-                               ShowSortNumbers="True" 
+                               AllowTriStateSorting="True"
+                               ShowSortNumbers="True"
                                AllowFiltering="True"
                                Background="White"
                                Panel.ZIndex="{Binding DisplaySalesperson}" >
@@ -240,12 +240,12 @@
             </i1:Interaction.Triggers>
         </syncfusion:SfDataGrid>
         <syncfusion:SfDataGrid ItemsSource="{Binding SelectedCustomers}"
-                               SelectedItem="{Binding OrderNumberView}"
-                               Margin="0 80 0 0"    
-                               ColumnSizer="Star" 
-                               AllowSorting="False" 
-                               AllowTriStateSorting="True" 
-                               ShowSortNumbers="True" 
+                               SelectedItem="{Binding OrderViewCustomer}"
+                               Margin="0 80 0 0"
+                               ColumnSizer="Star"
+                               AllowSorting="False"
+                               AllowTriStateSorting="True"
+                               ShowSortNumbers="True"
                                AllowFiltering="True"
                                Background="White"
                                Panel.ZIndex="{Binding DisplayCustomer}" >

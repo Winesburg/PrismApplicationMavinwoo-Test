@@ -26,6 +26,8 @@ namespace Module.ViewModels
         private DateTime _date_End;
         private List<OrderLinesDialogModel> _returnedOrderLines;
         private OrderInfoModel _orderNumberView;
+        private CustomerModel _orderViewCustomer;
+        private SalespersonModel _orderViewSalesperson;
         private List<OrderInfoModel> _title;
         private List<OrderInfoModel> _filterData;
         private ObservableCollection<OrderInfoModel> _filterD;
@@ -42,6 +44,8 @@ namespace Module.ViewModels
         public int DisplayOrder { get => _displayOrder; set { SetProperty(ref _displayOrder, value); } }
         public List<OrderLinesDialogModel> ReturnedOrderLines { get => _returnedOrderLines; set { SetProperty(ref _returnedOrderLines, value); } }
         public OrderInfoModel OrderNumberView { get => _orderNumberView; set { SetProperty(ref _orderNumberView, value); } }
+        public CustomerModel OrderViewCustomer { get => _orderViewCustomer; set { SetProperty(ref _orderViewCustomer, value); } }
+        public SalespersonModel OrderViewSalesperson { get => _orderViewSalesperson; set { SetProperty(ref _orderViewSalesperson, value); } }
         public DateTime Date_Start { get => _date_Start; set { SetProperty(ref _date_Start, value); } }
         public DateTime Date_End { get => _date_End; set { SetProperty(ref _date_End, value); } }
         public List<OrderInfoModel> Title
@@ -142,10 +146,21 @@ namespace Module.ViewModels
         } 
         private void OnDoubleClick()
         {
-
-            //  Find a way to communicate information to dialog window to display order lines in graph
-            ReturnedOrderLines = _dataRepository.ViewOrderDetails(OrderNumberView.Order_No);
-            DisplayOrder = 5;
+            if (OrderNumberView != null)
+            {
+                ReturnedOrderLines = _dataRepository.ViewOrderDetails(OrderNumberView.Order_No);
+                DisplayOrder = 5;
+            }
+            else if (OrderViewCustomer != null)
+            {
+                ReturnedOrderLines = _dataRepository.ViewOrderDetails(OrderViewCustomer.Order_No);
+                DisplayOrder = 5;
+            }
+            else
+            {
+                ReturnedOrderLines = _dataRepository.ViewOrderDetails(OrderViewSalesperson.Order_No);
+                DisplayOrder = 5;
+            }
             //_eventAggregator.GetEvent<OrderLinesViewEvent>().Publish(ReturnedOrderLines);
             //Title = _dataRepository.ViewOrderDetails(OrderNumberView.Order_No);
             //ShowOrderLinesDialog();
